@@ -23,6 +23,11 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
    $search_results = isset( $_REQUEST['s'] )      ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
    $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
 
+   // Зафиксируем текущий paged, для дальнейшего возврата
+   $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
+
+   $page   = get_page_name();
+
    $class_table -> prepare_items();
    // если пустое значение $button1
    if (empty($button1)){
@@ -38,13 +43,13 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
        <h2>
           <?php echo $title; ?>
           <?php if ( current_user_can( $perm_button )){
-             ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $_REQUEST['page'], $_REQUEST['paged'], $button1_action);?>" class="page-title-action">
+             ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button1_action);?>" class="page-title-action">
                    <?php echo _e($button1_name, $gl_['plugin_name'] );?>
                 </a>
              <?php
             // если не пустое значение $button2
             if (! empty($button2)){
-               ?> <a href="<?php echo sprintf('?page=%s&action=%s', $_REQUEST['page'], $button2[0]);?>" class="page-title-action">
+               ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button2[0]);?>" class="page-title-action">
                      <?php echo _e($button2[1], $gl_['plugin_name'] );?>
                   </a>
                <?php
