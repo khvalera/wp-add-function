@@ -1,0 +1,142 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-add-function\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-06-08 18:38+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.3; wp-5.4.1"
+
+#: wp-add-function/db-functions.php:50
+msgid "Record new"
+msgstr ""
+
+#: wp-add-function/db-functions.php:52
+msgid "Data correction"
+msgstr ""
+
+#: wp-add-function/db-functions.php:54
+msgid "Cancel deletion"
+msgstr ""
+
+#: wp-add-function/db-functions.php:56
+msgid "Delete mark"
+msgstr ""
+
+#: wp-add-function/db-functions.php:61
+msgid "Error inserting history data!"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:20
+#: wp-add-function/pages-functions.php:101
+#: wp-add-function/pages-functions.php:462
+msgid "Search"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:30
+msgid "New item"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:115
+msgid "Return"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:160
+msgid "Delete item"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:162
+msgid "In this dialog, you can mark the selected directory entry for deletion."
+msgstr ""
+
+#: wp-add-function/pages-functions.php:163
+msgid ""
+"The directory element is not deleted completely, but only marked for "
+"deletion."
+msgstr ""
+
+#: wp-add-function/pages-functions.php:167
+#, php-format
+msgid "Do you want to delete the directory entry '%s' with the number '%s'?"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:172
+msgid "Delete"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:173
+#: wp-add-function/pages-functions.php:204
+msgid "Cancel"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:194
+msgid "Cancel deletion item"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:196
+msgid ""
+"In this dialog box you can remove the mark for deletion from the selected "
+"directory entry."
+msgstr ""
+
+#: wp-add-function/pages-functions.php:199
+#, php-format
+msgid ""
+"Do you want to cancel the deletion of the directory entry '%s' with the "
+"number '%s'?"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:203
+msgid "Apply"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:356
+#: wp-add-function/pages-functions.php:484
+msgid "Select value"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:602
+msgid "Number of lines per page"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:652
+msgid "Error: "
+msgstr ""
+
+#: wp-add-function/pages-functions.php:676
+#: wp-add-function/pages-functions.php:678
+#: wp-add-function/pages-functions.php:701
+msgid "Filter"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:680
+msgid "History"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:684
+msgid "Cancel delete"
+msgstr ""
+
+#. Name of the plugin
+msgid "wp-add-function"
+msgstr ""
+
+#. Description of the plugin
+msgid "Additional common function WP"
+msgstr ""
+
+#. Author of the plugin
+msgid "Khomenko Valery"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://khv.pp.ua"
+msgstr ""
