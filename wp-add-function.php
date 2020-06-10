@@ -25,5 +25,5 @@ add_action( 'init', function() {
 require_once( WPMU_PLUGIN_DIR . '/wp-add-function/common-functions.php' );
 require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages-functions.php' );
 require_once( WPMU_PLUGIN_DIR . '/wp-add-function/db-functions.php' );
-require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-table.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-table-directory.php' );
 
