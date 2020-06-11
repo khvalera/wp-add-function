@@ -801,7 +801,7 @@ function column_button_filter( $this_column, $item, $column_name ){
 //===================================================
 // Функция отображения поля default в class-wp-list-table
 function display_column_default( $item, $column_name ){
-   global $action, $color;
+   global $color;
 
    if ( stripos ( $column_name, 'mail') != false )
         $column_value = ' <em><a href="mailto:' . $item[ $column_name ] . '"> '. $item[ $column_name ] . ' </a></em>';
@@ -813,6 +813,16 @@ function display_column_default( $item, $column_name ){
    // case 'id':
    //    return print_r( $item, true );
    }
+}
+
+//===================================================
+// Функция отображения поля class-wp-list-table в виде картинки
+function display_column_picture( $item, $column_name, $picture ){
+   global $gl_;
+
+   $column_value = '<img src="' . WP_PLUGIN_URL . '/' . $gl_['plugin_name'] . '/images/' . $picture . '-16x16.png' . '"name="picture_title" align="top" hspace="2" width="16" height="16" border="2"/>';
+
+   return $column_value;
 }
 
 //===========================================
