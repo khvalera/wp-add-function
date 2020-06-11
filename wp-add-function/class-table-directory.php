@@ -85,8 +85,8 @@ class class_table_directory extends WP_List_Table {
        screen (строка) — Строка содержащая название хука, нужного для определения текущей страницы. Если null, то будет установлен 
        текущий экран. По умолчанию: null */
        parent::__construct( array(
-            'singular'  => __( 'book',  'operative-accounting' ),  //singular name of the listed records
-            'plural'    => __( 'books', 'operative-accounting' ),  //plural name of the listed records
+            'singular'  => __( 'book',  'wp-add-function' ),  //singular name of the listed records
+            'plural'    => __( 'books', 'wp-add-function' ),  //plural name of the listed records
             'ajax'      => false                                   //does this table support ajax?
 
        ));
@@ -102,9 +102,9 @@ class class_table_directory extends WP_List_Table {
           return;
        ?>
           <ul class="subsubsub">
-             <?php echo __( 'Filter', 'operative-accounting' ) . ': '; ?>
-             <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'operative-accounting' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
-             <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'operative-accounting' ) . '</a>', $_REQUEST['page']); ?>
+             <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
+             <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
+             <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']); ?>
           </ul>
        <?php
     }
@@ -166,7 +166,7 @@ class class_table_directory extends WP_List_Table {
 
     /**********************************/
     function no_items() {
-       _e( 'There is not a single value.', 'operative-accounting');
+       _e( 'There is not a single value.', 'wp-add-function');
     }
 
     // Определяет столбцы, которые будут отображаться в вашей таблице
@@ -174,13 +174,13 @@ class class_table_directory extends WP_List_Table {
     public function get_columns() {
 
         $columns = array(
-            'id'         => __( 'Number',    'operative-accounting' ),
-            'name'       => __( 'Name',      'operative-accounting' ),
-            'commentary' => __( 'Comment',   'operative-accounting' ),
-            'modify'     => __( 'Modified',  'operative-accounting' )
+            'id'         => __( 'Number',    'wp-add-function' ),
+            'name'       => __( 'Name',      'wp-add-function' ),
+            'commentary' => __( 'Comment',   'wp-add-function' ),
+            'modify'     => __( 'Modified',  'wp-add-function' )
         );
         if ( $this -> action == 'history' ) {
-           $columns['action'] = __( 'Action',    'operative-accounting' );
+           $columns['action'] = __( 'Action',    'wp-add-function' );
         }
         return $columns;
     }

@@ -3,9 +3,98 @@
 // функции для работы с страницами
 
 //====================================
+// Форма журнала документов
+// $name            - Имя формы (пример: journal)
+// $class_table     - Имя класса таблицы
+// $perm_button     - Права на кнопки
+// $title           - Заглавие
+// $description1    - Описание 1
+// $description2    - Описание 2
+// $button1         - Свое имя для кнопки 1 (задается в виде массива, пример: array('new', 'New item'))
+// $button2         - Свое имя для кнопки 2 (задается в виде массива, пример: array('new', 'New item'))
+// $search_box_name - Имя кнопки поиска
+function form_journal( $name, $perm_button, $title, $description1, $description2 = '', $button1 = array(), $button2 = array(), $search_box_name = '' ) {
+   global $gl_;
+
+   if ( $search_box_name == '' ) {
+      $search_box_name = __( "Search", "wp-add-function" );
+   }
+
+   $search_results = isset( $_REQUEST['s'] )      ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+   $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
+
+   // Зафиксируем текущий paged, для дальнейшего возврата
+   $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
+
+   $page   = get_page_name();
+
+   $gl_['class-table'] -> prepare_items();
+   // если пустое значение $button1
+   if (empty($button1)){
+      $button1_action = 'new';
+      $button1_name   = __('New item', "wp-add-function" );
+   } else {
+      $button1_action = $button1[0];
+      $button1_name   = $button1[1];
+   }
+   ?>
+   <div class="wrap">
+   <div id="icon-users" class="icon32"><br/></div>
+       <h2>
+          <?php echo $title; ?>
+          <?php if ( current_user_can( $perm_button )){
+             ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button1_action);?>" class="page-title-action">
+                   <?php echo _e($button1_name, $gl_['plugin_name'] );?>
+                </a>
+             <?php
+            // если не пустое значение $button2
+            if (! empty($button2)){
+               ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button2[0]);?>" class="page-title-action">
+                     <?php echo _e($button2[1], $gl_['plugin_name'] );?>
+                  </a>
+               <?php
+            }
+          } ?>
+       </h2>
+        <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:2px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
+           <p>
+              <table class="wpuf-table">
+                 <th>
+                    <?php echo '<img src="' . WP_PLUGIN_URL . '/' . $gl_['plugin_name'] . '/images/' . $name . '-64x64.png' . '"name="picture_title" align="top" hspace="2" width="48" height="48" border="2"/>'; ?>
+                 </th>
+                 <td>
+                   <?php echo $description1; ?>
+                   <?php
+                      if ( ! empty( $description2 ))
+                         echo '<p>' . $description2 . '</p>' ;
+                   ?>
+                 </td>
+              </table>
+           </p>
+       </div>
+       <p>
+          <form id="form-filter" action="" method="get">
+             <?php
+                if ( $action == 'filter-deletion' ){
+                   printf( '<span class="subtitle" style="color: #ce181e">' . __( 'Marked for deletion' , $gl_['plugin_name']) . '</span>' );
+                }
+                if ( strlen( $search_results )) {
+                   /* translators: %s: search keywords */
+                   printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $search_results ) );
+                }
+             ?>
+             <?php $gl_['class-table'] -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
+             <?php $gl_['class-table'] -> display() ?>
+          </form>
+       </p>
+   </div>
+   <?php
+}
+
+//====================================
 // Форма списка справочника
 // $name            - Имя формы (пример: users)
-// $class_table     - Имя класса таблицы
+// $gl_['class-table']     - Имя класса таблицы
 // $perm_button     - Права на кнопки
 // $title           - Заглавие
 // $description1    - Описание 1
@@ -225,9 +314,11 @@ function view_form( $plural_name_lang, $name_id ) {
          form_delete( $plural_name_lang, $name_id );
       elseif ( $action == 'cancel-deletion' )
          form_cancel_deletion( $plural_name_lang, $name_id );
-      elseif ( $action == 'new' or $action == 'new1' )
-         view_form_new();
-      elseif ( $action == 'history' )
+      elseif ( $action == 'new' or $action == 'new1' ){
+         // Выполним функцию с префиксом $action
+         $func = 'view_form_' . $action ;
+         $func();
+      }elseif ( $action == 'history' )
          view_form_history();
       else
          view_form_list();

@@ -85,8 +85,8 @@ class class_table_journal_doc extends WP_List_Table {
        screen (строка) — Строка содержащая название хука, нужного для определения текущей страницы. Если null, то будет установлен 
        текущий экран. По умолчанию: null */
        parent::__construct( array(
-            'singular'  => __( 'book',  'operative-accounting' ),  //singular name of the listed records
-            'plural'    => __( 'books', 'operative-accounting' ),  //plural name of the listed records
+            'singular'  => __( 'book',  'wp-add-function' ),  //singular name of the listed records
+            'plural'    => __( 'books', 'wp-add-function' ),  //plural name of the listed records
             'ajax'      => false                                   //does this table support ajax?
 
        ));
@@ -102,9 +102,9 @@ class class_table_journal_doc extends WP_List_Table {
           return;
        ?>
           <ul class="subsubsub">
-             <?php echo __( 'Filter', 'operative-accounting' ) . ': '; ?>
-             <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'operative-accounting' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
-             <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'operative-accounting' ) . '</a>', $_REQUEST['page']); ?>
+             <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
+             <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
+             <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']); ?>
           </ul>
        <?php
     }
@@ -154,10 +154,11 @@ class class_table_journal_doc extends WP_List_Table {
        //if ( 'oa-products' != $this->page )
        //  return;
        echo '<style type="text/css">';
-       echo '.wp-list-table .column-id          { width: 8%; }';
-       echo '.wp-list-table .column-name        { width: 40%; }';
-       echo '.wp-list-table .column-commentary  { width: 35%; }';
-       echo '.wp-list-table .column-modify      { width: 10%; }';
+       echo '.wp-list-table .column-id            { width: 8%; }';
+       echo '.wp-list-table .column-doc_type      { width: 15%; }';
+       echo '.wp-list-table .column-doc_date_time { width: 15%; }';
+       echo '.wp-list-table .column-commentary    { width: 35%; }';
+       echo '.wp-list-table .column-modify        { width: 10%; }';
        if ( $this -> action == 'history' ) {
            echo '.wp-list-table .column-action  { width: 12%; }';
        }
@@ -166,7 +167,7 @@ class class_table_journal_doc extends WP_List_Table {
 
     /**********************************/
     function no_items() {
-       _e( 'There is not a single value.', 'operative-accounting');
+       _e( 'There is not a single value.', 'wp-add-function');
     }
 
     // Определяет столбцы, которые будут отображаться в вашей таблице
@@ -174,13 +175,15 @@ class class_table_journal_doc extends WP_List_Table {
     public function get_columns() {
 
         $columns = array(
-            'id'         => __( 'Number',    'operative-accounting' ),
-            'name'       => __( 'Name',      'operative-accounting' ),
-            'commentary' => __( 'Comment',   'operative-accounting' ),
-            'modify'     => __( 'Modified',  'operative-accounting' )
+            'id'            => __( 'Number',                 'wp-add-function' ),
+            'doc_date_time' => __( 'Date and time document', 'wp-add-function' ),
+            'doc_type'      => __( 'Document type',          'wp-add-function' ),
+            'amount'        => __( 'Amount',                 'wp-add-function' ),
+            'commentary'    => __( 'Comment',                'wp-add-function' ),
+            'modify'        => __( 'Modified',               'wp-add-function' )
         );
         if ( $this -> action == 'history' ) {
-           $columns['action'] = __( 'Action',    'operative-accounting' );
+           $columns['action'] = __( 'Action',    'wp-add-function' );
         }
         return $columns;
     }
@@ -194,7 +197,6 @@ class class_table_journal_doc extends WP_List_Table {
     function get_sortable_columns() {
         $sortable_columns = array(
             'id'     => array('id',     true),
-            'name'   => array('name',   true),
             'modify' => array('modify', true),
         );
         return $sortable_columns;
@@ -227,7 +229,6 @@ class class_table_journal_doc extends WP_List_Table {
        $query_search = "";
        if ( ! empty( $this -> search_value ))
           $query_search = "AND ( " . $db_table_name . ".id      LIKE    '%" . $this-> search_value . "%' OR
-                                 " . $db_table_name . ".name    LIKE    '%" . $this-> search_value . "%' OR
                                  " . $db_table_name . ".modify  LIKE    '%" . $this-> search_value . "%' OR
                                  " . $db_table_name . ".commentary LIKE '%" . $this-> search_value . "%' )";
 
