@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wp-add-function\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 20:11+0000\n"
-"PO-Revision-Date: 2020-06-10 20:12+0000\n"
+"POT-Creation-Date: 2020-06-11 16:06+0000\n"
+"PO-Revision-Date: 2020-06-11 16:06+0000\n"
 "Last-Translator: \n"
 "Language-Team: Русский\n"
 "Language: ru_RU\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.3.3; wp-5.4.1"
+"X-Loco-Version: 2.3.3; wp-5.4.2"
 
 #: wp-add-function/class-table-directory.php:88
 #: wp-add-function/class-table-journal.php:88
@@ -27,9 +27,9 @@ msgstr ""
 
 #: wp-add-function/class-table-directory.php:105
 #: wp-add-function/class-table-journal.php:105
-#: wp-add-function/pages-functions.php:770
 #: wp-add-function/pages-functions.php:772
-#: wp-add-function/pages-functions.php:795
+#: wp-add-function/pages-functions.php:774
+#: wp-add-function/pages-functions.php:797
 msgid "Filter"
 msgstr "Фильтр"
 
@@ -44,12 +44,12 @@ msgid "Reset"
 msgstr "Сброс"
 
 #: wp-add-function/class-table-directory.php:169
-#: wp-add-function/class-table-journal.php:170
+#: wp-add-function/class-table-journal.php:172
 msgid "There is not a single value."
 msgstr "Нет ни одного значения."
 
 #: wp-add-function/class-table-directory.php:177
-#: wp-add-function/class-table-journal.php:178
+#: wp-add-function/class-table-journal.php:180
 msgid "Number"
 msgstr "Номер"
 
@@ -58,29 +58,37 @@ msgid "Name"
 msgstr "Имя"
 
 #: wp-add-function/class-table-directory.php:179
-#: wp-add-function/class-table-journal.php:182
+#: wp-add-function/class-table-journal.php:186
 msgid "Comment"
 msgstr "Комментарий"
 
 #: wp-add-function/class-table-directory.php:180
-#: wp-add-function/class-table-journal.php:183
+#: wp-add-function/class-table-journal.php:187
 msgid "Modified"
 msgstr "Модифицирован"
 
 #: wp-add-function/class-table-directory.php:183
-#: wp-add-function/class-table-journal.php:186
+#: wp-add-function/class-table-journal.php:190
 msgid "Action"
 msgstr "Действие"
 
-#: wp-add-function/class-table-journal.php:179
-msgid "Date and time document"
-msgstr "Дата и время документа"
-
-#: wp-add-function/class-table-journal.php:180
+#: wp-add-function/class-table-journal.php:181
 msgid "Document type"
 msgstr "Тип документа"
 
-#: wp-add-function/class-table-journal.php:181
+#: wp-add-function/class-table-journal.php:182
+msgid "Date and time document"
+msgstr "Дата и время документа"
+
+#: wp-add-function/class-table-journal.php:183
+msgid "Storage"
+msgstr "Место хранения"
+
+#: wp-add-function/class-table-journal.php:184
+msgid "Product"
+msgstr "Товар"
+
+#: wp-add-function/class-table-journal.php:185
 msgid "Amount"
 msgstr "Количество"
 
@@ -107,7 +115,7 @@ msgstr "Ошибка при добавлении данных в историю!
 #: wp-add-function/pages-functions.php:20
 #: wp-add-function/pages-functions.php:109
 #: wp-add-function/pages-functions.php:195
-#: wp-add-function/pages-functions.php:556
+#: wp-add-function/pages-functions.php:558
 msgid "Search"
 msgstr "Поиск"
 
@@ -174,24 +182,24 @@ msgstr "Вы хотите отменить удаление записи спр�
 msgid "Apply"
 msgstr "Применять"
 
-#: wp-add-function/pages-functions.php:450
-#: wp-add-function/pages-functions.php:578
+#: wp-add-function/pages-functions.php:452
+#: wp-add-function/pages-functions.php:580
 msgid "Select value"
 msgstr "Выберите значение"
 
-#: wp-add-function/pages-functions.php:696
+#: wp-add-function/pages-functions.php:698
 msgid "Number of lines per page"
 msgstr "Количество строк на странице"
 
-#: wp-add-function/pages-functions.php:746
+#: wp-add-function/pages-functions.php:748
 msgid "Error: "
 msgstr "Ошибка:"
 
-#: wp-add-function/pages-functions.php:774
+#: wp-add-function/pages-functions.php:776
 msgid "History"
 msgstr "История"
 
-#: wp-add-function/pages-functions.php:778
+#: wp-add-function/pages-functions.php:780
 msgid "Cancel delete"
 msgstr "Отмена удаления"
 

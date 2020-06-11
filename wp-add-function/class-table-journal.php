@@ -154,10 +154,13 @@ class class_table_journal_doc extends WP_List_Table {
        //if ( 'oa-products' != $this->page )
        //  return;
        echo '<style type="text/css">';
-       echo '.wp-list-table .column-id            { width: 8%; }';
-       echo '.wp-list-table .column-doc_type      { width: 15%; }';
-       echo '.wp-list-table .column-doc_date_time { width: 15%; }';
-       echo '.wp-list-table .column-commentary    { width: 35%; }';
+       echo '.wp-list-table .column-id            { width: 6%; }';
+       echo '.wp-list-table .column-doc_type      { width: 8%; }';
+       echo '.wp-list-table .column-doc_date_time { width: 12%; }';
+       echo '.wp-list-table .column-storage       { width: 12%; }';
+       echo '.wp-list-table .column-product       { width: 12%; }';
+       echo '.wp-list-table .column-amount        { width: 8%; }';
+       echo '.wp-list-table .column-commentary    { width: 25%; }';
        echo '.wp-list-table .column-modify        { width: 10%; }';
        if ( $this -> action == 'history' ) {
            echo '.wp-list-table .column-action  { width: 12%; }';
@@ -176,8 +179,10 @@ class class_table_journal_doc extends WP_List_Table {
 
         $columns = array(
             'id'            => __( 'Number',                 'wp-add-function' ),
-            'doc_date_time' => __( 'Date and time document', 'wp-add-function' ),
             'doc_type'      => __( 'Document type',          'wp-add-function' ),
+            'doc_date_time' => __( 'Date and time document', 'wp-add-function' ),
+            'storage'       => __( 'Storage',                'wp-add-function' ),
+            'product'       => __( 'Product',                'wp-add-function' ),
             'amount'        => __( 'Amount',                 'wp-add-function' ),
             'commentary'    => __( 'Comment',                'wp-add-function' ),
             'modify'        => __( 'Modified',               'wp-add-function' )
@@ -196,8 +201,8 @@ class class_table_journal_doc extends WP_List_Table {
     // @return Array
     function get_sortable_columns() {
         $sortable_columns = array(
-            'id'     => array('id',     true),
-            'modify' => array('modify', true),
+            'doc_date_time' => array('id',     true),
+            'modify'        => array('modify', true),
         );
         return $sortable_columns;
     }
@@ -229,21 +234,29 @@ class class_table_journal_doc extends WP_List_Table {
        $query_search = "";
        if ( ! empty( $this -> search_value ))
           $query_search = "AND ( " . $db_table_name . ".id      LIKE    '%" . $this-> search_value . "%' OR
+                                                 storages.name  LIKE    '%" . $this-> search_value . "%' OR
+                                                 products.name  LIKE    '%" . $this-> search_value . "%' OR
                                  " . $db_table_name . ".modify  LIKE    '%" . $this-> search_value . "%' OR
                                  " . $db_table_name . ".commentary LIKE '%" . $this-> search_value . "%' )";
 
        // определим общее количество строк
        $this -> count_lines = $gl_['db'] -> get_var( "SELECT COUNT(*)
                                                       FROM " . $db_table_name . "
+                                                         LEFT JOIN storages ON " . $db_table_name . ".id_storage = storages.id
+                                                         LEFT JOIN products ON " . $db_table_name . ".id_product = products.id
                                                       WHERE
                                                          $query_additional
                                                          $query_search
                                                      ");
        // массив с данными таблицы
        $array_table = $gl_['db'] -> get_results("SELECT
-                                                     " . $db_table_name . ".*
+                                                     " . $db_table_name . ".*,
+                                                     storages.name   AS storage,
+                                                     products.name   AS product
                                                   FROM
                                                      " . $db_table_name . "
+                                                     LEFT JOIN storages ON " . $db_table_name . ".id_storage = storages.id
+                                                     LEFT JOIN products ON " . $db_table_name . ".id_product = products.id
                                                   WHERE
                                                      $query_additional
                                                      $query_search
@@ -265,7 +278,14 @@ class class_table_journal_doc extends WP_List_Table {
              return display_column_default( $item, $column_name );
           else
              return display_column_button( $this, $item, $column_name, array('history'), 'id' );
-       } elseif ( $column_name == "name" ) {
+       } elseif ( $column_name == "doc_type" ) {
+            // 1 - Приход 
+            if ( $item['doc_type'] == 1 )
+               return display_column_picture( $item, $column_name, 'plus' );
+            // 2 - Расход
+            elseif ( $item['doc_type'] == 2 )
+               return display_column_picture( $item, $column_name, 'minus' );
+       } elseif ( $column_name == "doc_date_time" ) {
           if ( $this -> action == 'filter-deletion' )
              return display_column_button( $this, $item, $column_name, array('cancel-deletion'), 'id' );
           elseif ( $this -> action == 'history' )
@@ -280,7 +300,7 @@ class class_table_journal_doc extends WP_List_Table {
      * @return Mixed */
     private function sort_data( $a, $b ) {
         // Set defaults
-        $orderby = 'id';
+        $orderby = 'doc_date_time';
         $order   = 'asc';
         // If orderby is set, use this as the sort column
         if ( ! empty( $_GET[ 'orderby' ] )) {
