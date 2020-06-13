@@ -10,10 +10,12 @@ $color_all = array(
 );
 
 //===========================================
-function current_date_time(){
+function current_date_time($format = '' ){
+   if ( empty( $format ))
+      $format = "Y/m/j H:i:s";
    // Получим время
    $timezone  = get_option('gmt_offset');
-   $today = gmdate("Y/m/j H:i:s", time() + 3600 * ($timezone + date("I")));
+   $today = gmdate( $format, time() + 3600 * ($timezone + date("I")));
    return $today;
 }
 

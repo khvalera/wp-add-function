@@ -410,18 +410,18 @@ function post_get_str($par) {
 }
 
 //===================================================
-// $display_name - Отображаемое имя реквизита на форме (можно указывать несколько, через запятую)
-// $type         - Тип реквизита (number, text, date, time...) (можно указывать несколько, через запятую)
-// $name         - Имя input (можно указывать несколько, через запятую)
-// $value        - Значение (можно указывать несколько, через запятую)
-// $style        - Указания стиля, пример: width:120px; min-width: 100px; (можно указывать несколько, через запятую)
-function html_input( $display_name, $type, $name, $value='', $other='', $style='', $placeholder='' ) {
+// $display_name  - Отображаемое имя реквизита на форме (можно указывать несколько, через запятую)
+// $type          - Тип реквизита (number, text, date, time...) (можно указывать несколько, через запятую)
+// $name          - Имя input (можно указывать несколько, через запятую)
+// $value         - Значение (можно указывать несколько, через запятую)
+// $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через запятую)
+function html_input( $display_name, $type, $name, $value='', $extra_options='' ) {
    // Преобразуем строку с пробелами в массив
    $array_display_name = explode( ",", $display_name );
-   $array_type  = explode( ",", $type );
-   $array_name  = explode( ",", $name );
-   $array_value = explode( ",", $value );
-   $array_style = explode( ",", $style );
+   $array_type          = explode( ",", $type );
+   $array_name          = explode( ",", $name );
+   $array_value         = explode( ",", $value );
+   $array_extra_options = explode( ",", $extra_options );
 
    // Проверим что бы переданное количество значений совпадало 
    if ( count ( $array_type ) <> count ( $array_name ) or count ( $array_name ) <> count ( $array_display_name )) {
@@ -434,7 +434,7 @@ function html_input( $display_name, $type, $name, $value='', $other='', $style='
          exit;
    }
    if ( ! empty( $style ) )
-      if ( count ( $array_name ) <> count ( $array_style )) {
+      if ( count ( $array_name ) <> count ( $extra_options )) {
          display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
          exit;
    }
@@ -446,12 +446,12 @@ function html_input( $display_name, $type, $name, $value='', $other='', $style='
             <?php
                foreach ( $array_name as $key => $_name ) {
                   $_display_name = $array_display_name[$key];
-                  $_type  = $array_type[$key];
+                  $_type         = $array_type[$key];
                   // если стиль не указан
-                  if ( ! empty( $style ) )
-                     $_style = $array_style[$key];
+                  if ( ! empty( $extra_options ) )
+                     $_extra_options= $array_extra_options[$key];
                   else
-                     $_style="width:350px; min-width: 100px;";
+                     $_extra_options='style="width:350px; min-width: 100px;"';
 
                   if ( ! empty( $value ) )
                      $_value = $array_value[$key];
@@ -463,12 +463,12 @@ function html_input( $display_name, $type, $name, $value='', $other='', $style='
                      $_name = 'tfield-' . $_name;
                   if ( $key == 0 ){
                      ?>
-                        <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" style="<?php echo $_style ?>" >
+                        <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> >
                      <?php
                   } else{
                     ?>
                        <b style="margin-left: 1%;"><?php echo $_display_name ?></b>
-                       <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" style="<?php echo $_style ?>" >
+                       <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> >
                      <?php
                   }
                }
