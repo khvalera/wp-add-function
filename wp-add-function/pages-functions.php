@@ -73,7 +73,7 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
            </p>
        </div>
        <p>
-          <form id="form-filter" action="" method="get">
+          <form id="form-filter" action="" method="post">
              <?php
                 if ( $action == 'filter-deletion' ){
                    printf( '<span class="subtitle" style="color: #ce181e">' . __( 'Marked for deletion' , $gl_['plugin_name']) . '</span>' );
@@ -341,6 +341,14 @@ function post_form_actions(){
    // pages - страница родитель для дальнейшего возврата
    $pages = isset( $_REQUEST['pages'] ) ? wp_unslash( trim( $_REQUEST['pages'] )) : '';
 
+   // Кнопка применить для периода в журнале документов
+   $POST_PERIOD = isset( $_POST['button_period'] );
+   print_r($_POST); exit;
+   if ( ! empty( $POST_PERIOD )) {
+      exit(print("!!!!"));
+      //wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+   }
+
    // Обработаем нажатие кнопки Save
    $POST_SAVE = isset( $_POST['button_save'] );
    if ( ! empty( $POST_SAVE )) {
@@ -387,6 +395,7 @@ function post_form_actions(){
       delete_form_data();
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
+
 }
 
 //===========================================
@@ -713,14 +722,17 @@ class add_admin_menu {
     public $plugin_prefix;
     public $parent_id;
     public $page;
+    public $journal;
 
-    function __construct($item_name_menu, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_id){
+    function __construct($item_name_menu, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_id, $journal = 0 ){
        $this -> item_name_menu      = $item_name_menu;
        $this -> item_Name_menu_lang = $item_Name_menu_lang;
        $this -> current_user_can    = $current_user_can;
        $this -> plugin_name         = $plugin_name;
        $this -> plugin_prefix       = $plugin_prefix;
        $this -> parent_id           = $parent_id;
+       // Если это журнал $journal = 1
+       $this -> journal             = $journal;
        // Что бы не было конфликтов с другими плагинами к странице добавим префикс
        $this -> page = $plugin_prefix . '-' . $item_name_menu;
        $this -> add_menu();
@@ -763,6 +775,25 @@ class add_admin_menu {
                     'option'  => $this->plugin_prefix .'_' . $this->item_name_menu . '_per_page',
                     );
             add_screen_option( $option, $args );
+            // Если это журнал
+            if ( $this -> journal == 1 ) {
+               $option = 'journal_date1';
+               $args = array(
+                       'label'   => __( 'Date from', 'wp-add-function' ),
+                       'default' => current_date_time("Y-m-d"),
+                       // название опции, будет записано в метаполе юзера
+                       'option'  => $this->plugin_prefix .'_' . $this->item_name_menu . '_date1',
+                       );
+               add_screen_option( $option, $args );
+               $option = 'journal_date2';
+               $args = array(
+                       'label'   => __( 'Date by', 'wp-add-function' ),
+                       'default' => current_date_time("Y-m-d"),
+                       // название опции, будет записано в метаполе юзера
+                       'option'  => $this->plugin_prefix .'_' . $this->item_name_menu . '_date2',
+                       );
+               add_screen_option( $option, $args );
+            }
             // создадим имя глобальной переменной
             $perName = $this->plugin_prefix . '_class_table_' . str_replace('-','_', $this->item_name_menu);
             global ${$perName};
