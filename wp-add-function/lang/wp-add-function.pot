@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wp-add-function\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-11 16:06+0000\n"
+"POT-Creation-Date: 2020-06-15 08:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -27,9 +27,9 @@ msgstr ""
 
 #: wp-add-function/class-table-directory.php:105
 #: wp-add-function/class-table-journal.php:105
-#: wp-add-function/pages-functions.php:772
-#: wp-add-function/pages-functions.php:774
-#: wp-add-function/pages-functions.php:797
+#: wp-add-function/pages-functions.php:834
+#: wp-add-function/pages-functions.php:836
+#: wp-add-function/pages-functions.php:859
 msgid "Filter"
 msgstr ""
 
@@ -44,12 +44,12 @@ msgid "Reset"
 msgstr ""
 
 #: wp-add-function/class-table-directory.php:169
-#: wp-add-function/class-table-journal.php:172
+#: wp-add-function/class-table-journal.php:181
 msgid "There is not a single value."
 msgstr ""
 
 #: wp-add-function/class-table-directory.php:177
-#: wp-add-function/class-table-journal.php:180
+#: wp-add-function/class-table-journal.php:189
 msgid "Number"
 msgstr ""
 
@@ -58,64 +58,72 @@ msgid "Name"
 msgstr ""
 
 #: wp-add-function/class-table-directory.php:179
-#: wp-add-function/class-table-journal.php:186
+#: wp-add-function/class-table-journal.php:195
 msgid "Comment"
 msgstr ""
 
 #: wp-add-function/class-table-directory.php:180
-#: wp-add-function/class-table-journal.php:187
+#: wp-add-function/class-table-journal.php:196
 msgid "Modified"
 msgstr ""
 
 #: wp-add-function/class-table-directory.php:183
-#: wp-add-function/class-table-journal.php:190
+#: wp-add-function/class-table-journal.php:199
 msgid "Action"
 msgstr ""
 
-#: wp-add-function/class-table-journal.php:181
+#: wp-add-function/class-table-journal.php:112
+msgid "Period from: "
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:112
+msgid " by: "
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:190
 msgid "Document type"
 msgstr ""
 
-#: wp-add-function/class-table-journal.php:182
+#: wp-add-function/class-table-journal.php:191
 msgid "Date and time document"
 msgstr ""
 
-#: wp-add-function/class-table-journal.php:183
+#: wp-add-function/class-table-journal.php:192
 msgid "Storage"
 msgstr ""
 
-#: wp-add-function/class-table-journal.php:184
+#: wp-add-function/class-table-journal.php:193
 msgid "Product"
 msgstr ""
 
-#: wp-add-function/class-table-journal.php:185
+#: wp-add-function/class-table-journal.php:194
 msgid "Amount"
 msgstr ""
 
-#: wp-add-function/db-functions.php:52
+#: wp-add-function/db-functions.php:54
 msgid "Record new"
 msgstr ""
 
-#: wp-add-function/db-functions.php:54
+#: wp-add-function/db-functions.php:56
 msgid "Data correction"
 msgstr ""
 
-#: wp-add-function/db-functions.php:56
+#: wp-add-function/db-functions.php:58
 msgid "Cancel deletion"
 msgstr ""
 
-#: wp-add-function/db-functions.php:58
+#: wp-add-function/db-functions.php:60
 msgid "Delete mark"
 msgstr ""
 
-#: wp-add-function/db-functions.php:62
+#: wp-add-function/db-functions.php:64
 msgid "Error inserting history data!"
 msgstr ""
 
 #: wp-add-function/pages-functions.php:20
 #: wp-add-function/pages-functions.php:109
 #: wp-add-function/pages-functions.php:195
-#: wp-add-function/pages-functions.php:558
+#: wp-add-function/pages-functions.php:657
 msgid "Search"
 msgstr ""
 
@@ -177,24 +185,24 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:452
-#: wp-add-function/pages-functions.php:580
+#: wp-add-function/pages-functions.php:500
+#: wp-add-function/pages-functions.php:592
 msgid "Select value"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:698
+#: wp-add-function/pages-functions.php:760
 msgid "Number of lines per page"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:748
+#: wp-add-function/pages-functions.php:810
 msgid "Error: "
 msgstr ""
 
-#: wp-add-function/pages-functions.php:776
+#: wp-add-function/pages-functions.php:838
 msgid "History"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:780
+#: wp-add-function/pages-functions.php:842
 msgid "Cancel delete"
 msgstr ""
 

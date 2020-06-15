@@ -61,22 +61,21 @@ class class_table_journal_doc extends WP_List_Table {
         $this -> per_page = get_user_meta( get_current_user_id(), $per_page_option['option'], true );
 
         // если сохраненной настройки нет, берем по умолчанию
-        if( ! $this -> per_page )
+        if( empty ( $this -> per_page))
            $this -> per_page = $per_page_option['default'];
 
-        // получим параметры настроек страницы для Журнала документов
-        $journal_date1_option = get_current_screen() -> get_option('journal_date1');
-        $journal_date2_option = get_current_screen() -> get_option('journal_date2');
-//print_r($journal_date1_option); exit;
-        // пробуем получить сохраненную настройку
-        $this -> journal_date1 = get_user_meta( get_current_user_id(), $journal_date1_option['option'], true );
-        $this -> journal_date2 = get_user_meta( get_current_user_id(), $journal_date2_option['option'], true );
+        // получим id пользователя WP
+        $user_id = get_current_user_id();
 
-        // если сохраненной настройки нет, берем по умолчанию
-        if( ! $this -> journal_date1 )
-           $this -> journal_date1 = $journal_date1_option['default'];
-        if( ! $this -> journal_date2 )
-           $this -> journal_date2 = $journal_date2_option['default'];
+        // пробуем получить сохраненную настройку
+        $this -> journal_date1 = get_user_meta( $user_id, str_replace('-','_', $this->page) . '_date1', true );
+        $this -> journal_date2 = get_user_meta( $user_id, str_replace('-','_', $this->page) . '_date2', true );
+
+        // если сохраненной настройки нет, берем текущую дату
+        if( empty( $this -> journal_date1))
+           $this -> journal_date1 = current_date_time("Y-m-d");
+        if( empty( $this -> journal_date2 ))
+           $this -> journal_date2 = current_date_time("Y-m-d");
 
         // получим значение из диалога поиска
         $this -> search_value = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] )) : '';
@@ -122,7 +121,7 @@ class class_table_journal_doc extends WP_List_Table {
                  echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');
                  echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']);
                  // Период в журнале
-                 html_input(__('Period from: ', 'wp-add-function' ) . "," . __(' by: ', 'wp-add-function' ), "date,date", "date1,dame2",
+                 html_input(__('Period from: ', 'wp-add-function' ) . "," . __(' by: ', 'wp-add-function' ), "date,date", "date1,date2",
                             $this -> journal_date1 . "," . $this -> journal_date2,
                            'style="width:120px; min-width: 110px;" required,style="width:120px; min-width: 110px;" required' );
                  submit_button(__( 'Apply', 'wp-add-function' ), 'button',  'button_period', false);
