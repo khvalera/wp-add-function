@@ -10,7 +10,7 @@ if ( ! class_exists('WP_List_Table')) {
 // Таблица для справочников
 class class_table_journal_doc extends WP_List_Table {
      public $action, $page, $paged, $per_page;
-     public $search_value, $count_lines;
+     public $search_value, $journal_date1, $journal_date2 ,$count_lines;
      public $color;
 
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
@@ -64,6 +64,20 @@ class class_table_journal_doc extends WP_List_Table {
         if( ! $this -> per_page )
            $this -> per_page = $per_page_option['default'];
 
+        // получим параметры настроек страницы для Журнала документов
+        $journal_date1_option = get_current_screen() -> get_option('journal_date1');
+        $journal_date2_option = get_current_screen() -> get_option('journal_date2');
+//print_r($journal_date1_option); exit;
+        // пробуем получить сохраненную настройку
+        $this -> journal_date1 = get_user_meta( get_current_user_id(), $journal_date1_option['option'], true );
+        $this -> journal_date2 = get_user_meta( get_current_user_id(), $journal_date2_option['option'], true );
+
+        // если сохраненной настройки нет, берем по умолчанию
+        if( ! $this -> journal_date1 )
+           $this -> journal_date1 = $journal_date1_option['default'];
+        if( ! $this -> journal_date2 )
+           $this -> journal_date2 = $journal_date2_option['default'];
+
         // получим значение из диалога поиска
         $this -> search_value = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] )) : '';
         // Определим цвет для дальнейшего использования в функциях
@@ -101,19 +115,20 @@ class class_table_journal_doc extends WP_List_Table {
        if ( 'top' != $which )
           return;
        ?>
+          <form id="form-extra_tablenav" action="" method="post">
           <ul class="subsubsub">
-             <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
-             <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
-             <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']); ?>
              <?php
-                $date1 = '';
-                $date2 = '';
-                // Период в журнале
-                html_input(__('Period from: ', 'wp-add-function' ) . "," . __(' by: ', 'wp-add-function' ), "date,date", "date1,dame2",
-                           $date1 . "," . $date2,
-                             'style="width:120px; min-width: 110px;" required,style="width:120px; min-width: 110px;" required' );
-             ?>
+                 echo __( 'Filter', 'wp-add-function' ) . ': ';
+                 echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');
+                 echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']);
+                 // Период в журнале
+                 html_input(__('Period from: ', 'wp-add-function' ) . "," . __(' by: ', 'wp-add-function' ), "date,date", "date1,dame2",
+                            $this -> journal_date1 . "," . $this -> journal_date2,
+                           'style="width:120px; min-width: 110px;" required,style="width:120px; min-width: 110px;" required' );
+                 submit_button(__( 'Apply', 'wp-add-function' ), 'button',  'button_period', false);
+              ?>
           </ul>
+          </form>
        <?php
     }
 
@@ -257,19 +272,22 @@ class class_table_journal_doc extends WP_List_Table {
                                                          $query_search
                                                      ");
        // массив с данными таблицы
-       $array_table = $gl_['db'] -> get_results("SELECT
-                                                     " . $db_table_name . ".*,
-                                                     storages.name   AS storage,
-                                                     products.name   AS product
-                                                  FROM
-                                                     " . $db_table_name . "
-                                                     LEFT JOIN storages ON " . $db_table_name . ".id_storage = storages.id
-                                                     LEFT JOIN products ON " . $db_table_name . ".id_product = products.id
-                                                  WHERE
-                                                     $query_additional
-                                                     $query_search
-                                                  LIMIT " . $this->per_page . " OFFSET $paged_query
-                                                 ", ARRAY_A );
+       $query = "SELECT
+                    " . $db_table_name . ".*,
+                    storages.name   AS storage,
+                    products.name   AS product
+                 FROM
+                    " . $db_table_name . "
+                    LEFT JOIN storages ON " . $db_table_name . ".id_storage = storages.id
+                    LEFT JOIN products ON " . $db_table_name . ".id_product = products.id
+                 WHERE
+                    (" . $db_table_name . ".doc_date >= '" . $this -> journal_date1 . "' AND
+                    " . $db_table_name . ".doc_date <= '" . $this -> journal_date2  . "') AND
+                    $query_additional
+                    $query_search
+                    LIMIT " . $this->per_page . " OFFSET $paged_query";
+       //print($query); exit;
+       $array_table = $gl_['db'] -> get_results( $query, ARRAY_A );
        $data = $array_table;
        return $data;
     }
