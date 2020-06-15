@@ -101,11 +101,13 @@ class class_table_directory extends WP_List_Table {
        if ( 'top' != $which )
           return;
        ?>
+          <form id="form-extra_tablenav" action="" method="post">
           <ul class="subsubsub">
              <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
              <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
              <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']); ?>
           </ul>
+          </form>
        <?php
     }
 
