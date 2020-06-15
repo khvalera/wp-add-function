@@ -87,7 +87,7 @@ class class_table_journal_doc extends WP_List_Table {
        parent::__construct( array(
             'singular'  => __( 'book',  'wp-add-function' ),  //singular name of the listed records
             'plural'    => __( 'books', 'wp-add-function' ),  //plural name of the listed records
-            'ajax'      => false                                   //does this table support ajax?
+            'ajax'      => false                              //does this table support ajax?
 
        ));
        add_action( 'admin_head', array( &$this, 'admin_header' ) );
@@ -105,6 +105,14 @@ class class_table_journal_doc extends WP_List_Table {
              <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
              <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
              <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']); ?>
+             <?php
+                $date1 = '';
+                $date2 = '';
+                // Период в журнале
+                html_input(__('Period from: ', 'operative-accounting' ) . "," . __(' by: ', 'operative-accounting' ), "date,date", "date1,dame2",
+                           $date1 . "," . $date2,
+                             'style="width:120px; min-width: 110px;" required,style="width:120px; min-width: 110px;" required' );
+             ?>
           </ul>
        <?php
     }

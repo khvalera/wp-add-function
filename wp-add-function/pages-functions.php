@@ -545,7 +545,7 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 // $name          - имя объекта на форме
 // $extra_options - дополнительные параметры (тут указывается стиль тоже: style="width:352px;")
 // $value_id      - id выбранной позиции
-// $value_name    - имя поля из таблицы базы данных для добавления как name
+// $value_name    - имя поля из таблицы базы данных для добавления как name (по умолчанию name)
 function html_select2( $display_name, $item_name, $name, $extra_options = '', $value_id = '', $value_name = '', $php_file = '' ) {
    global $gl_;
 
@@ -555,7 +555,7 @@ function html_select2( $display_name, $item_name, $name, $extra_options = '', $v
 
    if ( ! empty( $value_id )) {
       $data = get_row_table_id($item_name,'', $value_id);
-      if ( ! empty( $value_name ))
+      if ( empty( $value_name ))
          $value_name = 'name';
       //print_r($data); exit;
    }
