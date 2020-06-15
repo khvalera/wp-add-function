@@ -417,7 +417,7 @@ function post_get_str($par) {
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через запятую)
 function html_input( $display_name, $type, $name, $value='', $extra_options='' ) {
    // Преобразуем строку с пробелами в массив
-   $array_display_name = explode( ",", $display_name );
+   $array_display_name  = explode( ",", $display_name );
    $array_type          = explode( ",", $type );
    $array_name          = explode( ",", $name );
    $array_value         = explode( ",", $value );
@@ -467,7 +467,7 @@ function html_input( $display_name, $type, $name, $value='', $extra_options='' )
                      <?php
                   } else{
                     ?>
-                       <b style="margin-left: 1%;"><?php echo $_display_name ?></b>
+                       <b style="margin-left: 6px;"><?php echo $_display_name ?></b>
                        <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> >
                      <?php
                   }
