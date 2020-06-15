@@ -109,7 +109,7 @@ class class_table_journal_doc extends WP_List_Table {
                 $date1 = '';
                 $date2 = '';
                 // Период в журнале
-                html_input(__('Period from: ', 'operative-accounting' ) . "," . __(' by: ', 'operative-accounting' ), "date,date", "date1,dame2",
+                html_input(__('Period from: ', 'wp-add-function' ) . "," . __(' by: ', 'wp-add-function' ), "date,date", "date1,dame2",
                            $date1 . "," . $date2,
                              'style="width:120px; min-width: 110px;" required,style="width:120px; min-width: 110px;" required' );
              ?>
