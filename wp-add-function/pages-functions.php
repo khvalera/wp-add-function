@@ -541,11 +541,11 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 
 //===================================================
 // $display_name  - отображаемое имя реквизита
-// $item_name     - имя класса к которому привязываются данные из mysql
+// $item_name     - имя класса к которому привязываются данные из mysql (таблица базы данных)
 // $name          - имя объекта на форме
-// $value_id      - id выбранной позиции
-// $value_name    - имя выбранной позиции
 // $extra_options - дополнительные параметры (тут указывается стиль тоже: style="width:352px;")
+// $value_id      - id выбранной позиции
+// $value_name    - имя поля из таблицы базы данных для добавления как name
 function html_select2( $display_name, $item_name, $name, $extra_options = '', $value_id = '', $value_name = '', $php_file = '' ) {
    global $gl_;
 
@@ -553,6 +553,12 @@ function html_select2( $display_name, $item_name, $name, $extra_options = '', $v
    if ( strpos( $name, 'tfield-' ) === false )
       $name = 'tfield-' . $name;
 
+   if ( ! empty( $value_id )) {
+      $data = get_row_table_id($item_name,'', $value_id);
+      if ( ! empty( $value_name ))
+         $value_name = 'name';
+      //print_r($data); exit;
+   }
    // если стиль не указан используем width:352px;
    if ( stripos($extra_options, 'style') == false )
       $extra_options = $extra_options . ' style="width:352px;" ';
@@ -562,9 +568,10 @@ function html_select2( $display_name, $item_name, $name, $extra_options = '', $v
             <td>
                <select class="<?php echo 'item_' . $item_name; ?> form-control" name="<?php echo $name; ?>" <?php echo $extra_options ; ?> >
                   <?php
-                     if ( ! empty( $value_id )) {
-                        echo "<option selected value=$value_id>$value_name</option>";
-                     }
+                    // Получим нужную строку таблицы по $id в виде массива
+                    if ( ! empty( $data )) {
+                       echo "<option selected value=" . $data['id'] . ">" . $data[$value_name] . "</option>";
+                    }
                   ?>
                </select>
             </td>
@@ -578,6 +585,50 @@ function html_select2( $display_name, $item_name, $name, $extra_options = '', $v
       $ajax_php   = WP_PLUGIN_URL . '/'. $gl_['plugin_name'] . '/includes/' . $php_file;
    //exit(_e($ajax_php));
    java_item($item_name, $ajax_php);
+}
+//===================================================
+function java_item($item_name, $ajax_php = ''  ){
+
+   $place_item = __( 'Select value', 'wp-add-function' );
+   $class_name = '.item_' . $item_name;
+   ?>
+   <script type="text/javascript">
+
+      var class_name = '<?php echo $class_name; ?>';
+      var place_item = '<?php echo $place_item; ?>';
+      var ajax_php   = '<?php echo $ajax_php; ?>';
+
+      $(class_name).select2({
+           placeholder: {
+              id: '-1',
+              text: place_item
+           },
+           ajax: {
+             url: ajax_php,
+             dataType: 'json',
+             delay: 200,
+             processResults: function (data) {
+                 var data1 = data
+
+               return {
+                 results: data
+               };
+             },
+             cache: true
+           }
+      });
+      // обработка выбора значения
+      $(class_name).on("select2:select", function(e) {
+         //console.log(e); // весь объект
+         //console.log(e.params.data); // вот тут обычно полезные данные
+      });
+
+      // Если нужно выбрать значение (пока не разобрался)
+      //$(class_name).select2("trigger", "select", { data: { id: "5", text: '!!!' }});
+      // var newOption = new Option(text, 0, false, false);
+      //$(class_name).append(newOption).trigger('change');
+   </script>
+   <?php
 }
 
 //===========================================
@@ -620,43 +671,6 @@ function gl_form_array( $plugin_name, $prefix, $singular_name, $db_table_name = 
                            'prefix'                => $prefix
                          );
    return $gl_;
-}
-
-//===================================================
-function java_item($item_name, $ajax_php = '' ){
-
-   $place_item = __( 'Select value', 'wp-add-function' );
-   $class_name = '.item_' . $item_name;
-   //echo $place_item . $class_name;
-   ?>
-   <script type="text/javascript">
-
-      var class_name = '<?php echo $class_name; ?>';
-      var place_item = '<?php echo $place_item; ?>';
-      var ajax_php   = '<?php echo $ajax_php; ?>';
-
-      $(class_name).select2({
-           place_item: place_item,
-           ajax: {
-             url: ajax_php,
-             dataType: 'json',
-             delay: 200,
-             processResults: function (data) {
-               return {
-                 results: data
-               };
-             },
-             cache: true
-           }
-      });
-
-      // обработка выбора значения
-      $(class_name).on("select2:select", function(e) {
-         console.log(e); // весь объект
-         console.log(e.params.data); // вот тут обычно полезные данные
-      });
-   </script>
-   <?php
 }
 
 //===================================================
