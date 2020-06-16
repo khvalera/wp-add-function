@@ -837,9 +837,14 @@ function display_message( $str_code = '', $view = '', $type = '' ) {
 
 //===================================================
 // Выводит разные типы кнопок в поле для class-wp-list-table
-// $name_id - имя поля ID (пример: objectId)
-function display_column_button( $this_column, $item, $column_name, $buttons, $name_id ){
+// $name_id - Имя поля ID (пример: objectId)
+// $perm    - Права
+function display_column_button( $this_column, $item, $column_name, $buttons, $name_id, $perm = '' ){
    global $gl_, $action, $color, $paged;
+
+   // Если разрешение не указано используем read
+   if ( empty ( $perm ))
+      $perm = 'read';
 
    // Если есть то получим значение ID
    $item_id      = isset( $_REQUEST[$name_id] ) ? wp_unslash( trim( $_REQUEST[$name_id] )) : '';
@@ -856,7 +861,7 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
          } elseif ( $name == 'history' )
                $actions[$name] = sprintf( '<a href="?page=%s&action=%s&paged=%s&'.$name_id.'=%s">' . __( 'History', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'history', $paged, $item[ $name_id ] );
          else
-            if ( current_user_can( 'cm_edit' ))
+            if ( current_user_can( $perm ))
                if ( $name == 'cancel-deletion')
                   $actions[$name] = sprintf('<a href="?page=%s&paged=%s&action=%s&'.$name_id.'=%s">' . __( 'Cancel delete', 'wp-add-function' ) . '</a>', $_REQUEST['page'], $paged, $name, $item[$name_id]);
                else
