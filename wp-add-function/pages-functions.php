@@ -434,7 +434,8 @@ function post_get_str($par) {
 // $name          - Имя input (можно указывать несколько, через запятую)
 // $value         - Значение (можно указывать несколько, через запятую)
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через запятую)
-function html_input( $display_name, $type, $name, $value='', $extra_options='' ) {
+// $not_tfield    - Если равно true не использовать tfield
+function html_input( $display_name, $type, $name, $value='', $extra_options = '', $not_tfield = '' ) {
    // Преобразуем строку с пробелами в массив
    $array_display_name  = explode( ",", $display_name );
    $array_type          = explode( ",", $type );
@@ -476,10 +477,10 @@ function html_input( $display_name, $type, $name, $value='', $extra_options='' )
                      $_value = $array_value[$key];
                   else
                      $_value = '';
-
                   // Добавим 'tfield-' если в имени его нет
-                  if ( strpos( $_name, 'tfield-' ) === false )
-                     $_name = 'tfield-' . $_name;
+                  if ( $not_tfield != true )
+                     if ( strpos( $_name, 'tfield-' ) === false )
+                        $_name = 'tfield-' . $_name;
                   if ( $key == 0 ){
                      ?>
                         <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> >
