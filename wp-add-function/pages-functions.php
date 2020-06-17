@@ -498,6 +498,31 @@ function html_input( $display_name, $type, $name, $value='', $extra_options='' )
 }
 
 //===================================================
+// Многострочный текст
+// $display_name  - Отображаемое имя реквизита на форме
+// $name          - Имя поля, предназначено для того, чтобы обработчик формы мог его идентифицировать.
+// $cols          - Ширина поля в символах.
+// $rows          - Высота поля в строках текста.
+// $value         - Значение
+function html_textarea( $display_name, $name, $cols = '', $rows = '', $value='' ) {
+   ?>
+      <tr class="rich-editing-wrap">
+         <th scope="row"><?php echo $display_name; ?></th>
+         <td>
+            <?php
+               // Добавим 'tfield-' если в имени его нет
+               if ( strpos( $name, 'tfield-' ) === false )
+                  $name = 'tfield-' . $name;
+                  ?>
+                     <textarea name="<?php echo $name ?>" id="<?php echo $name ?>"  cols="<?php echo $cols ?>" rows="<?php echo $rows ?>"><?php echo $value ?></textarea>
+                  <?php
+            ?>
+         </td>
+      </tr>
+   <?php
+}
+
+//===================================================
 // $display_name  - отображаемое имя реквизита
 // $name          - имя (для авто сохранения должно соответствовать названию поля в таблице)
 // $array_data    - масив данных
@@ -930,7 +955,7 @@ add_action( 'admin_enqueue_scripts', function() {
 
 //=============================================
 // Изменим стиль админки
-add_action('admin_head', function() {
+add_action( 'admin_head', function() {
    // внешний вид формы
    echo '<link rel="stylesheet" type="text/css" href="' . WPMU_PLUGIN_URL . '/wp-add-function/css/forms.css' .  '">';
    // внешний вид таблицы
