@@ -434,8 +434,9 @@ function post_get_str($par) {
 // $name          - Имя input (можно указывать несколько, через запятую)
 // $value         - Значение (можно указывать несколько, через запятую)
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через запятую)
+// $onchange      - Название функции происходит по окончании изменения значения элемента формы, когда это изменение зафиксировано.
 // $not_tfield    - Если равно true не использовать tfield
-function html_input( $display_name, $type, $name, $value='', $extra_options = '', $not_tfield = '' ) {
+function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_tfield = '' ) {
    // Преобразуем строку с пробелами в массив
    $array_display_name  = explode( ",", $display_name );
    $array_type          = explode( ",", $type );
@@ -453,12 +454,16 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
          display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
          exit;
    }
-   if ( ! empty( $style ) )
-      if ( count ( $array_name ) <> count ( $extra_options )) {
+   if ( ! empty( $extra_options ) )
+      if ( count ( $array_name ) <> count ( $array_extra_options )) {
          display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
          exit;
    }
-
+   if ( ! empty( $onchange ) ){
+      $onchange = 'onchange="' . $onchange.'"';
+      // Добавим javascript
+      javascript_arithmetic_input();
+   }
    ?>
       <tr class="rich-editing-wrap">
          <th scope="row"><?php echo $array_display_name[0]; ?></th>
@@ -483,18 +488,33 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
                         $_name = 'tfield-' . $_name;
                   if ( $key == 0 ){
                      ?>
-                        <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> >
+                        <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> <?php echo $onchange ?> >
                      <?php
                   } else{
                     ?>
                        <b style="margin-left: 6px;"><?php echo $_display_name ?></b>
-                       <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> >
+                       <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> <?php echo $onchange ?> >
                      <?php
                   }
                }
             ?>
          </td>
       </tr>
+   <?php
+}
+
+//===================================================
+// sign - знак *, - , + и тд.
+function javascript_arithmetic_input(){
+   ?>
+      <script type="text/javascript">
+         function arithmetic_input(input1_name, input2_name, input3_name, sign_str ){
+            var n1 = document.getElementById(input1_name).value;
+            var n2 = document.getElementById(input2_name).value;
+            var n3 = eval(n1 + sign_str + n2);
+            document.getElementById(input3_name).value = n3.toFixed(3);
+         }
+      </script>
    <?php
 }
 
