@@ -152,13 +152,11 @@ class class_table_balances extends WP_List_Table {
     }
 
     function admin_header() {
-       //if ( 'oa-products' != $this->page )
-       //  return;
        echo '<style type="text/css">';
-       echo '.wp-list-table .column-num          { width: 8%; }';
+       echo '.wp-list-table .column-num          { width: 6%; }';
        echo '.wp-list-table .column-storage_name { width: 25%; }';
        echo '.wp-list-table .column-product_name { width: 25%; }';
-       echo '.wp-list-table .column-sum_rest     { width: 15%; }';
+       echo '.wp-list-table .column-rest         { width: 15%; }';
        echo '</style>';
     }
 
@@ -175,7 +173,7 @@ class class_table_balances extends WP_List_Table {
             'num'          => __( 'Number',   'wp-add-function' ),
             'storage_name' => __( 'Storage',  'wp-add-function' ),
             'product_name' => __( 'Product',  'wp-add-function' ),
-            'sum_rest'     => __( 'Rest',     'wp-add-function' )
+            'rest'         => __( 'Rest',     'wp-add-function' )
         );
         if ( $this -> action == 'history' ) {
            $columns['action'] = __( 'Action',    'wp-add-function' );
@@ -204,12 +202,10 @@ class class_table_balances extends WP_List_Table {
 
        // номер текущей страницы для запроса
        $paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
-       // Если есть то получим значение ID
-       $id = isset( $_REQUEST['id'] ) ? wp_unslash( trim( $_REQUEST['id'] )) : '';
 
-       $db_table_name = $gl_['db_table_name'];
        // Дополнительный запрос
-       $query_additional = $db_table_name . ".doc_date > '2020-06-01' AND " . $db_table_name . ".status IS NULL";
+       //$query_additional = "journal.doc_date < '2020-06-01' AND journal.status IS NULL";
+       $query_additional = "journal.status IS NULL";
 
        // Часть запроса для поиска
        $query_search = "";
@@ -221,11 +217,6 @@ class class_table_balances extends WP_List_Table {
 
        // определим общее количество строк
        $this -> count_lines = $gl_['db'] -> get_var( "SELECT COUNT(*)
-                                                         storages.id   AS storage_id,
-                                                         products.id   AS product_id,
-                                                         storages.name AS storage_name,
-                                                         products.name AS product_name,
-                                                         Sum(journal.rest) AS sum_rest
                                                      FROM
                                                          journal
                                                          LEFT JOIN storages ON journal.id_storage = storages.id
@@ -240,17 +231,17 @@ class class_table_balances extends WP_List_Table {
                                                          products.name
                                                      ");
        // массив с данными таблицы
-       $array_table = $gl_['db'] -> get_results("set @n:=0;
-                                                 SELECT @n:=@n+1 as num,
+       $array_table = $gl_['db'] -> get_results("SELECT @n := @n + 1 AS num,
                                                     storages.id   AS storage_id,
                                                     products.id   AS product_id,
                                                     storages.name AS storage_name,
                                                     products.name AS product_name,
-                                                    Sum(journal.rest) AS Sum_rest
+                                                    Sum(journal.rest) AS rest
                                                  FROM
                                                      journal
                                                      LEFT JOIN storages ON journal.id_storage = storages.id
-                                                     LEFT JOIN products ON journal.id_product = products.id
+                                                     LEFT JOIN products ON journal.id_product = products.id,
+                                                     (SELECT @n:=0) X
                                                  WHERE
                                                      $query_additional
                                                      $query_search
@@ -262,6 +253,7 @@ class class_table_balances extends WP_List_Table {
                                                     products.name
                                                   LIMIT " . $this->per_page . " OFFSET $paged_query
                                                  ", ARRAY_A );
+       //print_r($array_table); exit;
        $data = $array_table;
        return $data;
     }
@@ -273,7 +265,10 @@ class class_table_balances extends WP_List_Table {
      * @param  String $column_name - Current column name
      * @return Mixed */
     public function column_default( $item, $column_name ) {
-       return display_column_default( $item, $column_name );
+       if (( $column_name == "storage_name" ) or ( $column_name == "product_name" ))
+          return display_column_button( $this, $item, $column_name, array('filter_s'), 'id' );
+       else
+          return display_column_default( $item, $column_name, );
     }
 
     /** Позволяет сортировать данные по переменным, установленным в $_GET
