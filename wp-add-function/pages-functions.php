@@ -3,9 +3,69 @@
 // функции для работы с страницами
 
 //====================================
+// Форма отчета
+// $name            - Имя формы (пример: balances)
+// $title           - Заглавие
+// $description1    - Описание 1
+// $description2    - Описание 2
+// $search_box_name - Имя кнопки поиска
+function form_report( $name, $title, $description1, $description2 = '', $search_box_name = '' ) {
+   global $gl_;
+
+   if ( $search_box_name == '' ) {
+      $search_box_name = __( "Search", "wp-add-function" );
+   }
+
+   $search_results = isset( $_REQUEST['s'] )      ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+   $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
+
+   $page   = get_page_name();
+
+   $gl_['class-table'] -> prepare_items();
+   ?>
+   <div class="wrap">
+   <div id="icon-users" class="icon32"><br/></div>
+       <h2>
+          <?php echo $title; ?>
+       </h2>
+        <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:2px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
+           <p>
+              <table class="wpuf-table">
+                 <th>
+                    <?php echo '<img src="' . WP_PLUGIN_URL . '/' . $gl_['plugin_name'] . '/images/' . $name . '-64x64.png' . '"name="picture_title" align="top" hspace="2" width="48" height="48" border="2"/>'; ?>
+                 </th>
+                 <td>
+                   <?php echo $description1; ?>
+                   <?php
+                      if ( ! empty( $description2 ))
+                         echo '<p>' . $description2 . '</p>' ;
+                   ?>
+                 </td>
+              </table>
+           </p>
+       </div>
+       <p>
+          <form id="form-filter" action="" method="post">
+             <?php
+                if ( $action == 'filter-deletion' ){
+                   printf( '<span class="subtitle" style="color: #ce181e">' . __( 'Marked for deletion' , $gl_['plugin_name']) . '</span>' );
+                }
+                if ( strlen( $search_results )) {
+                   /* translators: %s: search keywords */
+                   printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $search_results ) );
+                }
+             ?>
+             <?php $gl_['class-table'] -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
+             <?php $gl_['class-table'] -> display() ?>
+          </form>
+       </p>
+   </div>
+   <?php
+}
+
+//====================================
 // Форма журнала документов
 // $name            - Имя формы (пример: journal)
-// $class_table     - Имя класса таблицы
 // $perm_button     - Права на кнопки
 // $title           - Заглавие
 // $description1    - Описание 1
@@ -933,12 +993,19 @@ function column_button_filter( $this_column, $item, $column_name ){
 //===================================================
 // Функция отображения поля default в class-wp-list-table
 function display_column_default( $item, $column_name ){
-   global $color;
+   global $color, $color_all;
+
+   $color_old = $color;
+
+   if ( !empty( $item[ $column_name ]))
+      if ( $item[ $column_name ][0] == '-' )
+         $color = $color_all['red'];
 
    if ( stripos ( $column_name, 'mail') != false )
         $column_value = ' <em><a href="mailto:' . $item[ $column_name ] . '"> '. $item[ $column_name ] . ' </a></em>';
    else
         $column_value = '<font color="'. $color .'">' . $item[ $column_name ] . '</font>';
+        $color = $color_old;
         switch( $column_name ) {
         default:
         return $column_value;

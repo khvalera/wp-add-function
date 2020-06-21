@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wp-add-function\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 08:23+0000\n"
+"POT-Creation-Date: 2020-06-20 21:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -15,88 +15,106 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.3; wp-5.4.1"
 
+#: wp-add-function/class-table-balances.php:88
 #: wp-add-function/class-table-directory.php:88
-#: wp-add-function/class-table-journal.php:88
+#: wp-add-function/class-table-journal.php:101
 msgid "book"
 msgstr ""
 
+#: wp-add-function/class-table-balances.php:89
 #: wp-add-function/class-table-directory.php:89
-#: wp-add-function/class-table-journal.php:89
+#: wp-add-function/class-table-journal.php:102
 msgid "books"
 msgstr ""
 
-#: wp-add-function/class-table-directory.php:105
-#: wp-add-function/class-table-journal.php:105
-#: wp-add-function/pages-functions.php:834
-#: wp-add-function/pages-functions.php:836
-#: wp-add-function/pages-functions.php:859
+#: wp-add-function/class-table-balances.php:106
+#: wp-add-function/class-table-directory.php:106
+#: wp-add-function/class-table-journal.php:120
+#: wp-add-function/pages-functions.php:904
+#: wp-add-function/pages-functions.php:906
+#: wp-add-function/pages-functions.php:929
 msgid "Filter"
 msgstr ""
 
-#: wp-add-function/class-table-directory.php:106
-#: wp-add-function/class-table-journal.php:106
-msgid "Marked for deletion"
-msgstr ""
-
-#: wp-add-function/class-table-directory.php:107
-#: wp-add-function/class-table-journal.php:107
+#: wp-add-function/class-table-balances.php:107
+#: wp-add-function/class-table-directory.php:108
+#: wp-add-function/class-table-journal.php:122
 msgid "Reset"
 msgstr ""
 
-#: wp-add-function/class-table-directory.php:169
-#: wp-add-function/class-table-journal.php:181
+#: wp-add-function/class-table-balances.php:167
+#: wp-add-function/class-table-directory.php:171
+#: wp-add-function/class-table-journal.php:193
 msgid "There is not a single value."
 msgstr ""
 
-#: wp-add-function/class-table-directory.php:177
-#: wp-add-function/class-table-journal.php:189
+#: wp-add-function/class-table-balances.php:175
+#: wp-add-function/class-table-directory.php:179
+#: wp-add-function/class-table-journal.php:201
 msgid "Number"
 msgstr ""
 
-#: wp-add-function/class-table-directory.php:178
-msgid "Name"
-msgstr ""
-
-#: wp-add-function/class-table-directory.php:179
-#: wp-add-function/class-table-journal.php:195
-msgid "Comment"
-msgstr ""
-
-#: wp-add-function/class-table-directory.php:180
-#: wp-add-function/class-table-journal.php:196
-msgid "Modified"
-msgstr ""
-
-#: wp-add-function/class-table-directory.php:183
-#: wp-add-function/class-table-journal.php:199
-msgid "Action"
-msgstr ""
-
-#: wp-add-function/class-table-journal.php:112
-msgid "Period from: "
-msgstr ""
-
-#: wp-add-function/class-table-journal.php:112
-msgid " by: "
-msgstr ""
-
-#: wp-add-function/class-table-journal.php:190
-msgid "Document type"
-msgstr ""
-
-#: wp-add-function/class-table-journal.php:191
-msgid "Date and time document"
-msgstr ""
-
-#: wp-add-function/class-table-journal.php:192
+#: wp-add-function/class-table-balances.php:176
+#: wp-add-function/class-table-journal.php:204
 msgid "Storage"
 msgstr ""
 
-#: wp-add-function/class-table-journal.php:193
+#: wp-add-function/class-table-balances.php:177
+#: wp-add-function/class-table-journal.php:205
 msgid "Product"
 msgstr ""
 
-#: wp-add-function/class-table-journal.php:194
+#: wp-add-function/class-table-balances.php:178
+msgid "Rest"
+msgstr ""
+
+#: wp-add-function/class-table-balances.php:181
+#: wp-add-function/class-table-directory.php:185
+#: wp-add-function/class-table-journal.php:211
+msgid "Action"
+msgstr ""
+
+#: wp-add-function/class-table-directory.php:107
+#: wp-add-function/class-table-journal.php:121
+msgid "Marked for deletion"
+msgstr ""
+
+#: wp-add-function/class-table-directory.php:180
+msgid "Name"
+msgstr ""
+
+#: wp-add-function/class-table-directory.php:181
+#: wp-add-function/class-table-journal.php:207
+msgid "Comment"
+msgstr ""
+
+#: wp-add-function/class-table-directory.php:182
+#: wp-add-function/class-table-journal.php:208
+msgid "Modified"
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:124
+msgid "Period from: "
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:124
+msgid " by: "
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:127
+#: wp-add-function/pages-functions.php:297
+msgid "Apply"
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:202
+msgid "Document type"
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:203
+msgid "Date and time document"
+msgstr ""
+
+#: wp-add-function/class-table-journal.php:206
 msgid "Amount"
 msgstr ""
 
@@ -123,7 +141,7 @@ msgstr ""
 #: wp-add-function/pages-functions.php:20
 #: wp-add-function/pages-functions.php:109
 #: wp-add-function/pages-functions.php:195
-#: wp-add-function/pages-functions.php:657
+#: wp-add-function/pages-functions.php:722
 msgid "Search"
 msgstr ""
 
@@ -181,28 +199,24 @@ msgid ""
 "number '%s'?"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:297
-msgid "Apply"
-msgstr ""
-
-#: wp-add-function/pages-functions.php:500
-#: wp-add-function/pages-functions.php:592
+#: wp-add-function/pages-functions.php:565
+#: wp-add-function/pages-functions.php:657
 msgid "Select value"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:760
+#: wp-add-function/pages-functions.php:825
 msgid "Number of lines per page"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:810
+#: wp-add-function/pages-functions.php:875
 msgid "Error: "
 msgstr ""
 
-#: wp-add-function/pages-functions.php:838
+#: wp-add-function/pages-functions.php:908
 msgid "History"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:842
+#: wp-add-function/pages-functions.php:912
 msgid "Cancel delete"
 msgstr ""
 
