@@ -228,7 +228,7 @@ class class_table_journal_doc extends WP_List_Table {
     }
 
     // Заполняем данные таблицы
-    private function table_data() {
+    public function table_data() {
        global $gl_;
 
        // Номер текущей страницы для запроса
