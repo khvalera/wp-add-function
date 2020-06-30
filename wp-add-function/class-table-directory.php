@@ -279,7 +279,7 @@ class class_table_directory extends WP_List_Table {
 
     /** Позволяет сортировать данные по переменным, установленным в $_GET
      * @return Mixed */
-    private function sort_data( $a, $b ) {
+    public function sort_data( $a, $b ) {
         // Set defaults
         $orderby = 'id';
         $order   = 'asc';
