@@ -219,7 +219,7 @@ class class_table_journal_doc extends WP_List_Table {
 
     // Определить сортируемые столбцы.
     // @return Array
-    function get_sortable_columns() {
+    public function get_sortable_columns() {
         $sortable_columns = array(
             'doc_date_time' => array('id',     true),
             'modify'        => array('modify', true),

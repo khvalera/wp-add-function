@@ -193,7 +193,7 @@ class class_table_directory extends WP_List_Table {
 
     // Определить сортируемые столбцы.
     // @return Array
-    function get_sortable_columns() {
+    public function get_sortable_columns() {
         $sortable_columns = array(
             'id'     => array('id',     true),
             'name'   => array('name',   true),

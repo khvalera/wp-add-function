@@ -187,7 +187,7 @@ class class_table_balances extends WP_List_Table {
 
     // Определить сортируемые столбцы.
     // @return Array
-    function get_sortable_columns() {
+    public function get_sortable_columns() {
         $sortable_columns = array(
             'num'          => array('num',     true),
             'storage_name' => array('storage_name',   true),
