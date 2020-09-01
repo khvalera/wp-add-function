@@ -22,8 +22,10 @@ class class_table_directory extends WP_List_Table {
 
         // определим поля
         $columns     = $this -> get_columns();
+
         // $hidden определяет скрытые столбцы
         $hidden      = $this -> get_hidden_columns();
+
         // $sortable определяет, может ли таблица быть отсортирована по этому столбцу.
         $sortable    = $this -> get_sortable_columns();
         $data        = $this -> table_data();
@@ -31,6 +33,7 @@ class class_table_directory extends WP_List_Table {
 
         // общее количество элементов
         $total_items = $this -> count_lines;
+
         // количество страниц
         $total_pages = ceil($total_items / $this -> per_page);
         $this -> set_pagination_args( array(
@@ -49,6 +52,7 @@ class class_table_directory extends WP_List_Table {
 
         // action используется для фильтров и нажатия кнопок
         $this -> action = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
+
         // Получим страницу
         $this -> page   = get_page_name();
 
@@ -66,6 +70,7 @@ class class_table_directory extends WP_List_Table {
 
         // получим значение из диалога поиска
         $this -> search_value = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] )) : '';
+
         // Определим цвет для дальнейшего использования в функциях
         if ( $this -> action == 'filter-deletion' )
            $color = $color_all['red'];

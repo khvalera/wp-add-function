@@ -216,44 +216,56 @@ class class_table_balances extends WP_List_Table {
                                  products.name LIKE '%" . $this-> search_value . "%' )";
 
        // определим общее количество строк
-       $this -> count_lines = $gl_['db'] -> get_var( "SELECT COUNT(*)
-                                                     FROM
-                                                         journal
-                                                         LEFT JOIN storages ON journal.id_storage = storages.id
-                                                         LEFT JOIN products ON journal.id_product = products.id
-                                                     WHERE
-                                                         $query_additional
-                                                         $query_search
-                                                     GROUP BY
-                                                         storages.id,
-                                                         products.id,
-                                                         storages.name,
-                                                         products.name
-                                                     ");
-       // массив с данными таблицы
-       $array_table = $gl_['db'] -> get_results("SELECT @n := @n + 1 AS num,
-                                                    storages.id   AS storage_id,
-                                                    products.id   AS product_id,
-                                                    storages.name AS storage_name,
-                                                    products.name AS product_name,
-                                                    Sum(journal.rest) AS rest
-                                                 FROM
-                                                     journal
-                                                     LEFT JOIN storages ON journal.id_storage = storages.id
-                                                     LEFT JOIN products ON journal.id_product = products.id,
-                                                     (SELECT @n:=0) X
-                                                 WHERE
-                                                     $query_additional
-                                                     $query_search
+       $query = "SELECT COUNT(*)
+                 FROM (
+                      SELECT @n := @n + 1 AS num,
+                             storages.id   AS storage_id,
+                             products.id   AS product_id,
+                             storages.name AS storage_name,
+                             products.name AS product_name,
+                             Sum(journal.rest) AS rest
+                      FROM
+                         journal
+                         LEFT JOIN storages ON journal.id_storage = storages.id
+                         LEFT JOIN products ON journal.id_product = products.id,
+                         (SELECT @n:=0) X
+                      WHERE
+                         $query_additional
+                         $query_search
+                      GROUP BY
+                         storages.id,
+                         products.id,
+                         storages.name,
+                         products.name
+                    ) AS number";
 
-                                                 GROUP BY
-                                                    storages.id,
-                                                    products.id,
-                                                    storages.name,
-                                                    products.name
-                                                  LIMIT " . $this->per_page . " OFFSET $paged_query
-                                                 ", ARRAY_A );
-       //print_r($array_table); exit;
+       //print_r($query); exit;
+       $this -> count_lines = $gl_['db'] -> get_var( $query );
+
+       // массив с данными таблицы
+       $query = "SELECT @n := @n + 1 AS num,
+                        storages.id   AS storage_id,
+                        products.id   AS product_id,
+                        storages.name AS storage_name,
+                        products.name AS product_name,
+                        Sum(journal.rest) AS rest
+                 FROM
+                       journal
+                       LEFT JOIN storages ON journal.id_storage = storages.id
+                       LEFT JOIN products ON journal.id_product = products.id,
+                       (SELECT @n:=0) X
+                 WHERE
+                       $query_additional
+                       $query_search
+                 GROUP BY
+                       storages.id,
+                       products.id,
+                       storages.name,
+                       products.name
+                 LIMIT " . $this->per_page . " OFFSET $paged_query";
+
+       $array_table = $gl_['db'] -> get_results( $query, ARRAY_A );
+       //print_r($query); exit;
        $data = $array_table;
        return $data;
     }

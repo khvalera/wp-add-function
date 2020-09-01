@@ -13,6 +13,7 @@ class class_table_journal_doc extends WP_List_Table {
      public $search_value, $journal_date1, $journal_date2 ,$count_lines;
      public $color;
 
+    /**********************************/
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
     Это важный метод на нем строиться вся таблица. Тут обычно устанавливаются все данные таблицы.
     Используйте в этом методе $this->set_pagination_args() и определите свойство $this->items - 
@@ -44,12 +45,13 @@ class class_table_journal_doc extends WP_List_Table {
         $this -> items = $data;
     }
 
+    /**********************************/
     function __construct(){
         global $color_all, $color;
 
         // action используется для фильтров и нажатия кнопок
         $this -> action = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
-        // Получим страницу
+        // получим страницу
         $this -> page   = get_page_name();
 
         $this -> paged = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
@@ -87,8 +89,8 @@ class class_table_journal_doc extends WP_List_Table {
         else
            $color = '';
 
-        /* plural (строка) — Название для множественного числа, используется во всяких заголовках, например в css классах, 
-        в заметках, например 'posts', тогда 'posts' будет добавлен в класс table. По умолчанию: '' ($this->screen->base)
+       /* plural (строка) — Название для множественного числа, используется во всяких заголовках, например в css классах, 
+       в заметках, например 'posts', тогда 'posts' будет добавлен в класс table. По умолчанию: '' ($this->screen->base)
 
        singular (строка) — Название для единственного числа, например 'post'. По умолчанию: ''
 
@@ -106,6 +108,7 @@ class class_table_journal_doc extends WP_List_Table {
        add_action( 'admin_head', array( &$this, 'admin_header' ) );
     }
 
+    /**********************************/
     // Дополнительные элементы управления таблицей, которые расположены между групповыми действиями и пагинацией.
     // Обычно сюда располагают фильтры данных таблицы.
     public function extra_tablenav( $which ){
@@ -131,7 +134,8 @@ class class_table_journal_doc extends WP_List_Table {
        <?php
     }
 
-   /* Форма поиска
+    /**********************************/
+    /* Форма поиска
     * Search form
     * @since 1.8
     * @param string $text
@@ -172,6 +176,7 @@ class class_table_journal_doc extends WP_List_Table {
       <?php
     }
 
+    /**********************************/
     function admin_header() {
        echo '<style type="text/css">';
        echo '.wp-list-table .column-id            { width: 6%; }';
@@ -193,6 +198,7 @@ class class_table_journal_doc extends WP_List_Table {
        _e( 'There is not a single value.', 'wp-add-function');
     }
 
+    /**********************************/
     // Определяет столбцы, которые будут отображаться в вашей таблице
     // @return Array
     public function get_columns() {
@@ -213,10 +219,12 @@ class class_table_journal_doc extends WP_List_Table {
         return $columns;
     }
 
+    /**********************************/
     public function get_hidden_columns() {
         return array();
     }
 
+    /**********************************/
     // Определить сортируемые столбцы.
     // @return Array
     public function get_sortable_columns() {
@@ -227,6 +235,7 @@ class class_table_journal_doc extends WP_List_Table {
         return $sortable_columns;
     }
 
+    /**********************************/
     // Заполняем данные таблицы
     public function table_data() {
        global $gl_;
