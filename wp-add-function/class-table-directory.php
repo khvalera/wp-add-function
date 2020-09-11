@@ -9,8 +9,10 @@ if ( ! class_exists('WP_List_Table')) {
 //===========================================
 // Таблица для справочников
 class class_table_directory extends WP_List_Table {
-     public $page, $paged, $per_page;
-     public $color;
+    // глобальные переменные
+    public $action, $page, $paged, $per_page;
+    public $search_value, $count_lines;
+    public $color;
 
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
     Это важный метод на нем строиться вся таблица. Тут обычно устанавливаются все данные таблицы.

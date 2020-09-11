@@ -9,9 +9,11 @@ if ( ! class_exists('WP_List_Table')) {
 //===========================================
 // Таблица журнала документов
 class class_table_journal_doc extends WP_List_Table {
-     public $page, $paged, $per_page;
-     public $journal_date1, $journal_date2;
-     public $color;
+    // глобальные переменные
+    public $action, $page, $paged, $per_page;
+    public $search_value, $count_lines;
+    public $color;
+    public $journal_date1, $journal_date2;
 
     /**********************************/
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
