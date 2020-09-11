@@ -391,7 +391,6 @@ function view_form( $plural_name_lang, $name_id ) {
 // Обработка действий POST формы
 function post_form_actions(){
    global $gl_, $new_objectid;
-
    // Получим текущую страницу (вместе с префиксом)
    $page    = get_page_name();
 
@@ -854,7 +853,7 @@ class add_admin_menu {
     public function add_menu(){
        add_action( 'admin_menu', array( $this, 'submenu_page'));
        //===================================================
-       // Дабавим пункт меню стравочника в верхнюю панель
+       // Дабавим пункт меню справочника в верхнюю панель
        // привяжем функцию к хуку
        if ( current_user_can( $this->current_user_can )){
             add_action( 'admin_bar_menu', function ( $wp_admin_bar ){

@@ -7,10 +7,9 @@ if ( ! class_exists('WP_List_Table')) {
 }
 
 //===========================================
-// Таблица для справочников
+// Таблица получения остатков
 class class_table_balances extends WP_List_Table {
-     public $action, $page, $paged, $per_page;
-     public $search_value, $count_lines;
+     public $page, $paged, $per_page;
      public $color;
 
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.

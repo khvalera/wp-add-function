@@ -7,10 +7,10 @@ if ( ! class_exists('WP_List_Table')) {
 }
 
 //===========================================
-// Таблица для справочников
+// Таблица журнала документов
 class class_table_journal_doc extends WP_List_Table {
-     public $action, $page, $paged, $per_page;
-     public $search_value, $journal_date1, $journal_date2 ,$count_lines;
+     public $page, $paged, $per_page;
+     public $journal_date1, $journal_date2;
      public $color;
 
     /**********************************/
