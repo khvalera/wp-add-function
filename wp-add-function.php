@@ -20,6 +20,12 @@ add_action( 'init', function() {
 });
 
 //===========================================
+// Чтобы не получать ошибку нужно предварительно запустить wp-includes/pluggable.php
+if( ! function_exists( 'wp_get_current_user' )) {
+    include(ABSPATH . "wp-includes/pluggable.php");
+}
+
+//===========================================
 // Подключение общих функций
 //===========================================
 require_once( WPMU_PLUGIN_DIR . '/wp-add-function/common-functions.php' );
