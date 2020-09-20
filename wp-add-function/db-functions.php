@@ -4,22 +4,24 @@
 
 //=============================================
 // Функция для получения строки таблицы по $id
-// $db_table_name - имя таблицы базы данных (не обязательно)
-// $array         - вид возврата данных
+// $db_table_name - имя таблицы базы данных (не обязательно, если не указано берется из $gl_)
+// $output_type   - вид возврата данных (не обязательно, по умолчанию ARRAY_A)
 // $id            - если нужно указать id явно
-function get_row_table_id( $db_table_name = '', $array = '', $id = '' ) {
+function get_row_table_id( $db_table_name = '', $output_type = '', $id = '' ) {
    global $gl_;
 
    if ( empty( $db_table_name ))
       $db_table_name = $gl_['db_table_name'];
-   if ( empty( $array ))
-      $array = ARRAY_A;
+   if ( empty( $output_type ))
+      $output_type = ARRAY_A;
+   //print_r($output_type);
+
    // получим id
    if ( empty($id) )
       $id = isset( $_REQUEST['id'] ) ? wp_unslash( trim( $_REQUEST['id'] )) : '';
 
    $query     = $gl_['db'] -> prepare( "SELECT * FROM " . $db_table_name . " WHERE id = %s", $id);
-   $row_table = $gl_['db'] -> get_row( $query , $array );
+   $row_table = $gl_['db'] -> get_row( $query , $output_type );
 
    return $row_table;
 }
