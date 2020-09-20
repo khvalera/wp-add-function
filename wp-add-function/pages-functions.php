@@ -665,24 +665,36 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 
 //===================================================
 // $display_name  - отображаемое имя реквизита
-// $item_name     - имя класса к которому привязываются данные из mysql (таблица базы данных)
-// $name          - имя объекта на форме
+// $table_name    - имя таблицы базы данных
+// $name          - имя класса и имя объекта на форме
 // $extra_options - дополнительные параметры (тут указывается стиль тоже: style="width:352px;")
-// $value_id      - id выбранной позиции
-// $value_name    - имя поля из таблицы базы данных для добавления как name (по умолчанию name)
-function html_select2( $display_name, $item_name, $name, $extra_options = '', $value_id = '', $value_name = '', $php_file = '' ) {
+// $select_id     - id выбранной позиции
+// $select_name   - имя поля из таблицы базы данных для добавления как name (по умолчанию name)
+// $php_file      - путь к ajax файлу (не обязательно)
+// $function      - если нужно использовать отдельную функцию для этого объекта
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $function = '') {
    global $gl_;
 
    // Добавим 'tfield-' если в имени его нет
    if ( strpos( $name, 'tfield-' ) === false )
       $name = 'tfield-' . $name;
-
-   if ( ! empty( $value_id )) {
-      $data = get_row_table_id($item_name,'', $value_id);
-      if ( empty( $value_name ))
-         $value_name = 'name';
+   // если указан $select_id
+   if ( ! empty( $select_id )) {
+      // если явно указана функция используем ее
+      if ( ! empty( $function )){
+         $func = $function;
+         $data = $func($table_name, ARRAY_A, $select_id);
+      // если функция указана в $gl_ используем ее
+      } elseif ( ! empty( $gl_['name_function_get_table_row_id'] )){
+         $func = $gl_['name_function_get_table_row_id'];
+         $data = $func($table_name, ARRAY_A, $select_id);
+      } else
+        $data = get_row_table_id($table_name, ARRAY_A, $select_id);
+      if ( empty( $select_name ))
+         $select_name = 'name';
       //print_r($data); exit;
    }
+   //print_r($data -> id);
    // если стиль не указан используем width:352px;
    if ( stripos($extra_options, 'style') == false )
       $extra_options = $extra_options . ' style="width:352px;" ';
@@ -690,26 +702,26 @@ function html_select2( $display_name, $item_name, $name, $extra_options = '', $v
       <tr class="rich-editing-wrap">
          <th scope="row"><?php echo $display_name; ?></th>
             <td>
-               <select class="<?php echo 'item_' . $item_name; ?> form-control" name="<?php echo $name; ?>" <?php echo $extra_options ; ?> >
+               <select class="<?php echo 'item_' . $name; ?> form-control" name="<?php echo $name; ?>" <?php echo $extra_options ; ?> >
                   <?php
-                    // Получим нужную строку таблицы по $id в виде массива
+                    // Выберем нужную строку таблицы по $id из массива
                     if ( ! empty( $data )) {
-                       echo "<option selected value=" . $data['id'] . ">" . $data[$value_name] . "</option>";
+                       echo "<option selected value=" . $data['id'] . ">" . $data[$select_name] . "</option>";
                     }
                   ?>
                </select>
             </td>
        </tr>
     <?php
-
    // если $php_file не указан используем ajax.php
    if ( empty( $php_file ) )
-      $ajax_php   = WP_PLUGIN_URL . '/'. $gl_['plugin_name'] . '/includes/' . $item_name . '/ajax.php';
+      $ajax_php   = WP_PLUGIN_URL . '/'. $gl_['plugin_name'] . '/includes/' . $table_name . '/ajax.php';
    else
       $ajax_php   = WP_PLUGIN_URL . '/'. $gl_['plugin_name'] . '/includes/' . $php_file;
    //exit(_e($ajax_php));
-   java_item($item_name, $ajax_php);
+   java_item($name, $ajax_php);
 }
+
 //===================================================
 function java_item($item_name, $ajax_php = ''  ){
 
