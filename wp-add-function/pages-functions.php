@@ -671,8 +671,8 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 // $select_id     - id выбранной позиции
 // $select_name   - имя поля из таблицы базы данных для добавления как name (по умолчанию name)
 // $php_file      - путь к ajax файлу (не обязательно)
-// $function      - если нужно использовать отдельную функцию для этого объекта
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $function = '') {
+// $if_select     - имя поля для отбора, если не указано то используется objectId
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '') {
    global $gl_;
 
    // Добавим 'tfield-' если в имени его нет
@@ -680,14 +680,10 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
       $name = 'tfield-' . $name;
    // если указан $select_id
    if ( ! empty( $select_id )) {
-      // если явно указана функция используем ее
-      if ( ! empty( $function )){
-         $func = $function;
-         $data = $func($table_name, ARRAY_A, $select_id);
       // если функция указана в $gl_ используем ее
-      } elseif ( ! empty( $gl_['name_function_get_table_row_id'] )){
+      if ( ! empty( $gl_['name_function_get_table_row_id'] )){
          $func = $gl_['name_function_get_table_row_id'];
-         $data = $func($table_name, ARRAY_A, $select_id);
+         $data = $func($table_name, ARRAY_A, $select_id, $if_select);
       } else
         $data = get_row_table_id($table_name, ARRAY_A, $select_id);
       if ( empty( $select_name ))
