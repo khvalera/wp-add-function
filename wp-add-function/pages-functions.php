@@ -690,7 +690,13 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
          $select_name = 'name';
       //print_r($data); exit;
    }
-   //print_r($data -> id);
+   // если есть objectId будем использовать его
+   if ( ! empty( $data['objectId'] ))
+      $name_id = 'objectId';
+   else
+      $name_id = 'id';
+
+   //print_r($data['id']);
    // если стиль не указан используем width:352px;
    if ( stripos($extra_options, 'style') == false )
       $extra_options = $extra_options . ' style="width:352px;" ';
@@ -702,7 +708,7 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
                   <?php
                     // Выберем нужную строку таблицы по $id из массива
                     if ( ! empty( $data )) {
-                       echo "<option selected value=" . $data['id'] . ">" . $data[$select_name] . "</option>";
+                       echo "<option selected value=" . $data[$name_id] . ">" . $data[$select_name] . "</option>";
                     }
                   ?>
                </select>
