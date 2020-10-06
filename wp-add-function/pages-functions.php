@@ -374,7 +374,7 @@ function view_form( $plural_name_lang, $name_id ) {
          form_delete( $plural_name_lang, $name_id );
       elseif ( $action == 'cancel-deletion' )
          form_cancel_deletion( $plural_name_lang, $name_id );
-      elseif ( $action == 'new' or $action == 'new1' ){
+      elseif ( substr($action, 0, 3) == 'new' ){
          // Выполним функцию с префиксом $action
          $func = 'view_form_' . $action ;
          $func();
