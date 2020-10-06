@@ -1063,4 +1063,15 @@ add_action( 'admin_head', function() {
    echo '<link rel="stylesheet" type="text/css" href="' . WPMU_PLUGIN_URL . '/wp-add-function/css/common.css' . '">';
 });
 
+
+//=============================================
+// Скрыть уведомление об обновлении WordPress с панели администрирования для обычных пользователей.
+add_action( 'admin_init', function () {
+   if ( !current_user_can('update_core') ) {
+      remove_action( 'admin_notices',         'update_nag', 3 );
+      remove_action( 'network_admin_notices', 'update_nag', 3 );
+   }
+});
+
 ?>
+
