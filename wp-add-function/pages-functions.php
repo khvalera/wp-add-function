@@ -2,6 +2,10 @@
 
 // функции для работы с страницами
 
+// Создаем экземпляр для оброботки ошибок
+global $form_message;
+$form_message = new WP_Error;
+
 //====================================
 // Форма отчета
 // $name            - Имя формы (пример: balances)
@@ -503,7 +507,7 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
    $array_value         = explode( ",", $value );
    $array_extra_options = explode( ",", $extra_options );
 
-   // Проверим что бы переданное количество значений совпадало 
+   // Проверим что бы переданное количество значений совпадало
    if ( count ( $array_type ) <> count ( $array_name ) or count ( $array_name ) <> count ( $array_display_name )) {
       display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
       exit;
@@ -929,8 +933,10 @@ function management_session($sess) {
 }
 
 //===================================================
-// Вывести сообщения
-// для ошибок data должно быть error
+// Вывести на странице сообщение или ошибку
+// $str_code - код ошибки или сообщения в виде строки
+// $view     - подробное описание сообщения или ошибки, для отображения на странице
+// $type     - тип сообщения, для ошибок должен быть error
 // $form_message -> add ('filed_to_get_data', __( "Failed to get data!", 'wp-add-function' ), 'error' );
 function display_message( $str_code = '', $view = '', $type = '' ) {
    global $form_message;
@@ -951,6 +957,7 @@ function display_message( $str_code = '', $view = '', $type = '' ) {
          else
             echo '<div>'. $message .'</div>';
         }
+        exit;
    }
 }
 
