@@ -468,7 +468,8 @@ function post_form_actions(){
       delete_form_data();
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
-
+   // Если есть ошибки или сообщения покажем все
+   display_message();
 }
 
 //===========================================
@@ -933,16 +934,31 @@ function management_session($sess) {
 }
 
 //===================================================
-// Вывести на странице сообщение или ошибку
+// Добавить сообщение или ошибку для дальнейшего отображения с помощью display_message
 // $str_code - код ошибки или сообщения в виде строки
 // $view     - подробное описание сообщения или ошибки, для отображения на странице
 // $type     - тип сообщения, для ошибок должен быть error
-// $form_message -> add ('filed_to_get_data', __( "Failed to get data!", 'wp-add-function' ), 'error' );
-function display_message( $str_code = '', $view = '', $type = '' ) {
+// add_message('filed_to_get_data', __( "Failed to get data!", 'wp-add-function' ), 'error' );
+function add_message( $str_code = '', $view = '', $type = '' ) {
    global $form_message;
 
    if ( !empty( $str_code ))
       $form_message -> add ($str_code, $view, $type );
+}
+
+//===================================================
+// Вывести на странице сообщение или ошибку
+// если в display_message передан $str_code, сообщение или ошибка будет отображена сразу же
+// $str_code - код ошибки или сообщения в виде строки
+// $view     - подробное описание сообщения или ошибки, для отображения на странице
+// $type     - тип сообщения, для ошибок должен быть error
+// display_message ('filed_to_get_data', __( "Failed to get data!", 'wp-add-function' ), 'error' );
+// display_message() - что бы отобразить все ошибки которые добавлены
+function display_message( $str_code = '', $view = '', $type = '' ) {
+   global $form_message;
+
+   if ( !empty( $str_code ))
+      add_message($str_code, $view, $type );
 
    if ( $form_message -> get_error_code() ) {
       foreach( $form_message -> get_error_codes() as $error_code ){
