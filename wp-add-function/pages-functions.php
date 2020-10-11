@@ -426,6 +426,8 @@ function post_form_actions(){
    $POST_SAVE = isset( $_POST['button_save'] );
    if ( ! empty( $POST_SAVE )) {
       save_edit_data();
+      // Если есть ошибки или сообщения покажем все
+      display_message();
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
    // ->>> на скорую руку, нужно исправить
@@ -434,6 +436,8 @@ function post_form_actions(){
    if ( $pages == 'issuing-discount-cards' ){
       if ( ! empty( $POST_SAVE_NEW )) {
          if ( save_new_data() != 1 )
+            // Если есть ошибки или сообщения покажем все
+            display_message();
             if ( ! empty( $pages ))
                wp_redirect( get_admin_url( null, 'admin.php?page=' . $pages . '&holder-objectId=' . $new_objectid ));
             else
@@ -443,6 +447,8 @@ function post_form_actions(){
       if ( ! empty( $POST_SAVE_NEW )) {
          $pagep  =  isset( $_REQUEST['pagep'] ) ? wp_unslash( trim( $_REQUEST['pagep'] )) : '';
          save_new_data();
+         // Если есть ошибки или сообщения покажем все
+         display_message();
          if ( empty( $pagep ))
             wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
          else
@@ -459,6 +465,8 @@ function post_form_actions(){
    $POST_DELETE = isset( $_POST['button_delete'] );
    if ( ! empty( $POST_DELETE )) {
       delete_form_data();
+      // Если есть ошибки или сообщения покажем все
+      display_message();
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
 
@@ -466,10 +474,10 @@ function post_form_actions(){
    $POST_CANCEL_DELETE = isset( $_POST['button_apply'] );
    if ( ! empty( $POST_CANCEL_DELETE )) {
       delete_form_data();
+      // Если есть ошибки или сообщения покажем все
+      display_message();
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
-   // Если есть ошибки или сообщения покажем все
-   display_message();
 }
 
 //===========================================
