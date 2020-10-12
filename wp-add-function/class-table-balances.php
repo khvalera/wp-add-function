@@ -298,7 +298,7 @@ class class_table_balances extends WP_List_Table {
         if ( ! empty($_GET[ 'order' ])) {
             $order = $_GET[ 'order' ];
         }
-        $result = strcmp( $a[$orderby], $b[$orderby] );
+        $result = strnatcmp( $a[$orderby], $b[$orderby] );
         if($order === 'asc') {
             return $result;
         }
