@@ -284,21 +284,22 @@ class class_table_directory extends WP_List_Table {
              return display_column_default( $item, $column_name );
     }
 
+    //====================================
     /** Позволяет сортировать данные по переменным, установленным в $_GET
      * @return Mixed */
-    public function sort_data( $a, $b ) {
+    function sort_data( $a, $b ){
         // Set defaults
         $orderby = 'id';
-        $order   = 'asc';
+        $order = 'asc';
         // If orderby is set, use this as the sort column
-        if ( ! empty( $_GET[ 'orderby' ] )) {
+        if(!empty($_GET['orderby'])){
             $orderby = $_GET['orderby'];
         }
         // If order is set use this as the order
-        if ( ! empty($_GET[ 'order' ])) {
-            $order = $_GET[ 'order' ];
+        if(!empty($_GET['order'])) {
+            $order = $_GET['order'];
         }
-        $result = strcmp( $a[$orderby], $b[$orderby] );
+        $result = strnatcmp( $a[$orderby], $b[$orderby] );
         if($order === 'asc') {
             return $result;
         }
