@@ -10,7 +10,7 @@ if ( ! class_exists('WP_List_Table')) {
 // Таблица для справочников
 class class_table_directory extends WP_List_Table {
     // глобальные переменные
-    public $action, $page, $paged, $per_page;
+    public $action, $page, $paged, $per_page, $paged_query;
     public $search_value, $count_lines;
     public $color;
 
@@ -68,6 +68,9 @@ class class_table_directory extends WP_List_Table {
         // если сохраненной настройки нет, берем по умолчанию
         if( ! $this -> per_page )
            $this -> per_page = $per_page_option['default'];
+
+        // номер текущей страницы для запроса
+        $this -> paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
 
         // получим значение из диалога поиска
         $this -> search_value = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] )) : '';
@@ -212,8 +215,6 @@ class class_table_directory extends WP_List_Table {
     public function table_data() {
        global $gl_;
 
-       // номер текущей страницы для запроса
-       $paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
        // Если есть то получим значение ID
        $id = isset( $_REQUEST['id'] ) ? wp_unslash( trim( $_REQUEST['id'] )) : '';
 
@@ -254,8 +255,8 @@ class class_table_directory extends WP_List_Table {
                                                   WHERE
                                                      $query_additional
                                                      $query_search
-                                                  LIMIT " . $this->per_page . " OFFSET $paged_query
-                                                 ", ARRAY_A );
+                                                  LIMIT " . $this->per_page . " OFFSET " . $this->paged_query
+                                                 , ARRAY_A );
        $data = $array_table;
        return $data;
     }
