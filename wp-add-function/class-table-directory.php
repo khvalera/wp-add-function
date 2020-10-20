@@ -109,6 +109,8 @@ class class_table_directory extends WP_List_Table {
 
        if ( 'top' != $which )
           return;
+       if ( $this -> action == 'history' )
+          return;
        ?>
           <form id="form-extra_tablenav" action="" method="post">
           <ul class="subsubsub">
