@@ -515,22 +515,20 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
    $array_name          = explode( ",", $name );
    $array_value         = explode( ",", $value );
    $array_extra_options = explode( ",", $extra_options );
-
    // Проверим что бы переданное количество значений совпадало
    if ( count ( $array_type ) <> count ( $array_name ) or count ( $array_name ) <> count ( $array_display_name )) {
       display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
-      exit;
    }
+
    if ( ! empty( $value ) )
       if ( count ( $array_name ) <> count ( $array_value )) {
          display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
-         exit;
-   }
+      }
+
    if ( ! empty( $extra_options ) )
       if ( count ( $array_name ) <> count ( $array_extra_options )) {
          display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
-         exit;
-   }
+      }
    if ( ! empty( $onchange ) ){
       $onchange = 'onchange="' . $onchange.'"';
       // Добавим javascript
