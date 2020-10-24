@@ -501,20 +501,20 @@ function post_get_str($par) {
 }
 
 //===================================================
-// $display_name  - Отображаемое имя реквизита на форме (можно указывать несколько, через запятую)
-// $type          - Тип реквизита (number, text, date, time...) (можно указывать несколько, через запятую)
-// $name          - Имя input (можно указывать несколько, через запятую)
-// $value         - Значение (можно указывать несколько, через запятую)
-// $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через запятую)
+// $display_name  - Отображаемое имя реквизита на форме (можно указывать несколько, через |)
+// $type          - Тип реквизита (number, text, date, time...) (можно указывать несколько, через |)
+// $name          - Имя input (можно указывать несколько, через |)
+// $value         - Значение (можно указывать несколько, через |)
+// $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через |)
 // $onchange      - Название функции происходит по окончании изменения значения элемента формы, когда это изменение зафиксировано.
 // $not_tfield    - Если равно true не использовать tfield
 function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_tfield = '' ) {
    // Преобразуем строку с пробелами в массив
-   $array_display_name  = explode( ",", $display_name );
-   $array_type          = explode( ",", $type );
-   $array_name          = explode( ",", $name );
-   $array_value         = explode( ",", $value );
-   $array_extra_options = explode( ",", $extra_options );
+   $array_display_name  = explode( "|", $display_name );
+   $array_type          = explode( "|", $type );
+   $array_name          = explode( "|", $name );
+   $array_value         = explode( "|", $value );
+   $array_extra_options = explode( "|", $extra_options );
    // Проверим что бы переданное количество значений совпадало
    if ( count ( $array_type ) <> count ( $array_name ) or count ( $array_name ) <> count ( $array_display_name )) {
       display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
