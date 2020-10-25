@@ -126,9 +126,9 @@ class class_table_journal_doc extends WP_List_Table {
                  echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');
                  echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']);
                  // Период в журнале
-                 html_input(__('Period from: ', 'wp-add-function' ) . "," . __(' by: ', 'wp-add-function' ), "date,date", "date1,date2",
-                            $this -> journal_date1 . "," . $this -> journal_date2,
-                           'style="width:120px; min-width: 110px;" required,style="width:120px; min-width: 110px;" required' );
+                 html_input(__('Period from: ', 'wp-add-function' ) . "|" . __(' by: ', 'wp-add-function' ), "date|date", "date1|date2",
+                            $this -> journal_date1 . "|" . $this -> journal_date2,
+                           'style="width:120px; min-width: 110px;" required|style="width:120px; min-width: 110px;" required' );
                  submit_button(__( 'Apply', 'wp-add-function' ), 'button',  'button_period', false);
               ?>
           </ul>
