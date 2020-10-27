@@ -133,6 +133,8 @@ class class_table_directory extends WP_List_Table {
     public function search_box($text, $input_id) {
       if ( $this -> action == 'history' )
           return;
+      if ( $this -> action == 'filter-deletion' )
+          return;
       if(empty($_REQUEST['s']) && !$this -> has_items()) {
         return;
       }
