@@ -544,8 +544,8 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
                   $_type         = $array_type[$key];
                   // Если пустой extra_options используем style="width:350px; min-width: 100px;"
                   if ( ! empty( $extra_options ) )
-                     // Если не найдено style добавим style="width:350px; min-width: 100px;"
-                     if ( strrpos($array_extra_options[$key], "style=") === false )
+                     // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
+                     if (( strrpos($array_extra_options[$key], "style=") === false ) and (strrpos($array_extra_options[$key], "size") === false))
                         $_extra_options='style="width:350px; min-width: 100px;"' . $array_extra_options[$key];
                      else
                         $_extra_options= $array_extra_options[$key];
