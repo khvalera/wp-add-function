@@ -506,7 +506,7 @@ function post_get_str($par) {
 // $name          - Имя input (можно указывать несколько, через |)
 // $value         - Значение (можно указывать несколько, через |)
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через |)
-// $onchange      - Название функции происходит по окончании изменения значения элемента формы, когда это изменение зафиксировано.
+// $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
 // $not_tfield    - Если равно true не использовать tfield
 function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_tfield = '' ) {
    // Преобразуем строку с пробелами в массив
@@ -542,9 +542,13 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
                foreach ( $array_name as $key => $_name ) {
                   $_display_name = $array_display_name[$key];
                   $_type         = $array_type[$key];
-                  // если стиль не указан
+                  // Если пустой extra_options используем style="width:350px; min-width: 100px;"
                   if ( ! empty( $extra_options ) )
-                     $_extra_options= $array_extra_options[$key];
+                     // Если не найдено style добавим style="width:350px; min-width: 100px;"
+                     if ( strrpos($array_extra_options[$key], "style=") === false )
+                        $_extra_options='style="width:350px; min-width: 100px;"' . $array_extra_options[$key];
+                     else
+                        $_extra_options= $array_extra_options[$key];
                   else
                      $_extra_options='style="width:350px; min-width: 100px;"';
 
