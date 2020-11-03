@@ -11,7 +11,7 @@ if ( ! class_exists('WP_List_Table')) {
 class class_table_directory extends WP_List_Table {
     // глобальные переменные
     public $action, $page, $paged, $per_page, $paged_query;
-    public $search_value, $count_lines;
+    public $search_value, $filter, $filter_value, $count_lines;
     public $color;
 
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
@@ -71,6 +71,12 @@ class class_table_directory extends WP_List_Table {
 
         // номер текущей страницы для запроса
         $this -> paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
+
+        // получим значение фильтра (передается имя поля таблицы)
+        $this -> filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
+
+        // для фильтра получим значение value
+        $this -> filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
 
         // получим значение из диалога поиска
         $this -> search_value = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] )) : '';
