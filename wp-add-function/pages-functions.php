@@ -245,7 +245,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
                 // если используется фильтр
                 if ( ! empty( $filter ) and ! empty( $filter_value )){
                    /* translators: %s: search keywords */
-                   printf( '<span class="subtitle">' . __( 'Filter by &#8220;%s=%s&#8221;' ) . '</span>', esc_html( $filter ), esc_html( $filter_value ) );
+                   printf( '<span class="subtitle" style="color: #336699;font-weight:bold">' . __( 'Filter by &#8220;%s=%s&#8221;', $gl_['plugin_name'] ) . '</span>', esc_html( $filter ), esc_html( $filter_value ) );
                 }
              ?>
              <?php $class_table -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
