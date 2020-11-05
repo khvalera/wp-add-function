@@ -174,6 +174,13 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
    }
 
    $search_results = isset( $_REQUEST['s'] )      ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+
+   // получим значение фильтра (передается имя поля таблицы)
+   $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
+
+   // для фильтра получим значение value
+   $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
+
    $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
 
    // Зафиксируем текущий paged, для дальнейшего возврата
@@ -234,6 +241,11 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
                 if ( strlen( $search_results )) {
                    /* translators: %s: search keywords */
                    printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $search_results ) );
+                }
+                // если используется фильтр
+                if ( ! empty( $filter ) and ! empty( $filter_value )){
+                   /* translators: %s: search keywords */
+                   printf( '<span class="subtitle">' . __( 'Filter by &#8220;%s=%s&#8221;' ) . '</span>', esc_html( $filter ), esc_html( $filter_value ) );
                 }
              ?>
              <?php $class_table -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>

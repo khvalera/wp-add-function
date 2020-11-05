@@ -88,7 +88,7 @@ class class_table_balances extends WP_List_Table {
        parent::__construct( array(
             'singular'  => __( 'book',  'wp-add-function' ),  //singular name of the listed records
             'plural'    => __( 'books', 'wp-add-function' ),  //plural name of the listed records
-            'ajax'      => false                                   //does this table support ajax?
+            'ajax'      => false                              //does this table support ajax?
 
        ));
        add_action( 'admin_head', array( &$this, 'admin_header' ) );
