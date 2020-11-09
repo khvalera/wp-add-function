@@ -696,10 +696,10 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 // $name          - имя класса и имя объекта на форме
 // $extra_options - дополнительные параметры (тут указывается стиль тоже: style="width:352px;")
 // $select_id     - id выбранной позиции
-// $select_name   - имя поля из таблицы базы данных для добавления как name (по умолчанию name)
+// $select_name   - строка или масив с именами полей из таблицы базы данных для добавления как name (по умолчанию name). пример: array("objectId", "holderName")
 // $php_file      - путь к ajax файлу (не обязательно)
 // $if_select     - имя поля для отбора, если не указано то используется objectId
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '') {
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = array(''), $php_file = '', $if_select = '') {
    global $gl_;
 
    // Добавим 'tfield-' если в имени его нет
@@ -713,10 +713,26 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
          $data = $func($table_name, ARRAY_A, $select_id, $if_select);
       } else
         $data = get_row_table_id($table_name, ARRAY_A, $select_id);
+      // если не выбран $select_name
       if ( empty( $select_name ))
          $select_name = 'name';
-      //print_r($data); exit;
+      else {
+        if (is_array($select_name)){
+           // если выбран $select_name, разберем
+           $data_names=""; $nom = 0;
+           foreach ($select_name as $n) {
+              $nom++;
+              if ( $nom == 1 )
+                 $data_names = $data_names . $data[$n];
+              else
+                 $data_names = $data_names . " - " . $data[$n];
+           }
+           $select_name = $data_names;
+         } else
+           $select_name = $data[$select_name];
+      }
    }
+   //print_r($data); exit;
    // если есть objectId будем использовать его
    if ( ! empty( $data['objectId'] ))
       $name_id = 'objectId';
@@ -735,7 +751,7 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
                   <?php
                     // Выберем нужную строку таблицы по $id из массива
                     if ( ! empty( $data )) {
-                       echo "<option selected value=" . $data[$name_id] . ">" . $data[$select_name] . "</option>";
+                       echo "<option selected value=" . $data[$name_id] . ">" . $select_name . "</option>";
                     }
                   ?>
                </select>
@@ -773,7 +789,7 @@ function java_item($item_name, $ajax_php = ''  ){
              dataType: 'json',
              delay: 200,
              processResults: function (data) {
-                 var data1 = data
+                 var data = data
 
                return {
                  results: data
@@ -789,9 +805,11 @@ function java_item($item_name, $ajax_php = ''  ){
       });
 
       // Если нужно выбрать значение (пока не разобрался)
-      //$(class_name).select2("trigger", "select", { data: { id: "5", text: '!!!' }});
-      // var newOption = new Option(text, 0, false, false);
+      //$(class_name).select2("trigger", "select", { data: { id: "3", text: '!!!' }});
+      //var newOption = new Option(text, 0, false, false);
       //$(class_name).append(newOption).trigger('change');
+      //$(class_name).val(1);
+      //$(class_name).select2().trigger('change');
    </script>
    <?php
 }
@@ -1020,7 +1038,7 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
          if ( $name == 'filter_s') {
             if (!empty( $item_id ))
                $actions[$name] = sprintf( '<a href="?page=%s&'.$name_id.'=%s&paged=%s&s=%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $_REQUEST['page'], $item_id, $paged, $item[ $column_name ] );
-           else
+            else
                $actions[$name] = sprintf( '<a href="?page=%s&paged=%s&s=%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $_REQUEST['page'], $paged, $item[ $column_name ]);
          } elseif ( $name == 'history' )
                $actions[$name] = sprintf( '<a href="?page=%s&action=%s&paged=%s&'.$name_id.'=%s">' . __( 'History', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'history', $paged, $item[ $name_id ] );
@@ -1037,15 +1055,33 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
 
 //===================================================
 // Функция формирующая в указанном поле кнопку фильтр для class-wp-list-table
-// Заменена на display_column_button (СТАТАЯ)
-function column_button_filter( $this_column, $item, $column_name ){
+// $this_table  - переменная с сылкой на объект class-wp-list-table
+// $item        - массив с структурой и значениями выделенной строки строки таблицы
+// $column_name - имя выбранного поля таблицы
+// $column_db   - имя поля таблицы базы данных
+// $page        - имя страницы на которую переходим (если не выбрано то текущая)
+function column_button_filter( $this_table, $item, $column_name, $column_db, $page = '' ){
    global $color;
 
-   if ( $item[ $column_name ] = '')
-      return '';
-   $column_value = '<font color="'. $color .'">' . $item[ $column_name ] . '</font>';
-   $actions = array('filter_s' => sprintf('<a href="?page=%s&s=%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $_REQUEST['page'], $item[ $column_name ] ));
-   return sprintf('%1$s %2$s', $column_value, $this_column -> row_actions($actions) );
+   $pagep        = isset( $_REQUEST['paged'] )    ? wp_unslash( trim( $_REQUEST['paged'] )) : '';
+
+   if ( empty( $page ))
+      $page = $this_table -> page;
+// => [page] 
+  // $column_name  = 'cardId';
+   //$column_value = '<font color="'. $color .'">' . $item[ 'purseDiscountCount' ] . '</font>';
+//       $actions = array(
+//                'view'   => sprintf('<a href="?page=%s&pagep=%s&f=%s&v=%s">' . __( 'View', 'card-manager' ) . '</a>', 'cm-purses-discount', $pagep, $column_name, $item['objectId']),
+//                'add'    => sprintf('<a href="?page=%s&pagep=%s&action=%s&f=%s&v=%s">' . __( 'Add', 'card-manager' ) . '</a>', 'cm-purses-discount', $pagep, 'new', $column_name, $item[ 'objectId' ] ),
+//                );
+//       return sprintf('%1$s %2$s', $column_value, $this -> row_actions( $actions ) );
+   //print_r( $column_db ); exit;
+   // если нет значения
+   //if ( $item[ $column_name ] = '')
+//      return '';
+   $column_value = '<font color="'. $color . '">' . $item[ $column_name ] . '</font>';
+   $actions      = array( 'filter' => sprintf('<a href="?page=%s&f=%s&v=%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $page, $column_db, $item[ $column_db ]));
+   return sprintf('%1$s %2$s', $column_value, $this_table -> row_actions($actions) );
 }
 
 //===================================================
