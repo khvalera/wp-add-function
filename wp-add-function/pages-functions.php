@@ -699,7 +699,7 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 // $select_name   - строка или масив с именами полей из таблицы базы данных для добавления как name (по умолчанию name). пример: array("objectId", "holderName")
 // $php_file      - путь к ajax файлу (не обязательно)
 // $if_select     - имя поля для отбора, если не указано то используется objectId
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = array(''), $php_file = '', $if_select = '') {
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '') {
    global $gl_;
 
    // Добавим 'tfield-' если в имени его нет
@@ -715,9 +715,9 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
         $data = get_row_table_id($table_name, ARRAY_A, $select_id);
       // если не выбран $select_name
       if ( empty( $select_name ))
-         $select_name = 'name';
+         $select_name = $data['name'];
       else {
-        if (is_array($select_name)){
+        if ( is_array( $select_name )){
            // если выбран $select_name, разберем
            $data_names=""; $nom = 0;
            foreach ($select_name as $n) {
