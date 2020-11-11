@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wp-add-function\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-05 20:24+0000\n"
+"POT-Creation-Date: 2020-11-11 20:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -30,9 +30,9 @@ msgstr ""
 #: wp-add-function/class-table-balances.php:107
 #: wp-add-function/class-table-directory.php:123
 #: wp-add-function/class-table-journal.php:125
-#: wp-add-function/pages-functions.php:1022
-#: wp-add-function/pages-functions.php:1024
+#: wp-add-function/pages-functions.php:1045
 #: wp-add-function/pages-functions.php:1047
+#: wp-add-function/pages-functions.php:1088
 msgid "Filter"
 msgstr ""
 
@@ -142,7 +142,7 @@ msgstr ""
 #: wp-add-function/pages-functions.php:84
 #: wp-add-function/pages-functions.php:173
 #: wp-add-function/pages-functions.php:271
-#: wp-add-function/pages-functions.php:822
+#: wp-add-function/pages-functions.php:845
 msgid "Search"
 msgstr ""
 
@@ -201,23 +201,28 @@ msgid ""
 msgstr ""
 
 #: wp-add-function/pages-functions.php:651
-#: wp-add-function/pages-functions.php:757
+#: wp-add-function/pages-functions.php:778
 msgid "Select value"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:925
+#: wp-add-function/pages-functions.php:767
+#, php-format
+msgid "File not found '%s'"
+msgstr ""
+
+#: wp-add-function/pages-functions.php:948
 msgid "Number of lines per page"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:992
+#: wp-add-function/pages-functions.php:1015
 msgid "Error: "
 msgstr ""
 
-#: wp-add-function/pages-functions.php:1026
+#: wp-add-function/pages-functions.php:1049
 msgid "History"
 msgstr ""
 
-#: wp-add-function/pages-functions.php:1030
+#: wp-add-function/pages-functions.php:1053
 msgid "Cancel delete"
 msgstr ""
 

@@ -759,15 +759,24 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
        </tr>
     <?php
    // если $php_file не указан используем ajax.php
-   if ( empty( $php_file ) )
+   if ( empty( $php_file ) ) {
       $ajax_php   = WP_PLUGIN_URL . '/'. $gl_['plugin_name'] . '/includes/' . $table_name . '/ajax.php';
-   else
+      // проверим существует ли файл в локальной системе
+      if ( ! file_exists( dirname( plugin_dir_path( __FILE__ ), 2) . '/plugins/' . $gl_['plugin_name'] . '/includes/' . $table_name . '/ajax.php' )){
+         display_message('file not found', sprintf(__( "File not found '%s'", 'wp-add-function' ), $gl_['plugin_name'] . '/includes/' . $table_name . '/ajax.php'), 'error');
+      }
+   } else {
       $ajax_php   = WP_PLUGIN_URL . '/'. $gl_['plugin_name'] . '/includes/' . $php_file;
-   //exit(_e($ajax_php));
+      // проверим существует ли файл в локальной системе
+      if ( ! file_exists( dirname( plugin_dir_path( __FILE__ ), 2) . '/plugins/' . $gl_['plugin_name'] . '/includes/' . $php_file )){
+         display_message('file not found', sprintf(__( "File not found '%s'", 'wp-add-function' ), $gl_['plugin_name'] . '/includes/' . $php_file), 'error');
+      }
+   }
    java_item($name, $ajax_php);
 }
 
 //===================================================
+// javascript select2
 function java_item($item_name, $ajax_php = ''  ){
 
    $place_item = __( 'Select value', 'wp-add-function' );
