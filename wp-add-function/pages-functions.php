@@ -406,11 +406,12 @@ function view_form( $plural_name_lang, $name_id ) {
 //====================================
 // Обработка действий POST формы
 function post_form_actions(){
-   global $gl_, $new_objectid;
+   global $gl_;
+
    // Получим текущую страницу (вместе с префиксом)
    $page    = get_page_name();
 
-   // Зафиксируем текущий paged, для дальнейшего возврата
+   // зафиксируем текущий paged (номер страницы), для дальнейшего возврата
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
    // pages - страница родитель для дальнейшего возврата
@@ -442,19 +443,20 @@ function post_form_actions(){
       display_message();
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
-   // ->>> на скорую руку, нужно исправить
+
    // Обработаем нажатие Save New
    $POST_SAVE_NEW = isset( $_POST['button_new_save'] );
-   if ( $pages == 'issuing-discount-cards' ){
+   // Если после записи нужно перенаправление на другую страницу
+   if ( ! empty( $pages )) {
       if ( ! empty( $POST_SAVE_NEW )) {
          if ( save_new_data() != 1 )
             // Если есть ошибки или сообщения покажем все
             display_message();
-            if ( ! empty( $pages ))
-               wp_redirect( get_admin_url( null, 'admin.php?page=' . $pages . '&holder-objectId=' . $new_objectid ));
-            else
-               wp_redirect( esc_url( get_admin_url( null, 'admin.php?page=' . $page )));
+         // Получим имя поля для возврата в pages
+         $field = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
+         wp_redirect( get_admin_url( null, 'admin.php?page=' . $pages . '&' . $field . '=' . $gl_[$field] ));
       }
+   // Обработка записи нового эелемента
    } else{
       if ( ! empty( $POST_SAVE_NEW )) {
          $pagep  =  isset( $_REQUEST['pagep'] ) ? wp_unslash( trim( $_REQUEST['pagep'] )) : '';
@@ -467,6 +469,7 @@ function post_form_actions(){
             wp_redirect(get_admin_url(null, 'admin.php?page=card-holders&paged=' . $pagep ));
       }
    }
+
    // Обработаем нажатие кнопки Сancel
    $POST_CANCEL = isset( $_POST['button_cancel'] );
    if ( ! empty( $POST_CANCEL )) {
