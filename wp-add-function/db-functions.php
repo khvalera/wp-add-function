@@ -4,13 +4,31 @@
 
 //=============================================
 // Функция добавляет фильтр в запрос
+// если в значении $array_filter первый знак *, то не используем таблицу
 function add_query_filter( $this_ ) {
    global $gl_;
 
+    // преобразуем filter в массив
+    $array_filter  = explode( "|", $this_ -> filter );
+
+    $array_value  = explode( "|", $this_ -> filter_value );
+
    // если есть фильтр по значению поля таблицы
    $query_filter = "";
-   if ( ! empty( $this_ -> filter) and ! empty( $this_ -> filter_value ) ) {
-      $query_filter = $gl_['db_table_name'] . "." . $this_ -> filter . " = " . $this_ -> filter_value;
+   foreach ( $array_filter as $index => $f ) {
+      if ( ! empty( $f ) and ! empty( $array_value[$index] ) ) {
+         // если первый знак *, то не используем таблицу
+         if ( $f[0] == "*"){
+            if ( !empty($query_filter))
+              $query_filter =  $query_filter . " AND ";
+            $query_filter =  $query_filter . substr($f, 1 ) . " = " . $array_value[$index];
+         } else {
+            if ( !empty($query_filter))
+              $query_filter =  $query_filter . " AND ";
+
+           $query_filter = $query_filter . $gl_['db_table_name'] . "." . $f . " = " . $array_value[$index];
+         }
+      }
    }
    return $query_filter;
 }
@@ -22,6 +40,8 @@ function add_query_filter( $this_ ) {
 // $id            - если нужно указать id явно
 function get_row_table_id( $db_table_name = '', $output_type = '', $id = '' ) {
    global $gl_;
+
+   print_r($db_table_name);
 
    if ( empty( $db_table_name ))
       $db_table_name = $gl_['db_table_name'];
