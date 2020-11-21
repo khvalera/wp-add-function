@@ -244,8 +244,26 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
                 }
                 // если используется фильтр
                 if ( ! empty( $filter ) and ! empty( $filter_value )){
+                   // преобразуем filter в массив
+                  $array_filter = explode( "|", $filter );
+                  $array_value  = explode( "|", $filter_value );
+                  $filter_str = "";
+                  foreach ( $array_filter as $index => $f ) {
+                     if ( ! empty( $f ) and ! empty( $array_value[$index] ) ) {
+                        // если первый знак *, то не используем таблицу
+                        if ( $f[0] == "*"){
+                           if ( !empty($filter_str))
+                              $filter_str =  $filter_str . " and ";
+                              $filter_str =  $filter_str . substr($f, 1 ) . " = " . $array_value[$index];
+                        } else {
+                           if ( !empty($query_filter))
+                              $filter_str =  $filter_str . " and ";
+                              $filter_str = $filter_str . $f . " = " . $array_value[$index];
+                        }
+                     }
+                   }
                    /* translators: %s: search keywords */
-                   printf( '<span class="subtitle" style="color: #336699;font-weight:bold">' . __( 'Filter by &#8220;%s=%s&#8221;', $gl_['plugin_name'] ) . '</span>', esc_html( $filter ), esc_html( $filter_value ) );
+                   printf( '<span class="subtitle" style="color: #336699;font-weight:bold">' . __( 'Filter by &#8220;%s&#8221;', $gl_['plugin_name'] ) . '</span>', esc_html( $filter_str ) );
                 }
              ?>
              <?php $class_table -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
