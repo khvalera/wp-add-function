@@ -253,11 +253,11 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
                         // если первый знак *, то не используем таблицу
                         if ( $f[0] == "*"){
                            if ( !empty($filter_str))
-                              $filter_str =  $filter_str . " and ";
+                              $filter_str =  $filter_str . " , ";
                               $filter_str =  $filter_str . substr($f, 1 ) . " = " . $array_value[$index];
                         } else {
                            if ( !empty($query_filter))
-                              $filter_str =  $filter_str . " and ";
+                              $filter_str =  $filter_str . " , ";
                               $filter_str = $filter_str . $f . " = " . $array_value[$index];
                         }
                      }
@@ -798,7 +798,7 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
 
 //===================================================
 // javascript select2
-function java_item($item_name, $ajax_php = ''  ){
+function java_item($item_name, $ajax_php = '', $params = '' ){
 
    $place_item = __( 'Select value', 'wp-add-function' );
    $class_name = '.item_' . $item_name;
@@ -807,7 +807,7 @@ function java_item($item_name, $ajax_php = ''  ){
 
       var class_name = '<?php echo $class_name; ?>';
       var place_item = '<?php echo $place_item; ?>';
-      var ajax_php   = '<?php echo $ajax_php; ?>';
+      var ajax_php   = '<?php echo $ajax_php . $params; ?>';
 
       $(class_name).select2({
            placeholder: {
@@ -825,8 +825,8 @@ function java_item($item_name, $ajax_php = ''  ){
                  results: data
                };
              },
-             cache: true
-           }
+           },
+           cache: true
       });
       // обработка выбора значения
       $(class_name).on("select2:select", function(e) {
