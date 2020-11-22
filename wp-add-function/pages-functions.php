@@ -720,7 +720,8 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 // $select_name   - строка или масив с именами полей из таблицы базы данных для добавления как name (по умолчанию name). пример: array("objectId", "holderName")
 // $php_file      - путь к ajax файлу (не обязательно)
 // $if_select     - имя поля для отбора, если не указано то используется objectId
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '') {
+// $params        - параметры для передачи в ajax_php (пример: "?f=objectId&v=1")
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '') {
    global $gl_;
 
    // Добавим 'tfield-' если в имени его нет
@@ -793,7 +794,7 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
          display_message('file not found', sprintf(__( "File not found '%s'", 'wp-add-function' ), $gl_['plugin_name'] . '/includes/' . $php_file), 'error');
       }
    }
-   java_item($name, $ajax_php);
+   java_item($name, $ajax_php, $params);
 }
 
 //===================================================
