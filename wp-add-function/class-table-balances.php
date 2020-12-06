@@ -45,6 +45,7 @@ class class_table_balances extends WP_List_Table {
         $this -> items = $data;
     }
 
+    //===========================================
     function __construct(){
         global $color_all, $color;
 
@@ -53,6 +54,7 @@ class class_table_balances extends WP_List_Table {
         // Получим страницу
         $this -> page   = get_page_name();
 
+        // номер страницы пагинации, используется для дальнейшего возврата
         $this -> paged = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
         // получим параметры настроек страницы

@@ -6,6 +6,26 @@
 global $form_message;
 $form_message = new WP_Error;
 
+// Описание механизма работы с страницами
+// $action - вариант открываемой формы (выполняемого действия):
+//           new,new1        - форма создания нового элемента
+//           edit            - форма редактирования выбранного элемента
+//           delete          - пометка на удаление выбранного элемента
+//           cancel-deletion - отмена пометки на удаление выбранного элемента
+//           history         - форма отображения истории выбранного элемента
+//           filter-deletion - форма для отображения помеченных для удаления элементов
+//
+// $page   - открываемая страница
+// $paged  - (paginated) номер страницы пагинации, используется для дальнейшего возврата для $page
+//
+// $p (parent) - (старый $pagep) - станица родитель, используется для дальнейшего возврата
+// $n (numbered) - это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
+//
+// $search_results (s) - отображение поиска ? нужно пересмотреть!!!
+//
+// $f (filter или field) - имя поля таблицы для запроса фильтраци
+// $v (filter value)     - значение для поля ($filter) для запроса фильтрации
+
 //====================================
 // Форма отчета
 // $name            - Имя формы (пример: balances)
@@ -22,7 +42,6 @@ function form_report( $name, $title, $description1, $description2 = '', $search_
 
    $search_results = isset( $_REQUEST['s'] )      ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
    $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
-
    $page   = get_page_name();
 
    $gl_['class-table'] -> prepare_items();
@@ -87,9 +106,8 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
    $search_results = isset( $_REQUEST['s'] )      ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
    $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
 
-   // Зафиксируем текущий paged, для дальнейшего возврата
+   // Зафиксируем текущий paged, (номер страницы пагинации), для дальнейшего возврата
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
-
    $page   = get_page_name();
 
    $gl_['class-table'] -> prepare_items();
@@ -101,6 +119,7 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
       $button1_action = $button1[0];
       $button1_name   = $button1[1];
    }
+
    ?>
    <div class="wrap">
    <div id="icon-users" class="icon32"><br/></div>
@@ -173,7 +192,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
       $search_box_name = __( "Search", "wp-add-function" );
    }
 
-   $search_results = isset( $_REQUEST['s'] )      ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+   $search_results = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
 
    // получим значение фильтра (передается имя поля таблицы)
    $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
@@ -183,10 +202,11 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
 
    $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
 
-   // Зафиксируем текущий paged, для дальнейшего возврата
+   // Зафиксируем текущий paged, (номер страницы пагинации), для дальнейшего возврата
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
-   $page   = get_page_name();
+   // Получим $page из $class_table
+   $page   = $class_table -> page;
 
    $class_table -> prepare_items();
    // если пустое значение $button1
@@ -268,6 +288,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
              ?>
              <?php $class_table -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
              <?php $class_table -> display() ?>
+
           </form>
        </p>
    </div>
@@ -288,8 +309,8 @@ function form_directory_history( $class_table, $title, $description, $search_box
    if ( $search_box_name == '' ) {
       $search_box_name = __( "Search", 'wp-add-function' );
    }
-   // Для возврата на прежде открытый номер родительской страницы получим pagep
-   $pagep = isset($_REQUEST['pagep']) ? max(0, intval($_REQUEST['pagep'] )) : 1;
+   // станица родитель, используется для дальнейшего возврата
+   $parent = isset($_REQUEST['p']) ? max(0, intval($_REQUEST['p'] )) : 1;
 
    $page  = get_page_name( $gl_['prefix'] );
 
@@ -299,7 +320,7 @@ function form_directory_history( $class_table, $title, $description, $search_box
     <div id="icon-users" class="icon32"><br/></div>
        <h2>
            <?php echo $title ?>
-           <a href="<?php echo sprintf('?page=%s&paged=%s', get_page_name(), $pagep );?>" class="page-title-action">
+           <a href="<?php echo sprintf('?page=%s&p=%s', get_page_name(), $parent );?>" class="page-title-action">
               <?php echo _e( 'Return', 'wp-add-function' ); ?>
            </a>
        </h2>
@@ -429,7 +450,7 @@ function post_form_actions(){
    // Получим текущую страницу (вместе с префиксом)
    $page    = get_page_name();
 
-   // зафиксируем текущий paged (номер страницы), для дальнейшего возврата
+   // Зафиксируем текущий paged, (номер страницы пагинации), для дальнейшего возврата
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
    // pages - страница родитель для дальнейшего возврата
@@ -477,14 +498,15 @@ function post_form_actions(){
    // Обработка записи нового эелемента
    } else{
       if ( ! empty( $POST_SAVE_NEW )) {
-         $pagep  =  isset( $_REQUEST['pagep'] ) ? wp_unslash( trim( $_REQUEST['pagep'] )) : '';
+         // Станица родитель, используется для дальнейшего возврата
+         $parent  =  isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
          save_new_data();
          // Если есть ошибки или сообщения покажем все
          display_message();
-         if ( empty( $pagep ))
+         if ( empty( $parent ))
             wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
          else
-            wp_redirect(get_admin_url(null, 'admin.php?page=card-holders&paged=' . $pagep ));
+            wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&p=' . $parent ));
       }
    }
 
@@ -1061,6 +1083,7 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
 
    // Если есть то получим значение ID
    $item_id      = isset( $_REQUEST[$name_id] ) ? wp_unslash( trim( $_REQUEST[$name_id] )) : '';
+   // Зафиксируем текущий paged, (номер страницы пагинации), для дальнейшего возврата 
    $paged        = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
    $column_value = '<font color="'. $color .'">' . $item[ $column_name ] . '</font>';
    $actions = array();
@@ -1094,7 +1117,8 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
 function column_button_filter( $this_table, $item, $column_name, $column_db, $page = '' ){
    global $color;
 
-   $pagep        = isset( $_REQUEST['paged'] )    ? wp_unslash( trim( $_REQUEST['paged'] )) : '';
+   // Станица родитель, используется для дальнейшего возврата
+   $parent = isset( $_REQUEST['p'] )    ? wp_unslash( trim( $_REQUEST['p'] )) : '';
 
    if ( empty( $page ))
       $page = $this_table -> page;
@@ -1102,8 +1126,8 @@ function column_button_filter( $this_table, $item, $column_name, $column_db, $pa
   // $column_name  = 'cardId';
    //$column_value = '<font color="'. $color .'">' . $item[ 'purseDiscountCount' ] . '</font>';
 //       $actions = array(
-//                'view'   => sprintf('<a href="?page=%s&pagep=%s&f=%s&v=%s">' . __( 'View', 'card-manager' ) . '</a>', 'cm-purses-discount', $pagep, $column_name, $item['objectId']),
-//                'add'    => sprintf('<a href="?page=%s&pagep=%s&action=%s&f=%s&v=%s">' . __( 'Add', 'card-manager' ) . '</a>', 'cm-purses-discount', $pagep, 'new', $column_name, $item[ 'objectId' ] ),
+//                'view'   => sprintf('<a href="?page=%s&p=%s&f=%s&v=%s">' . __( 'View', 'card-manager' ) . '</a>', 'cm-purses-discount', $parent, $column_name, $item['objectId']),
+//                'add'    => sprintf('<a href="?page=%s&p=%s&action=%s&f=%s&v=%s">' . __( 'Add', 'card-manager' ) . '</a>', 'cm-purses-discount', $parent, 'new', $column_name, $item[ 'objectId' ] ),
 //                );
 //       return sprintf('%1$s %2$s', $column_value, $this -> row_actions( $actions ) );
    //print_r( $column_db ); exit;
