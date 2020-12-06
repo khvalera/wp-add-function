@@ -449,12 +449,13 @@ function post_form_actions(){
 
    // Получим текущую страницу (вместе с префиксом)
    $page    = get_page_name();
-
-   // Зафиксируем текущий paged, (номер страницы пагинации), для дальнейшего возврата
+   // Получим номер страницы пагинации
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
-   // pages - страница родитель для дальнейшего возврата
-   $pages = isset( $_REQUEST['pages'] ) ? wp_unslash( trim( $_REQUEST['pages'] )) : '';
+   // parent - страница родитель для дальнейшего возврата
+   $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+   // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
+   $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
 
    // Кнопка применить для периода в журнале документов
    $POST_PERIOD = isset( $_POST['button_period'] );
@@ -486,27 +487,22 @@ function post_form_actions(){
    // Обработаем нажатие Save New
    $POST_SAVE_NEW = isset( $_POST['button_new_save'] );
    // Если после записи нужно перенаправление на другую страницу
-   if ( ! empty( $pages )) {
+   if ( ! empty( $parent )) {
       if ( ! empty( $POST_SAVE_NEW )) {
          if ( save_new_data() != 1 )
             // Если есть ошибки или сообщения покажем все
             display_message();
          // Получим имя поля для возврата в pages
          $field = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
-         wp_redirect( get_admin_url( null, 'admin.php?page=' . $pages . '&' . $field . '=' . $gl_[$field] ));
+         wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&' . $field . '=' . $gl_[$field] ));
       }
    // Обработка записи нового эелемента
    } else{
       if ( ! empty( $POST_SAVE_NEW )) {
-         // Станица родитель, используется для дальнейшего возврата
-         $parent  =  isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
          save_new_data();
          // Если есть ошибки или сообщения покажем все
          display_message();
-         if ( empty( $parent ))
-            wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
-         else
-            wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&p=' . $parent ));
+         wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
       }
    }
 
