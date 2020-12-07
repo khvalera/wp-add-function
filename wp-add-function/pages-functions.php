@@ -200,13 +200,18 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
    // для фильтра получим значение value
    $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
 
-   $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
-
-   // Зафиксируем текущий paged, (номер страницы пагинации), для дальнейшего возврата
-   $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
+   $action       = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
 
    // Получим $page из $class_table
    $page   = $class_table -> page;
+
+   // Зафиксируем текущий paged, (номер страницы пагинации)
+   $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
+
+   // parent - страница родитель для дальнейшего возврата
+   $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+   // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
+   $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
 
    $class_table -> prepare_items();
    // если пустое значение $button1
@@ -222,19 +227,25 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
    <div id="icon-users" class="icon32"><br/></div>
        <h2>
           <?php echo $title; ?>
-          <?php if ( current_user_can( $perm_button )){
-             ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button1_action);?>" class="page-title-action">
+          <?php
+             if ( current_user_can( $perm_button )){
+                ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button1_action);?>" class="page-title-action">
                    <?php echo _e($button1_name, $gl_['plugin_name'] );?>
-                </a>
-             <?php
-            // если не пустое значение $button2
-            if (! empty($button2)){
-               ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button2[0]);?>" class="page-title-action">
-                     <?php echo _e($button2[1], $gl_['plugin_name'] );?>
-                  </a>
-               <?php
-            }
-          } ?>
+                </a> <?php
+                // если не пустое значение $button2
+                if (! empty($button2)){
+                   ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button2[0]);?>" class="page-title-action">
+                      <?php echo _e($button2[1], $gl_['plugin_name'] );?>
+                   </a> <?php
+                }
+             }
+             // если есть страница родитель, выводим кнопку
+             if (! empty($parent)){
+                ?> <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
+                   <?php echo _e( 'Return', 'wp-add-function' ); ?>
+                </a> <?php
+             }
+          ?>
        </h2>
         <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:2px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
            <p>
