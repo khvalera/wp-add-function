@@ -22,6 +22,11 @@ function add_query_filter( $this_ ) {
             if ( !empty($query_filter))
               $query_filter =  $query_filter . " AND ";
             $query_filter =  $query_filter . substr($f, 1 ) . " = " . $array_value[$index];
+         // если есть точка, значит с полем указана таблица
+         } elseif ( strpos($f, ".") != false ){
+            if ( !empty($query_filter))
+              $query_filter =  $query_filter . " AND ";
+            $query_filter =  $query_filter . $f . " = " . $array_value[$index];
          } else {
             if ( !empty($query_filter))
               $query_filter =  $query_filter . " AND ";
