@@ -283,11 +283,11 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
                      if ( ! empty( $f ) and ! empty( $array_value[$index] ) ) {
                         // если первый знак *, то не используем таблицу
                         if ( $f[0] == "*"){
-                           if ( !empty($filter_str))
+                           if ( ! empty($filter_str))
                               $filter_str =  $filter_str . " , ";
                               $filter_str =  $filter_str . substr($f, 1 ) . " = " . $array_value[$index];
                         } else {
-                           if ( !empty($query_filter))
+                           if ( ! empty($filter_str))
                               $filter_str =  $filter_str . " , ";
                               $filter_str = $filter_str . $f . " = " . $array_value[$index];
                         }
