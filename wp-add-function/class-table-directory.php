@@ -121,8 +121,12 @@ class class_table_directory extends WP_List_Table {
           <form id="form-extra_tablenav" action="" method="post">
           <ul class="subsubsub">
              <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
-             <?php echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');?>
-             <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']); ?>
+             <a href="<?php echo sprintf('?page=%s&action=%s', $_REQUEST['page'], 'filter-deletion');?>" class="page-title-action" style="color: <?php echo $color_all['red'];?>">
+                  <?php echo _e("Marked for deletion", 'wp-add-function' );?>
+             </a>
+             <a href="<?php echo sprintf('?page=%s', $_REQUEST['page']);?>" class="page-title-action">
+                  <?php echo _e("Reset", 'wp-add-function' );?>
+             </a>
           </ul>
           </form>
        <?php
