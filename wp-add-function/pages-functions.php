@@ -874,6 +874,30 @@ function java_item($item_name, $ajax_php = '', $params = '' ){
    <?php
 }
 
+//====================================
+// Функция возвращает указанное значение фильтра по name
+function request_filter_value( $name ){
+   // получим значение фильтра (передается имя поля таблицы)
+   $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
+
+   // для фильтра получим значение value
+   $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
+
+   // если используется фильтр
+   if ( ! empty( $filter ) and ! empty( $filter_value )){
+      // преобразуем filter в массив
+      $array_filter = explode( "|", $filter );
+      $array_value  = explode( "|", $filter_value );
+      foreach ( $array_filter as $index => $f ) {
+          if ( ! empty( $f ) and ! empty( $array_value[$index] ) ) {
+             if ( $f == $name )
+                return $array_value[$index];
+          }
+      }
+   }
+   return "";
+}
+
 //===========================================
 // Функция заполняет масив gl_
 // singular_name      - имя в единственном числе
@@ -1205,7 +1229,6 @@ add_action( 'admin_head', function() {
    // внешний вид таблицы
    echo '<link rel="stylesheet" type="text/css" href="' . WPMU_PLUGIN_URL . '/wp-add-function/css/common.css' . '">';
 });
-
 
 //=============================================
 // Скрыть уведомление об обновлении WordPress с панели администрирования для обычных пользователей.
