@@ -503,10 +503,16 @@ function post_form_actions(){
          if ( save_new_data() != 1 )
             // Если есть ошибки или сообщения покажем все
             display_message();
-         // Получим имя поля для возврата в pages
-         $field = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
-         wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&' . $field . '=' . $gl_[$field] ));
+         // получим значение фильтра (передается имя поля таблицы)
+         $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
+
+         // для фильтра получим значение value
+         $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
+         if ( empty( $filter_value ))
+            $filter_value = $gl_[$filter];
+         wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&f=' . $filter . '&v=' . $filter_value ));
       }
+
    // Обработка записи нового эелемента
    } else{
       if ( ! empty( $POST_SAVE_NEW )) {
@@ -981,6 +987,7 @@ class add_admin_menu {
     public $parent_id;
     public $page;
 
+    //===================================================
     function __construct($item_name_menu, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_id ){
        $this -> item_name_menu      = $item_name_menu;
        $this -> item_Name_menu_lang = $item_Name_menu_lang;
@@ -993,6 +1000,7 @@ class add_admin_menu {
        $this -> add_menu();
     }
 
+    //===================================================
     public function add_menu(){
        add_action( 'admin_menu', array( $this, 'submenu_page'));
        //===================================================
@@ -1010,6 +1018,7 @@ class add_admin_menu {
        }
     }
 
+    //===================================================
     public function submenu_page(){
          // var_dump( $this);
          // Добавим страницу
