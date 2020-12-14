@@ -505,16 +505,16 @@ function post_form_actions(){
             display_message();
          // получим значение фильтра (передается имя поля таблицы)
          $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
-
          // для фильтра получим значение value
          $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
-         if ( empty( $filter_value ))
+         if ( (! empty( $filter )) and ( empty( $filter_value ))){
             $filter_value = $gl_[$filter];
-         wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&f=' . $filter . '&v=' . $filter_value ));
+            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&f=' . $filter . '&v=' . $filter_value ));
+         } else
+            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered ));
       }
-
    // Обработка записи нового эелемента
-   } else{
+   } else {
       if ( ! empty( $POST_SAVE_NEW )) {
          save_new_data();
          // Если есть ошибки или сообщения покажем все
