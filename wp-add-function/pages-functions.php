@@ -959,8 +959,8 @@ function get_page_name( $prefix = '' ){
 //===================================================
 // Функция добавляет пункты меню в admin_bar
 // $image - указывается относительно каталога плагинов
-function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $parent_id = '' ) {
-   if ( $parent_id == '' ) {
+function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $parent = '' ) {
+   if ( $parent == '' ) {
        $wp_admin_bar -> add_menu( array(
       'id'    => $id,
       'title' => admin_bar_menu_title_icon( plugins_url( $image ), $nama_lang),
@@ -968,8 +968,8 @@ function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $pare
        ));
    } else {
        $wp_admin_bar -> add_menu( array(
-       'parent' => $parent_id,           // параметр id из первой ссылки
-       'id'     => $id,                  // свой id, чтобы можно было добавить дочерние ссылки
+       'parent' => $parent,           // параметр id из первой ссылки
+       'id'     => $id,               // свой id, чтобы можно было добавить дочерние ссылки
        'title'  => admin_bar_menu_title_icon( plugins_url( $image ), $nama_lang),
        'href'   => esc_url(get_admin_url(null, 'admin.php?page=' . $page )),
        ));
@@ -984,7 +984,8 @@ function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $pare
 // $current_user_can    - отображать страницу для пользователя с правами
 // $plugin_name         - имя плагина
 // $plugin_prefix       - префикс плагина
-// $parent_id           - что за родитель?
+// $parent_page         - родительская страница (без префикса)
+// $position            - где отображать меню в admin_bar или admin_menu
 class add_admin_submenu_class_table {
     // объявление свойства
     public $item_name;
@@ -992,17 +993,18 @@ class add_admin_submenu_class_table {
     public $current_user_can;
     public $plugin_name;
     public $plugin_prefix;
-    public $parent_id;
+    public $parent_page;
     public $page;
 
     //===================================================
-    function __construct($item_name, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_id ){
+    function __construct($item_name, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_page, $position = 'admin_bar' ){
        $this -> item_name           = $item_name;
        $this -> item_Name_menu_lang = $item_Name_menu_lang;
        $this -> current_user_can    = $current_user_can;
        $this -> plugin_name         = $plugin_name;
        $this -> plugin_prefix       = $plugin_prefix;
-       $this -> parent_id           = $parent_id;
+       $this -> parent_page         = $parent_page;
+       $this -> position            = $position;
        // Что бы не было конфликтов с другими плагинами к странице добавим префикс
        $this -> page = $plugin_prefix . '-' . $item_name;
        $this -> add_menu();
@@ -1013,30 +1015,38 @@ class add_admin_submenu_class_table {
     public function add_menu(){
        add_action( 'admin_menu', array( $this, 'submenu_page'));
 
-       //===================================================
-       // Дабавим пункт меню справочника в admin_bar_menu (верхнюю панель), привяжем функцию к хуку
-       if ( current_user_can( $this->current_user_can )){
-            add_action( 'admin_bar_menu', function ( $wp_admin_bar ){
+       // если нужно отображать меню в admin_bar
+       if ( $this->position == 'admin_bar')
+          // добавим пункт меню справочника в admin_bar_menu (верхнюю панель), привяжем функцию к хуку
+          if ( current_user_can( $this->current_user_can )){
+               add_action( 'admin_bar_menu', function ( $wp_admin_bar ){
                   add_admin_bar_menu( $wp_admin_bar,
-                                         $this->plugin_prefix . '-' . $this->item_name . '-menu-id',
-                                         $this->plugin_name . '/images/' . $this->item_name . '-16x16.png',
-                                         $this->page,
-                                         __( $this->item_Name_menu_lang, $this->plugin_name ),
-                                         $this->plugin_prefix . '-' . $this->parent_id . '-menu-id' );
-            }, 90 );
-       }
+                                      $this->plugin_prefix . '-' . $this->item_name . '-menu-id',
+                                      $this->plugin_name . '/images/' . $this->item_name . '-16x16.png',
+                                      $this->page,
+                                      __( $this->item_Name_menu_lang, $this->plugin_name ),
+                                      $this->plugin_prefix . '-' . $this->parent_page . '-menu-id' );
+               }, 90 );
+          }
     }
 
     //===================================================
     // Добавляет дочернюю страницу (без отображения в меню) указанного главного меню в админ-панели.
     public function submenu_page(){
          // var_dump( $this);
-         // Добавим страницу
-         $hook_menu = add_submenu_page(null, $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
-                      function(){
-                         management_session($this->page);
-                         require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
-                     });
+         // добавим страницу в admin_bar
+         if ( $this->position == 'admin_bar')
+            $hook_menu = add_submenu_page(null, $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
+                            function(){
+                               management_session($this->page);
+                               require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
+                            });
+         else
+            $hook_menu = add_submenu_page($this->parent_page, $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
+                            function(){
+                               management_session($this->page);
+                               require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
+                            });
 
         // подключаемся к событию, когда страница загружена, но еще ничего не выводится
         add_action( "load-$hook_menu", function() {
