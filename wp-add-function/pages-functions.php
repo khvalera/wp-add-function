@@ -959,7 +959,7 @@ function get_page_name( $prefix = '' ){
 //===================================================
 // Функция добавляет пункты меню в admin_bar
 // $image - указывается относительно каталога плагинов
-function add_menu_wp_admin_bar($wp_admin_bar, $id, $image, $page, $nama_lang, $parent_id = '' ) {
+function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $parent_id = '' ) {
    if ( $parent_id == '' ) {
        $wp_admin_bar -> add_menu( array(
       'id'    => $id,
@@ -1008,7 +1008,7 @@ class add_admin_menu {
        // привяжем функцию к хуку
        if ( current_user_can( $this->current_user_can )){
             add_action( 'admin_bar_menu', function ( $wp_admin_bar ){
-                  add_menu_wp_admin_bar( $wp_admin_bar,
+                  add_admin_bar_menu( $wp_admin_bar,
                                          $this->plugin_prefix . '-' . $this->item_name_menu . '-menu-id',
                                          $this->plugin_name . '/images/' . $this->item_name_menu . '-16x16.png',
                                          $this->page,
