@@ -979,9 +979,11 @@ function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $pare
 //===================================================
 // Класс автоматизирует добавление дочерней страницы в меню
 // которая будет использовать class_table
+// $item_name_menu      - имя меню и страницы (без префикса) 
+// $item_Name_menu_lang - отображаемое имя страницы
 class add_admin_submenu_class_table {
     // объявление свойства
-    public $item_name_menu;
+    public $item_name;
     public $item_Name_menu_lang;
     public $current_user_can;
     public $plugin_name;
@@ -990,15 +992,15 @@ class add_admin_submenu_class_table {
     public $page;
 
     //===================================================
-    function __construct($item_name_menu, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_id ){
-       $this -> item_name_menu      = $item_name_menu;
+    function __construct($item_name, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_id ){
+       $this -> item_name           = $item_name;
        $this -> item_Name_menu_lang = $item_Name_menu_lang;
        $this -> current_user_can    = $current_user_can;
        $this -> plugin_name         = $plugin_name;
        $this -> plugin_prefix       = $plugin_prefix;
        $this -> parent_id           = $parent_id;
        // Что бы не было конфликтов с другими плагинами к странице добавим префикс
-       $this -> page = $plugin_prefix . '-' . $item_name_menu;
+       $this -> page = $plugin_prefix . '-' . $item_name;
        $this -> add_menu();
     }
 
@@ -1012,8 +1014,8 @@ class add_admin_submenu_class_table {
        if ( current_user_can( $this->current_user_can )){
             add_action( 'admin_bar_menu', function ( $wp_admin_bar ){
                   add_admin_bar_menu( $wp_admin_bar,
-                                         $this->plugin_prefix . '-' . $this->item_name_menu . '-menu-id',
-                                         $this->plugin_name . '/images/' . $this->item_name_menu . '-16x16.png',
+                                         $this->plugin_prefix . '-' . $this->item_name . '-menu-id',
+                                         $this->plugin_name . '/images/' . $this->item_name . '-16x16.png',
                                          $this->page,
                                          __( $this->item_Name_menu_lang, $this->plugin_name ),
                                          $this->plugin_prefix . '-' . $this->parent_id . '-menu-id' );
@@ -1029,7 +1031,7 @@ class add_admin_submenu_class_table {
          $hook_menu = add_submenu_page(null, $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
                       function(){
                          management_session($this->page);
-                         require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name_menu . '/page.php' );
+                         require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
                      });
 
         // подключаемся к событию, когда страница загружена, но еще ничего не выводится
@@ -1040,15 +1042,15 @@ class add_admin_submenu_class_table {
                     'label'   => __( 'Number of lines per page', 'wp-add-function' ),
                     'default' => 10,
                     // название опции, будет записано в метаполе юзера
-                    'option'  => $this->plugin_prefix .'_' . $this->item_name_menu . '_per_page',
+                    'option'  => $this->plugin_prefix .'_' . $this->item_name . '_per_page',
                     );
             add_screen_option( $option, $args );
             // создадим имя глобальной переменной
-            $perName = $this->plugin_prefix . '_class_table_' . str_replace('-','_', $this->item_name_menu);
+            $perName = $this->plugin_prefix . '_class_table_' . str_replace('-','_', $this->item_name);
             global ${$perName};
 
             // создадим класс по имени
-            $className = $this->plugin_prefix .'_class_table_' . str_replace('-','_', $this->item_name_menu);
+            $className = $this->plugin_prefix .'_class_table_' . str_replace('-','_', $this->item_name);
             ${$perName} = new $className;
         });
     }
