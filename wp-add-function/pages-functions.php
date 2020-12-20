@@ -979,8 +979,12 @@ function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $pare
 //===================================================
 // Класс автоматизирует добавление дочерней страницы в меню
 // которая будет использовать class_table
-// $item_name_menu      - имя меню и страницы (без префикса) 
+// $item_name_menu      - имя меню и страницы (без префикса)
 // $item_Name_menu_lang - отображаемое имя страницы
+// $current_user_can    - отображать страницу для пользователя с правами
+// $plugin_name         - имя плагина
+// $plugin_prefix       - префикс плагина
+// $parent_id           - что за родитель?
 class add_admin_submenu_class_table {
     // объявление свойства
     public $item_name;
