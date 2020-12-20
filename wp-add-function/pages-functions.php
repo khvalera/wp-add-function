@@ -977,7 +977,9 @@ function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $pare
 }
 
 //===================================================
-class add_admin_menu {
+// Класс автоматизирует добавление дочерней страницы в меню
+// которая будет использовать class_table
+class add_admin_submenu_class_table {
     // объявление свойства
     public $item_name_menu;
     public $item_Name_menu_lang;
@@ -1001,11 +1003,12 @@ class add_admin_menu {
     }
 
     //===================================================
+    // Функция которая выполняется при создании класса
     public function add_menu(){
        add_action( 'admin_menu', array( $this, 'submenu_page'));
+
        //===================================================
-       // Дабавим пункт меню справочника в верхнюю панель
-       // привяжем функцию к хуку
+       // Дабавим пункт меню справочника в admin_bar_menu (верхнюю панель), привяжем функцию к хуку
        if ( current_user_can( $this->current_user_can )){
             add_action( 'admin_bar_menu', function ( $wp_admin_bar ){
                   add_admin_bar_menu( $wp_admin_bar,
@@ -1019,6 +1022,7 @@ class add_admin_menu {
     }
 
     //===================================================
+    // Добавляет дочернюю страницу (без отображения в меню) указанного главного меню в админ-панели.
     public function submenu_page(){
          // var_dump( $this);
          // Добавим страницу
