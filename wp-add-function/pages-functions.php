@@ -992,8 +992,9 @@ function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $pare
 // $plugin_prefix       - префикс плагина
 // $parent_page         - родительская страница (без префикса)
 // $position            - где отображать меню в admin_bar или admin_menu
+// $set_fields          - массив с произвольными полями настройки страницы
 class add_admin_submenu_class_table {
-    // объявление свойства
+    // объявление свойств
     public $item_name;
     public $item_Name_menu_lang;
     public $current_user_can;
@@ -1001,9 +1002,10 @@ class add_admin_submenu_class_table {
     public $plugin_prefix;
     public $parent_page;
     public $page;
+    public $settings_fields;
 
     //===================================================
-    function __construct($item_name, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_page, $position = 'admin_bar' ){
+    function __construct($item_name, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_page, $position = 'admin_bar', $set_fields = array()){
        $this -> item_name           = $item_name;
        $this -> item_Name_menu_lang = $item_Name_menu_lang;
        $this -> current_user_can    = $current_user_can;
@@ -1011,6 +1013,7 @@ class add_admin_submenu_class_table {
        $this -> plugin_prefix       = $plugin_prefix;
        $this -> parent_page         = $parent_page;
        $this -> position            = $position;
+       $this -> set_fields          = $set_fields;
        // Что бы не было конфликтов с другими плагинами к странице добавим префикс
        $this -> page = $plugin_prefix . '-' . $item_name;
        $this -> add_menu();
@@ -1054,15 +1057,20 @@ class add_admin_submenu_class_table {
                                require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
                             });
 
+        // добавим поля в настройки страницы
         // подключаемся к событию, когда страница загружена, но еще ничего не выводится
         add_action( "load-$hook_menu", function() {
            $option = 'per_page';
-           $args = array(
+           // если не передали массив с полями настроек используем по умолчанию per page
+           if ( empty( $this->set_fields ))
+                $args = array(
                     'label'   => __( 'Number of lines per page', 'wp-add-function' ),
                     'default' => 10,
                     // название опции, будет записано в метаполе юзера
                     'option'  => $this->plugin_prefix .'_' . str_replace('-','_', $this->item_name) . '_per_page',
-                    );
+                );
+            else
+               $args = $this->set_fields;
             add_screen_option( $option, $args );
             // создадим имя глобальной переменной
             $perName = $this->plugin_prefix . '_class_table_' . str_replace('-','_', $this->item_name);
