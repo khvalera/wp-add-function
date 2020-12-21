@@ -1056,13 +1056,12 @@ class add_admin_submenu_class_table {
 
         // подключаемся к событию, когда страница загружена, но еще ничего не выводится
         add_action( "load-$hook_menu", function() {
-
            $option = 'per_page';
            $args = array(
                     'label'   => __( 'Number of lines per page', 'wp-add-function' ),
                     'default' => 10,
                     // название опции, будет записано в метаполе юзера
-                    'option'  => $this->plugin_prefix .'_' . $this->item_name . '_per_page',
+                    'option'  => $this->plugin_prefix .'_' . str_replace('-','_', $this->item_name) . '_per_page',
                     );
             add_screen_option( $option, $args );
             // создадим имя глобальной переменной

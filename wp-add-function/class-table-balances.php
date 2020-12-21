@@ -14,6 +14,7 @@ class class_table_balances extends WP_List_Table {
     public $search_value, $count_lines;
     public $color;
 
+    //===========================================
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
     Это важный метод на нем строиться вся таблица. Тут обычно устанавливаются все данные таблицы.
     Используйте в этом методе $this->set_pagination_args() и определите свойство $this->items - 
@@ -96,6 +97,7 @@ class class_table_balances extends WP_List_Table {
        add_action( 'admin_head', array( &$this, 'admin_header' ) );
     }
 
+    //===========================================
     // Дополнительные элементы управления таблицей, которые расположены между групповыми действиями и пагинацией.
     // Обычно сюда располагают фильтры данных таблицы.
     public function extra_tablenav( $which ){
@@ -113,47 +115,49 @@ class class_table_balances extends WP_List_Table {
        <?php
     }
 
-   /* Форма поиска
-    * Search form
-    * @since 1.8
-    * @param string $text
-    * @param int $input_id
-    * @uses _admin_search_query()
-    * @uses has_items()
-    * @uses submit_button()*/
-    public function search_box($text, $input_id) {
+    //===========================================
+    /* Форма поиска
+     * Search form
+     * @since 1.8
+     * @param string $text
+     * @param int $input_id
+     * @uses _admin_search_query()
+     * @uses has_items()
+     * @uses submit_button()*/
+     public function search_box($text, $input_id) {
 
-      if(empty($_REQUEST['s']) && !$this -> has_items()) {
-        return;
-      }
-      $input_id = $input_id.'-search-input';
-      if(!empty($_REQUEST['orderby'])) {
-        echo '<input type="hidden" name="orderby" value="'.esc_attr($_REQUEST['orderby']).'" />';
-      }
-      if(!empty($_REQUEST['order'])) {
-        echo '<input type="hidden" name="order" value="'.esc_attr($_REQUEST['order']).'" />';
-      }
-      if(!empty($_REQUEST['detached'])) {
-        echo '<input type="hidden" name="detached" value="'.esc_attr($_REQUEST['detached']).'" />';
-      }
-      ?>
-         <form id="<?php echo $this->page; ?>-filter" action="" method="get">
-           <p class="search-box">
-             <label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
-             <input type="hidden" id="page" name="page" value="<?php echo $this->page; ?>" />
-             <?php
-                if ( ! empty( $this -> action ))
-                   if ( $this -> action == 'filter-deletion' ){
-                      echo '<input type="hidden" id="action" name="action" value="filter-deletion" />';
-                 }
-             ?>
-             <input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
-             <?php submit_button($text, 'button', false, false, array('id' => 'search-submit')); ?>
-           </p>
-         </form>
-      <?php
-    }
+       if(empty($_REQUEST['s']) && !$this -> has_items()) {
+         return;
+       }
+       $input_id = $input_id.'-search-input';
+       if(!empty($_REQUEST['orderby'])) {
+         echo '<input type="hidden" name="orderby" value="'.esc_attr($_REQUEST['orderby']).'" />';
+       }
+       if(!empty($_REQUEST['order'])) {
+         echo '<input type="hidden" name="order" value="'.esc_attr($_REQUEST['order']).'" />';
+       }
+       if(!empty($_REQUEST['detached'])) {
+         echo '<input type="hidden" name="detached" value="'.esc_attr($_REQUEST['detached']).'" />';
+       }
+       ?>
+          <form id="<?php echo $this->page; ?>-filter" action="" method="get">
+            <p class="search-box">
+              <label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
+              <input type="hidden" id="page" name="page" value="<?php echo $this->page; ?>" />
+              <?php
+                 if ( ! empty( $this -> action ))
+                    if ( $this -> action == 'filter-deletion' ){
+                       echo '<input type="hidden" id="action" name="action" value="filter-deletion" />';
+                  }
+              ?>
+              <input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
+              <?php submit_button($text, 'button', false, false, array('id' => 'search-submit')); ?>
+            </p>
+          </form>
+       <?php
+     }
 
+    //===========================================
     function admin_header() {
        echo '<style type="text/css">';
        echo '.wp-list-table .column-num          { width: 6%; }';
@@ -163,11 +167,12 @@ class class_table_balances extends WP_List_Table {
        echo '</style>';
     }
 
-    /**********************************/
+    //===========================================
     function no_items() {
        _e( 'There is not a single value.', 'wp-add-function');
     }
 
+    //===========================================
     // Определяет столбцы, которые будут отображаться в вашей таблице
     // @return Array
     public function get_columns() {
@@ -184,10 +189,12 @@ class class_table_balances extends WP_List_Table {
         return $columns;
     }
 
+    //===========================================
     public function get_hidden_columns() {
         return array();
     }
 
+    //===========================================
     // Определить сортируемые столбцы.
     // @return Array
     public function get_sortable_columns() {
@@ -199,6 +206,7 @@ class class_table_balances extends WP_List_Table {
         return $sortable_columns;
     }
 
+    //===========================================
     // Заполняем данные таблицы
     public function table_data() {
        global $gl_;
@@ -273,6 +281,7 @@ class class_table_balances extends WP_List_Table {
        return $data;
     }
 
+    //===========================================
     /** Метод который отвечает за то что содержит отдельная ячейка колонки,
     когда для вывода её данных не определен отдельный метод.
     Можно так же это сделать в function column_имя колонки.
@@ -286,6 +295,7 @@ class class_table_balances extends WP_List_Table {
           return display_column_default( $item, $column_name, );
     }
 
+    //===========================================
     /** Позволяет сортировать данные по переменным, установленным в $_GET
      * @return Mixed */
     public function sort_data( $a, $b ) {
