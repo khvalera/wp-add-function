@@ -1262,7 +1262,7 @@ function display_column_picture( $item, $column_name, $picture ){
 // Добавим select2
 add_action( 'admin_enqueue_scripts', function() {
    //Our own JS file
-   wp_register_script( 'select_search', WPMU_PLUGIN_URL . '/wp-add-function/js/jquery.js', array( 'jquery' ), 1.9, false );
+   wp_register_script( 'select_search', WPMU_PLUGIN_URL . '/wp-add-function/js/jquery-3.5.1.js', array( 'jquery' ), 3.5, false );
    wp_enqueue_script( 'select_search' );
 
    //Select2 JS
