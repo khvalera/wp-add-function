@@ -1266,7 +1266,7 @@ add_action( 'admin_enqueue_scripts', function() {
    wp_enqueue_script( 'select_search' );
 
    //Select2 JS
-   wp_register_script( 'select2_js', WPMU_PLUGIN_URL . '/wp-add-function/js/select2.min.js', array( 'jquery' ), 4.0, false );
+   wp_register_script( 'select2_js', WPMU_PLUGIN_URL . '/wp-add-function/js/select2.js', array( 'jquery' ), 4.0, false );
    wp_enqueue_script( 'select2_js' );
 
    //Select2 CSS
