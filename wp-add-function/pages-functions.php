@@ -27,10 +27,11 @@ $form_message = new WP_Error;
 // $v (filter value)     - значение для поля ($filter) для запроса фильтрации
 
 //===========================================
-// Запись настройки пользователя (количество строк на странице и тд.)
+// Запись настроек пользователя на странице (количество строк на странице и тд.)
 add_filter( 'set-screen-option', function( $status, $option, $value ){
    return $value;
 }, 10, 3 );
+
 
 //====================================
 // Форма отчета
@@ -992,7 +993,7 @@ function add_admin_bar_menu($wp_admin_bar, $id, $image, $page, $nama_lang, $pare
 // $plugin_prefix       - префикс плагина
 // $parent_page         - родительская страница (без префикса)
 // $position            - где отображать меню в admin_bar или admin_menu
-// $set_fields          - массив с произвольными полями настройки страницы
+// $set_fields          - массив с полями настройки страницы (предусмотрено только per_page или layout_columns)
 class add_admin_submenu_class_table {
     // объявление свойств
     public $item_name;
@@ -1060,6 +1061,7 @@ class add_admin_submenu_class_table {
         // добавим поля в настройки страницы
         // подключаемся к событию, когда страница загружена, но еще ничего не выводится
         add_action( "load-$hook_menu", function() {
+           // для add_screen_option предусмотрено только per_page или layout_columns
            $option = 'per_page';
            // если не передали массив с полями настроек используем по умолчанию per page
            if ( empty( $this->set_fields ))
@@ -1071,9 +1073,19 @@ class add_admin_submenu_class_table {
                 );
             else
                $args = $this->set_fields;
-            add_screen_option( $option, $args );
+
+            // определим является массив многомерным
+            if ((count($args, COUNT_RECURSIVE) - count($args)) > 0){
+               foreach ( $args as $key => &$value ) {
+                  $option = $key;
+                  add_screen_option( $option, $value );
+               }
+            } else
+               add_screen_option( $option, $args );
+
             // создадим имя глобальной переменной
             $perName = $this->plugin_prefix . '_class_table_' . str_replace('-','_', $this->item_name);
+            // объявим переменную глобальной
             global ${$perName};
 
             // создадим класс по имени
