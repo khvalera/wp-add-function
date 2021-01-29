@@ -8,10 +8,9 @@
 function add_query_filter( $this_ ) {
    global $gl_;
 
-    // преобразуем filter в массив
-    $array_filter  = explode( "|", $this_ -> filter );
-
-    $array_value  = explode( "|", $this_ -> filter_value );
+   // преобразуем filter в массив
+   $array_filter = explode( "|", $this_ -> filter );
+   $array_value  = explode( "|", $this_ -> filter_value );
 
    // если есть фильтр по значению поля таблицы
    $query_filter = "";
@@ -20,16 +19,16 @@ function add_query_filter( $this_ ) {
          // если первый знак *, то не используем таблицу
          if ( $f[0] == "*"){
             if ( !empty($query_filter))
-              $query_filter =  $query_filter . " AND ";
+               $query_filter =  $query_filter . " AND ";
             $query_filter =  $query_filter . substr($f, 1 ) . " = " . $array_value[$index];
          // если есть точка, значит с полем указана таблица
          } elseif ( strpos($f, ".") != false ){
             if ( !empty($query_filter))
-              $query_filter =  $query_filter . " AND ";
+               $query_filter =  $query_filter . " AND ";
             $query_filter =  $query_filter . $f . " = " . $array_value[$index];
          } else {
             if ( !empty($query_filter))
-              $query_filter =  $query_filter . " AND ";
+               $query_filter =  $query_filter . " AND ";
 
            $query_filter = $query_filter . $gl_['db_table_name'] . "." . $f . " = " . $array_value[$index];
          }

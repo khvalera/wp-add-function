@@ -572,7 +572,19 @@ function post_array($prefix = 'tfield-'){
 
 //===================================================
 function post_get_str($par) {
-   return isset( $_POST[ $par ] )  ? wp_unslash( trim( $_POST[ $par ] )) : '';
+   return isset( $_POST[ $par ] ) ? wp_unslash( trim( $_POST[ $par ] )) : '';
+}
+
+//===================================================
+// Функция отображения кнопки
+// display_name - Отображаемое имя кнопки на форме
+// link_page    - Cсылка на страницу
+// style        - Стиль
+// class        - Класс
+function html_button($display_name, $link_page, $style = '', $class = 'page-title-action' ){
+   ?><a href="<?php echo $link_page;?>" class="<?php echo $class;?>">
+      <?php echo $display_name;?>
+   </a><?php
 }
 
 //===================================================
