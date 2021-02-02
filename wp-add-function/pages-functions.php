@@ -245,7 +245,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
                    </a> <?php
                 }
              }
-             // если есть страница родитель, выводим кнопку
+             // если есть страница родитель, выводим кнопку для возврата
              if (! empty($parent)){
                 ?> <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
                    <?php echo _e( 'Return', 'wp-add-function' ); ?>
@@ -464,9 +464,9 @@ function view_form( $plural_name_lang, $name_id ) {
 function post_form_actions(){
    global $gl_;
 
-   // Получим текущую страницу (вместе с префиксом)
+   // получим текущую страницу (вместе с префиксом)
    $page    = get_page_name();
-   // Получим номер страницы пагинации
+   // получим номер страницы пагинации
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
    // parent - страница родитель для дальнейшего возврата
@@ -474,7 +474,7 @@ function post_form_actions(){
    // это paged для $parent (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
    $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
 
-   // Кнопка применить для периода в журнале документов
+   // обработаем нажатие кнопки применить для периода в журнале документов
    $POST_PERIOD = isset( $_POST['button_period'] );
    if ( ! empty( $POST_PERIOD )) {
       // Заполним в массив данные значений полей формы
@@ -492,7 +492,7 @@ function post_form_actions(){
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
 
-   // Обработаем нажатие кнопки Save
+   // обработаем нажатие кнопки Save
    $POST_SAVE = isset( $_POST['button_save'] );
    if ( ! empty( $POST_SAVE )) {
       save_edit_data();
@@ -501,7 +501,7 @@ function post_form_actions(){
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
 
-   // Обработаем нажатие Save New
+   // обработаем нажатие кнопки Save New
    $POST_SAVE_NEW = isset( $_POST['button_new_save'] );
    // Если после записи нужно перенаправление на другую страницу
    if ( ! empty( $parent )) {
@@ -513,17 +513,14 @@ function post_form_actions(){
          $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
          // для фильтра получим значение value
          $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
-         echo "filter " . $filter;
-         echo " filter_value " . $filter_value;
-
-         exit;
          if ( (! empty( $filter )) and ( empty( $filter_value ))){
             $filter_value = $gl_[$filter];
             wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&f=' . $filter . '&v=' . $filter_value ));
          } else
             wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered ));
       }
-   // Обработка записи нового эелемента
+
+   // обработка записи нового эелемента
    } else {
       if ( ! empty( $POST_SAVE_NEW )) {
          save_new_data();
@@ -533,13 +530,17 @@ function post_form_actions(){
       }
    }
 
-   // Обработаем нажатие кнопки Сancel
+   // обработаем нажатие кнопки Сancel
    $POST_CANCEL = isset( $_POST['button_cancel'] );
    if ( ! empty( $POST_CANCEL )) {
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+      // если нужно вернуться на страницу родитель
+      if ( ! empty( $parent ))
+         wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered ));
+      else
+         wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
 
-   // Обработаем нажатие кнопки Delete
+   // обработаем нажатие кнопки Delete
    $POST_DELETE = isset( $_POST['button_delete'] );
    if ( ! empty( $POST_DELETE )) {
       delete_form_data();
