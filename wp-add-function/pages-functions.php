@@ -313,7 +313,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
 }
 
 //====================================
-// Форма списка истории
+// Форма списка с историей
 // $name            - Имя формы (пример: users)
 // $class_table     - Имя класса таблицы
 // $search_box_name - Имя кнопки поиска
@@ -326,10 +326,15 @@ function form_directory_history( $class_table, $title, $description, $search_box
    if ( $search_box_name == '' ) {
       $search_box_name = __( "Search", 'wp-add-function' );
    }
-   // станица родитель, используется для дальнейшего возврата
-   $parent = isset($_REQUEST['p']) ? max(0, intval($_REQUEST['p'] )) : 1;
 
+   // текущая страница
    $page  = get_page_name( $gl_['prefix'] );
+
+   // страница родитель на которую возвращаемся
+   $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+
+   // это paged для $parent (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
+   $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
 
    $class_table -> prepare_items();
    ?>
@@ -337,7 +342,7 @@ function form_directory_history( $class_table, $title, $description, $search_box
     <div id="icon-users" class="icon32"><br/></div>
        <h2>
            <?php echo $title ?>
-           <a href="<?php echo sprintf('?page=%s&p=%s', get_page_name(), $parent );?>" class="page-title-action">
+           <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
               <?php echo _e( 'Return', 'wp-add-function' ); ?>
            </a>
        </h2>
@@ -1196,7 +1201,7 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
             else
                $actions[$name] = sprintf( '<a href="?page=%s&paged=%s&s=%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $_REQUEST['page'], $paged, $item[ $column_name ]);
          } elseif ( $name == 'history' )
-               $actions[$name] = sprintf( '<a href="?page=%s&action=%s&paged=%s&'.$name_id.'=%s">' . __( 'History', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'history', $paged, $item[ $name_id ] );
+               $actions[$name] = sprintf( '<a href="?page=%s&action=%s&p=%s&n=%s&'.$name_id.'=%s">' . __( 'History', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'history', $_REQUEST['page'], $paged, $item[ $name_id ] );
          else
             if ( current_user_can( $perm ))
                if ( $name == 'cancel-deletion')
