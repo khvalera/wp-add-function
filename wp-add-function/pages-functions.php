@@ -26,6 +26,22 @@ $form_message = new WP_Error;
 // $f (filter или field) - имя поля таблицы $page или нескольких полей через разделитель |, для поля на форме или запроса фильтраци
 // $v (filter value)     - значение для поля ($filter) или нескольких полей через разделитель |, для поля на форме или запроса фильтраци
 
+// Функция подготавливает часть URL-запроса для передачи
+// параметров в открываемую форму страницы.
+// parameters -   массив с передаваемыми параметрами и значениями.
+//                пример: array('id'=>1, 'name'=> 'test', 'description' => '')
+// return_value - параметр или параметры форма (страница) должна вернуть (не обязателен).
+//                пример: array('id', 'name')
+// array_name   - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчания field).
+function http_values_query( $parameters, $return_value = '', $array_name = 'field'){
+    if ( ! empty( $return_value ))
+       $data = array($array_name => $parameters, 'return_value'=> $return_value);
+    else
+       $data = array($array_name => $parameters);
+
+   return http_build_query($data);
+}
+
 //===========================================
 // Запись настроек пользователя на странице (количество строк на странице и тд.)
 add_filter( 'set-screen-option', function( $status, $option, $value ){
@@ -524,7 +540,6 @@ function post_form_actions(){
          } else
             wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered ));
       }
-
    // обработка записи нового эелемента
    } else {
       if ( ! empty( $POST_SAVE_NEW )) {
