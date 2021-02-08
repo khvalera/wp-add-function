@@ -26,20 +26,44 @@ $form_message = new WP_Error;
 // $f (filter или field) - имя поля таблицы $page или нескольких полей через разделитель |, для поля на форме или запроса фильтраци
 // $v (filter value)     - значение для поля ($filter) или нескольких полей через разделитель |, для поля на форме или запроса фильтраци
 
+//===========================================
 // Функция подготавливает часть URL-запроса для передачи
 // параметров в открываемую форму страницы.
-// parameters -   массив с передаваемыми параметрами и значениями.
+// parameters   - массив с передаваемыми параметрами и значениями.
 //                пример: array('id'=>1, 'name'=> 'test', 'description' => '')
-// return_value - параметр или параметры форма (страница) должна вернуть (не обязателен).
+// return_value - параметр или параметры которые форма (страница) должна вернуть (не обязателен).
 //                пример: array('id', 'name')
 // array_name   - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчания field).
 function http_values_query( $parameters, $return_value = '', $array_name = 'field'){
     if ( ! empty( $return_value ))
-       $data = array($array_name => $parameters, 'return_value'=> $return_value);
+       $data = array($array_name => $parameters, 'return_value' => $return_value);
     else
        $data = array($array_name => $parameters);
 
    return http_build_query($data);
+}
+
+//===========================================
+// Функция возвращает массив значений созданных с помощью http_values_query.
+// field_name - вернуть определенное значение (если не указано возвращает все значения ввиде массива)
+function get_http_values( $field = '' ){
+   $array_fields = isset( $_GET["field"] ) ? $_GET["field"] : array();
+   // если нужно вернуть только одно значение
+   if ( ! empty( $field )){
+      if ( array_key_exists( $field, $array_fields ))
+         return $array_fields[$field];
+      else
+         return '';
+   } else
+      return $array_fields;
+}
+
+//===========================================
+// Функция возвращает значение которое должна вернуть форма.
+// Предварительно массив создается с помощью http_values_query.
+function get_http_return_value(){
+   $array_return_value = isset( $_GET["return_value"] ) ? $_GET["return_value"] : array();
+   return $array_return_value;
 }
 
 //===========================================
@@ -530,13 +554,22 @@ function post_form_actions(){
          if ( save_new_data() != 1 )
             // Если есть ошибки или сообщения покажем все
             display_message();
+
          // получим значение фильтра (передается имя поля таблицы)
-         $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
-         // для фильтра получим значение value
-         $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
-         if ( (! empty( $filter )) and ( empty( $filter_value ))){
-            $filter_value = $gl_[$filter];
-            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&f=' . $filter . '&v=' . $filter_value ));
+         // получим имя поля для возврата в parent
+         $return_field = get_http_return_value();
+         if (! empty( $return_field )) {
+            $return_value = $gl_[$return_field];
+            // получим все значения переданные раньше
+            $fields_values = get_http_values();
+            // добавим или заменим в массиве значение $return_field
+            $fields_values[$return_field] = $return_value;
+            // cоздадим часть ссылки
+            $link_values = http_values_query($fields_values);
+            if ( isset($_REQUEST['n']))
+               wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&' . $link_values ));
+            else
+               wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&' . $link_values ));
          } else
             wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered ));
       }
@@ -553,9 +586,16 @@ function post_form_actions(){
    // обработаем нажатие кнопки Сancel
    $POST_CANCEL = isset( $_POST['button_cancel'] );
    if ( ! empty( $POST_CANCEL )) {
+      // получим все значения переданные раньше
+      $fields_values = get_http_values();
+      // cоздадим часть ссылки
+      $link_values = http_values_query($fields_values);
       // если нужно вернуться на страницу родитель
       if ( ! empty( $parent ))
-         wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered ));
+         if ( isset($_REQUEST['n']))
+            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&' . $link_values));
+         else
+            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&' . $link_values));
       else
          wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
