@@ -46,8 +46,9 @@ function http_values_query( $parameters, $return_value = '', $array_name = 'fiel
 //===========================================
 // Функция возвращает массив значений созданных с помощью http_values_query.
 // field_name - вернуть определенное значение (если не указано возвращает все значения ввиде массива)
-function get_http_values( $field = '' ){
-   $array_fields = isset( $_GET["field"] ) ? $_GET["field"] : array();
+// array_name - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчания field).
+function get_http_values( $field = '', $array_name = 'field'){
+   $array_fields = isset( $_GET[$array_name] ) ? $_GET[$array_name] : array();
    // если нужно вернуть только одно значение
    if ( ! empty( $field )){
       if ( array_key_exists( $field, $array_fields ))
