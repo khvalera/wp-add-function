@@ -74,6 +74,96 @@ add_filter( 'set-screen-option', function( $status, $option, $value ){
 }, 10, 3 );
 
 //====================================
+// Класс для создания диалоговой формы
+class class_dialogue_form {
+    // глобальные переменные
+    // включить или отключить описания
+    public $display_description = false;
+    public $display_controls = false;
+    // переменные описания
+    public $plugin_name, $image_file, $description_text1, $description_text2;
+    // переменные элементы управления
+    public $item_controls;
+
+    //====================================
+    function __construct(){
+    }
+
+   //====================================
+   // plugin_name - имя плагина
+   // image_file  - путь к файлу с изображением относительно каталога плагина
+   // description_text1 - описание №1
+   // description_text2 - описание №2
+   public function description($plugin_name, $image_file, $description_text1 = '', $description_text2 = '' ){
+      ?>
+         <div class="wrap">
+            <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px; width:550px;">
+              <p>
+                 <table class="wpuf-table">
+                    <th>
+                       <?php echo '<img src="' . WP_PLUGIN_URL . '/' . $plugin_name . $image_file . '"name="picture_title"
+                       align="top" hspace="2" width="48" height="48" border="2"/>'; ?>
+                    </th>
+                    <td>
+                       <p>
+                          <h3>
+                             <?php echo $description_text1; ?>
+                          </h3>
+                       </p>
+                       <p>
+                          <h4>
+                             <?php echo $description_text2; ?>
+                          </h4>
+                       </p>
+                    </td>
+                 </table>
+            </div>
+         </div>
+      <?php
+   }
+
+   //====================================
+   public function controls(){
+      ?>
+         <div class="wrap">
+            <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px; width:550px;">
+              <p>
+                  <table class="form-table">
+                     <?php call_user_func( $this -> item_controls); ?>
+                  </table>
+               </p>
+            </div>
+         </div>
+      <?php
+   }
+
+   //====================================
+   // функция которая выполняется при создании класса
+   // отображение формы
+   public function form_display(){
+      ?>
+         <form action="" method="post">
+            <div class="wrap">
+               <h2>
+                  <?php echo $this -> header_text; ?>
+               </h2>
+            </div>
+            <?php if ( $this -> display_description )
+                     $this -> description($this -> plugin_name, $this -> image_file, $this -> description_text1, $this -> description_text2);
+            $this -> controls();
+            ?>
+            <!- это закрытие form из form_header: -->
+            <p>
+               <?php call_user_func( $this -> footer_button); ?>
+            </p>
+         </form>
+         <!- почему то не закрыт div id="wpbody-content" нужно разобраться -->
+         </div>
+      <?php
+   }
+}
+
+//====================================
 // Форма отчета
 // $name            - Имя формы (пример: balances)
 // $title           - Заглавие
