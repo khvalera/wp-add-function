@@ -80,7 +80,7 @@ add_filter( 'set-screen-option', function( $status, $option, $value ){
 // link_page        - адрес документа, на который следует перейти
 // current_user_can - права пользователя
 class class_href_button {
-     public $button_text;
+     public $text;
      public $title;
      public $link_page;
      public $current_user_can;
