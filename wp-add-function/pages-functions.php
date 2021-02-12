@@ -91,7 +91,7 @@ class class_href_button {
        $this -> title            = $title;
        $this -> link_page        = $link_page;
        $this -> current_user_can = $current_user_can;
-       $this -> show();
+       $this -> display();
     }
 
     //====================================
@@ -109,7 +109,7 @@ class class_href_button {
     }
 
     //====================================
-    public function show(){
+    public function display(){
        // если не установлены права пользователя
        if ( empty( $this -> current_user_can ))
           $this -> button();
