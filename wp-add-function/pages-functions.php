@@ -74,6 +74,46 @@ add_filter( 'set-screen-option', function( $status, $option, $value ){
 }, 10, 3 );
 
 //====================================
+// Класс для создания кнопки с текстом (используется совместно с class_dialogue_form)
+// button_text      - текст на кнопке
+// button_title     - всплывающая подсказка
+// label_text       - текст метки перед кнопкой
+// link_page        - адрес документа, на который следует перейти
+// current_user_can - права пользователя
+class class_href_text_button {
+     public $button_text;
+     public $button_title;
+     public $link_page;
+     public $label_text;
+     public $current_user_can;
+
+    //====================================
+    function __construct( $button_text = '', $link_page = '', $button_title = '', $label_text = '', $current_user_can = '' ){
+       $this -> button_text      = $button_text;
+       $this -> button_title     = $button_title;
+       $this -> link_page        = $link_page;
+       $this -> current_user_can = $current_user_can;
+       $this -> label_text       = $label_text;
+       $this -> display();
+    }
+
+    //====================================
+    // отображение
+    public function display(){
+       ?>
+          <tr class="rich-editing-wrap">
+             <th scope="row"><?php echo $this -> label_text; ?></th>
+                <td>
+                   <?php
+                      $class_href_button = new class_href_button( $this -> button_text, $this -> link_page, $this -> button_title, $this -> current_user_can );
+                   ?>
+                </td>
+          </tr>
+      <?php
+   }
+}
+
+//====================================
 // Класс используется для создания кнопки с использованием href
 // text             - текст на кнопке
 // title            - всплывающая подсказка
@@ -194,9 +234,13 @@ class class_dialogue_form {
                    <?php echo $this -> header_text; ?>
                 </h2>
              </div>
-             <?php if ( $this -> display_description )
-                      $this -> description($this -> plugin_name, $this -> image_file, $this -> description_text1, $this -> description_text2);
-             $this -> controls();
+             <?php
+             // если нужно вывести description
+             if ( $this -> display_description )
+                $this -> description($this -> plugin_name, $this -> image_file, $this -> description_text1, $this -> description_text2);
+             // если нужно вывести controls
+             if ( $this -> display_controls )
+                $this -> controls();
              ?>
              <!- это закрытие form из form_header: -->
              <p>
