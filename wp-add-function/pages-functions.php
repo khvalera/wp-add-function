@@ -744,19 +744,20 @@ function post_form_actions(){
          $link_action = isset($_REQUEST['a']) ? "&action=" . wp_unslash( trim( $_REQUEST['a'])) : '';
       }
 
-      // получим все значения переданные раньше
-      $fields_values = get_http_values();
-      // получим все значения переданные раньше и cоздадим часть ссылки
-      $link_values = ! isset( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
-
       if ( save_new_data() != 1 )
          // Если есть ошибки или сообщения покажем все
          display_message();
+
+      // получим все значения переданные раньше
+      $fields_values = get_http_values();
 
      // получим имя поля для возврата в parent
      $return_field = get_http_return_value();
      if (! empty( $return_field ))
         $fields_values[$return_field] = $gl_[$return_field];
+
+      // получим все значения переданные раньше и cоздадим часть ссылки
+      $link_values = ! empty( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
 
       // если нужно вернуться на страницу родитель
       wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
@@ -780,7 +781,7 @@ function post_form_actions(){
       // получим все значения переданные раньше
       $fields_values = get_http_values();
       // получим все значения переданные раньше и cоздадим часть ссылки
-      $link_values = ! isset( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
+      $link_values = ! empty( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
 
       // если нужно вернуться на страницу родитель
       wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
