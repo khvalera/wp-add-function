@@ -691,14 +691,16 @@ function post_form_actions(){
    global $gl_;
 
    // получим текущую страницу (вместе с префиксом)
-   $page    = get_page_name();
+   $page   = get_page_name();
    // получим номер страницы пагинации
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
    // parent - страница родитель для дальнейшего возврата
    $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
    // это paged для $parent (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
-   $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
+   $parent_n  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
+   // это action для $parent (используется для дальнейшего возврата на action родительской страницы)
+   $parent_a  = isset($_REQUEST['a']) ? max(0, intval($_REQUEST['a'] )) : '';
 
    // обработаем нажатие кнопки применить для периода в журнале документов
    $POST_PERIOD = isset( $_POST['button_period'] );
@@ -729,56 +731,59 @@ function post_form_actions(){
 
    // обработаем нажатие кнопки Save New
    $POST_SAVE_NEW = isset( $_POST['button_new_save'] );
-   // Если после записи нужно перенаправление на другую страницу
-   if ( ! empty( $parent )) {
-      if ( ! empty( $POST_SAVE_NEW )) {
-         if ( save_new_data() != 1 )
-            // Если есть ошибки или сообщения покажем все
-            display_message();
-
-         // получим значение фильтра (передается имя поля таблицы)
-         // получим имя поля для возврата в parent
-         $return_field = get_http_return_value();
-         if (! empty( $return_field )) {
-            $return_value = $gl_[$return_field];
-            // получим все значения переданные раньше
-            $fields_values = get_http_values();
-            // добавим или заменим в массиве значение $return_field
-            $fields_values[$return_field] = $return_value;
-            // cоздадим часть ссылки
-            $link_values = http_values_query($fields_values);
-            if ( isset($_REQUEST['n']))
-               wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&' . $link_values ));
-            else
-               wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&' . $link_values ));
-         } else
-            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered ));
+   if ( ! empty( $POST_SAVE_NEW )) {
+      // подготовим ссылку
+      // если указан $parent используем его в противном случае $page
+      if ( empty( $parent )){
+         $link_page = "?page=" . $page;
+         $link_paged  = isset($_REQUEST['paged']) ? "&paged=" . wp_unslash( trim( $_REQUEST['paged'])) : '';
+         $link_action = '';
+      } else {
+         $link_page   = "?page=" . $parent;
+         $link_paged  = isset($_REQUEST['n']) ? "&paged=" . wp_unslash( trim( $_REQUEST['n'])) : '';
+         $link_action = isset($_REQUEST['a']) ? "&action=" . wp_unslash( trim( $_REQUEST['a'])) : '';
       }
-   // обработка записи нового эелемента
-   } else {
-      if ( ! empty( $POST_SAVE_NEW )) {
-         save_new_data();
+
+      // получим все значения переданные раньше
+      $fields_values = get_http_values();
+      // получим все значения переданные раньше и cоздадим часть ссылки
+      $link_values = ! isset( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
+
+      if ( save_new_data() != 1 )
          // Если есть ошибки или сообщения покажем все
          display_message();
-         wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
-      }
+
+     // получим имя поля для возврата в parent
+     $return_field = get_http_return_value();
+     if (! empty( $return_field ))
+        $fields_values[$return_field] = $gl_[$return_field];
+
+      // если нужно вернуться на страницу родитель
+      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
    }
 
    // обработаем нажатие кнопки Сancel
    $POST_CANCEL = isset( $_POST['button_cancel'] );
    if ( ! empty( $POST_CANCEL )) {
+      // подготовим ссылку
+      // если указан $parent используем его в противном случае $page
+      if ( isset( $parent )){
+         $link_page = "?page=" . $page;
+         $link_paged  = isset($_REQUEST['paged']) ? "&paged=" . wp_unslash( trim( $_REQUEST['paged'])) : '';
+         $link_action = '';
+      } else {
+         $link_page   = "?page=" . $parent;
+         $link_paged  = isset($_REQUEST['n']) ? "&paged=" . wp_unslash( trim( $_REQUEST['n'])) : '';
+         $link_action = isset($_REQUEST['a']) ? "&action=" . wp_unslash( trim( $_REQUEST['a'])) : '';
+      }
+
       // получим все значения переданные раньше
       $fields_values = get_http_values();
-      // cоздадим часть ссылки
-      $link_values = http_values_query($fields_values);
+      // получим все значения переданные раньше и cоздадим часть ссылки
+      $link_values = ! isset( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
+
       // если нужно вернуться на страницу родитель
-      if ( ! empty( $parent ))
-         if ( isset($_REQUEST['n']))
-            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&paged=' . $numbered . '&' . $link_values));
-         else
-            wp_redirect( get_admin_url( null, 'admin.php?page=' . $parent . '&' . $link_values));
-      else
-         wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
    }
 
    // обработаем нажатие кнопки Delete
