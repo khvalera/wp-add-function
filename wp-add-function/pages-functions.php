@@ -161,13 +161,14 @@ class class_href_button {
 
 //====================================
 // Класс для создания диалоговой формы
+// description1_font_size и description2_font_size - размер шрифта для текста описаний
 class class_dialogue_form {
     // глобальные переменные
     // включить или отключить описания
     public $display_description = false;
     public $display_controls = false;
     // переменные описания
-    public $plugin_name, $image_file, $description_text1, $description_text2;
+    public $plugin_name, $image_file, $description_text1, $description_text2, $description1_font_size, $description2_font_size ;
     // переменные элементы управления
     public $item_controls;
 
@@ -181,6 +182,11 @@ class class_dialogue_form {
     // description_text1 - описание №1
     // description_text2 - описание №2
     public function description($plugin_name, $image_file, $description_text1 = '', $description_text2 = '' ){
+       if ( empty( $this -> description1_font_size ))
+          $this -> description1_font_size = 'h3';
+       if ( empty( $this -> description2_font_size ))
+          $this -> description2_font_size = 'h4';
+
        ?>
           <div class="wrap">
              <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px; width:550px;">
@@ -192,14 +198,14 @@ class class_dialogue_form {
                      </th>
                      <td>
                         <p>
-                           <h3>
+                           <?php echo '<' . $this -> description1_font_size . '>'; ?>
                               <?php echo $description_text1; ?>
-                           </h3>
+                           <?php echo '</' . $this -> description1_font_size . '>'; ?>
                         </p>
                         <p>
-                           <h4>
+                           <?php echo '<' . $this -> description2_font_size . '>'; ?>
                               <?php echo $description_text2; ?>
-                           </h4>
+                           <?php echo '</' . $this -> description2_font_size . '>'; ?>
                         </p>
                      </td>
                   </table>
