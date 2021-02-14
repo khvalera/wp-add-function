@@ -699,8 +699,6 @@ function post_form_actions(){
    $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
    // это paged для $parent (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
    $parent_n  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
-   // это action для $parent (используется для дальнейшего возврата на action родительской страницы)
-   $parent_a  = isset($_REQUEST['a']) ? max(0, intval($_REQUEST['a'] )) : '';
 
    // обработаем нажатие кнопки применить для периода в журнале документов
    $POST_PERIOD = isset( $_POST['button_period'] );
@@ -712,10 +710,10 @@ function post_form_actions(){
       // Получим id пользователя WP
       $user_id = get_current_user_id();
       if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date1', $data['date1'] ) ){
-        echo "Поле не обновлено";
+        add_message('insufficient_permission', sprintf(__( "Failed to update meta field for user %s", 'card-manager' ), "date1"), 'error');
       }
       if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date2', $data['date2'] ) ){
-        echo "Поле не обновлено";
+        add_message('insufficient_permission', sprintf(__( "Failed to update meta field for user %s", 'card-manager' ), "date2"), 'error');
       }
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
@@ -768,10 +766,15 @@ function post_form_actions(){
    if ( ! empty( $POST_CANCEL )) {
       // подготовим ссылку
       // если указан $parent используем его в противном случае $page
-      if ( isset( $parent )){
+      if ( empty( $parent )){
          $link_page = "?page=" . $page;
          $link_paged  = isset($_REQUEST['paged']) ? "&paged=" . wp_unslash( trim( $_REQUEST['paged'])) : '';
          $link_action = '';
+         // сдалаем исключение для некоторых action
+         //if ( isset($_REQUEST['action']) ){
+        //    if (( $_REQUEST['action'] == "new") or ( $_REQUEST['action'] == "new1"))
+        //       $link_action = '';
+        // }
       } else {
          $link_page   = "?page=" . $parent;
          $link_paged  = isset($_REQUEST['n']) ? "&paged=" . wp_unslash( trim( $_REQUEST['n'])) : '';
@@ -804,6 +807,9 @@ function post_form_actions(){
       display_message();
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
+
+   // Если есть ошибки или сообщения покажем все
+   display_message();
 }
 
 //===========================================

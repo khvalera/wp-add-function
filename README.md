@@ -1,6 +1,7 @@
 Mu-Plugins for WP with additional common features.
 
 ====================================
+
 class_href_button - Used to create a button using href.
 
   Class variables:
