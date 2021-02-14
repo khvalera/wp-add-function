@@ -1213,18 +1213,18 @@ function gl_form_array( $plugin_name, $prefix, $singular_name, $db_table_name = 
 
    // Глобальный массив для передачи значений внутри формы
    $gl_ = array( 'singular_name'         => $singular_name,
-                           'singular_name_lang'    => __(str_replace('-',' ', $singular_name), $plugin_name ),
-                           'singular_Name_lang'    => __(ucfirst( str_replace('-',' ', $singular_name)), $plugin_name ),
-                           'plural_name'           => $plural_name,
-                           'plural_name_lang'      => __(str_replace('-',' ', $plural_name), $plugin_name ),
-                           'search_box_name'       => $search_box_name,
-                           'picture_title'         => "/images/".$plural_name."-64x64.png",
-                           'class-table'           => $class_table,
-                           'db_table_name'         => $db_table_name,
-                           'db_table_name_history' => 'history_' . $db_table_name,
-                           'plugin_name'           => $plugin_name,
-                           'prefix'                => $prefix
-                         );
+                 'singular_name_lang'    => __(str_replace('-',' ', $singular_name), $plugin_name ),
+                 'singular_Name_lang'    => __(ucfirst( str_replace('-',' ', $singular_name)), $plugin_name ),
+                 'plural_name'           => $plural_name,
+                 'plural_name_lang'      => __(str_replace('-',' ', $plural_name), $plugin_name ),
+                 'search_box_name'       => $search_box_name,
+                 'picture_title'         => "/images/".$plural_name."-64x64.png",
+                 'class-table'           => $class_table,
+                 'db_table_name'         => $db_table_name,
+                 'db_table_name_history' => 'history_' . $db_table_name,
+                 'plugin_name'           => $plugin_name,
+                 'prefix'                => $prefix
+               );
    return $gl_;
 }
 
@@ -1547,6 +1547,11 @@ add_action( 'admin_enqueue_scripts', function() {
    //Select2 CSS
    wp_register_style( 'select2_css', WPMU_PLUGIN_URL . '/wp-add-function/css/select2.min.css' );
    wp_enqueue_style( 'select2_css' );
+
+   // language select2
+   $user_lang = substr(get_user_locale(),0, 2);
+   wp_register_script( 'select2_lang', WPMU_PLUGIN_URL . '/wp-add-function/js/i18n/' . $user_lang .'.js' );
+   wp_enqueue_script( 'select2_lang' );
 
 }, -100 );
 
