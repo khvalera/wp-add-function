@@ -33,14 +33,15 @@ $form_message = new WP_Error;
 //                пример: array('id'=>1, 'name'=> 'test', 'description' => '')
 // return_value - параметр или параметры которые форма (страница) должна вернуть (не обязателен).
 //                пример: array('id', 'name')
-// array_name   - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчания field).
-function http_values_query( $parameters, $return_value = '', $array_name = 'field'){
+// array_name   - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчанию field).
+// first_char   - первый знак в запросе (по умолчанию &)
+function http_values_query( $parameters, $return_value = '', $array_name = 'field', $first_char = '&'){
     if ( ! empty( $return_value ))
        $data = array($array_name => $parameters, 'return_value' => $return_value);
     else
        $data = array($array_name => $parameters);
 
-   return http_build_query($data);
+    return empty(http_build_query($data)) ? '' : $first_char . http_build_query($data);
 }
 
 //===========================================
@@ -760,8 +761,8 @@ function post_form_actions(){
      if (! empty( $return_field ))
         $fields_values[$return_field] = $gl_[$return_field];
 
-      // получим все значения переданные раньше и cоздадим часть ссылки
-      $link_values = ! empty( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
+      // cоздадим часть ссылки
+      $link_values = http_values_query( $fields_values );
 
       // если нужно вернуться на страницу родитель
       wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
@@ -789,8 +790,8 @@ function post_form_actions(){
 
       // получим все значения переданные раньше
       $fields_values = get_http_values();
-      // получим все значения переданные раньше и cоздадим часть ссылки
-      $link_values = ! empty( $fields_values ) ? '&' . http_values_query( $fields_values ) : '';
+      // cоздадим часть ссылки
+      $link_values = http_values_query( $fields_values );
 
       // если нужно вернуться на страницу родитель
       wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
