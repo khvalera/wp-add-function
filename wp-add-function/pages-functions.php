@@ -28,18 +28,18 @@ $form_message = new WP_Error;
 
 //===========================================
 // Функция подготавливает часть URL-запроса для передачи
-// параметров в открываемую форму страницы.
+// параметров в открываемую форму страницы. (аналог _http_build_query)
 // parameters   - массив с передаваемыми параметрами и значениями.
 //                пример: array('id'=>1, 'name'=> 'test', 'description' => '')
 // return_value - параметр или параметры которые форма (страница) должна вернуть (не обязателен).
 //                пример: array('id', 'name')
-// array_name   - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчанию field).
+// key_name     - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчанию field).
 // first_char   - первый знак в запросе (по умолчанию &)
-function http_values_query( $parameters, $return_value = '', $array_name = 'field', $first_char = '&'){
+function http_values_query( $parameters, $return_value = '', $key_name = 'field', $first_char = '&'){
     if ( ! empty( $return_value ))
-       $data = array($array_name => $parameters, 'return_value' => $return_value);
+       $data = array($key_name => $parameters, 'return_value' => $return_value);
     else
-       $data = array($array_name => $parameters);
+       $data = array($key_name => $parameters);
 
     return empty(http_build_query($data)) ? '' : $first_char . http_build_query($data);
 }
@@ -47,9 +47,9 @@ function http_values_query( $parameters, $return_value = '', $array_name = 'fiel
 //===========================================
 // Функция возвращает массив значений созданных с помощью http_values_query.
 // field_name - вернуть определенное значение (если не указано возвращает все значения ввиде массива)
-// array_name - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчания field).
-function get_http_values( $field = '', $array_name = 'field'){
-   $array_fields = isset( $_GET[$array_name] ) ? $_GET[$array_name] : array();
+// key_name - имя массива которое потом можно открыть с помощью $_GET[$key_name](не обязателен, по умолчания field).
+function get_http_values( $field = '', $key_name = 'field'){
+   $array_fields = isset( $_GET[$key_name] ) ? $_GET[$key_name] : array();
    // если нужно вернуть только одно значение
    if ( ! empty( $field )){
       if ( array_key_exists( $field, $array_fields ))
