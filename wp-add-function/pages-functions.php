@@ -975,10 +975,11 @@ function html_textarea( $display_name, $name, $cols = '', $rows = '', $value='' 
 // $value_id      - id выбранной позиции
 // $value_name    - имя выбранной позиции
 // $extra_options - дополнительные параметры (стиль тут тоже указывается style="width:352px;")
-function html_select($display_name, $name, $array_data, $extra_options = '', $value_id = '', $id_field = '', $value_field = '' ){
+function html_select($display_name, $name, $array_data, $extra_options = '', $value_id = '', $id_field = '', $value_field = '', $not_tfield = '' ){
    // Добавим 'tfield-' если в имени его нет
-   if ( strpos( $name, 'tfield-' ) === false )
-      $name = 'tfield-' . $name;
+   if ( $not_tfield != true )
+      if ( strpos( $name, 'tfield-' ) === false )
+         $name = 'tfield-' . $name;
    // если стиль не указан используем width:352px;
    if ( stripos($extra_options, 'style') == false )
       $extra_options = $extra_options . ' style="width:352px;" ';
@@ -1039,12 +1040,13 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 // $php_file      - путь к ajax файлу (не обязательно)
 // $if_select     - имя поля для отбора, если не указано то используется objectId
 // $params        - параметры для передачи в ajax_php (пример: "?f=objectId&v=1")
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '') {
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '', $not_tfield = '' ) {
    global $gl_;
 
    // Добавим 'tfield-' если в имени его нет
-   if ( strpos( $name, 'tfield-' ) === false )
-      $name = 'tfield-' . $name;
+   if ( $not_tfield != true )
+      if ( strpos( $name, 'tfield-' ) === false )
+         $name = 'tfield-' . $name;
    // если указан $select_id
    if ( ! empty( $select_id )) {
       // если функция указана в $gl_ используем ее
