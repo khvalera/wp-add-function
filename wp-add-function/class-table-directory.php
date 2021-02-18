@@ -255,24 +255,22 @@ class class_table_directory extends WP_List_Table {
                                  " . $db_table_name . ".modify  LIKE    '%" . $this-> search_value . "%' OR
                                  " . $db_table_name . ".commentary LIKE '%" . $this-> search_value . "%' )";
 
-       // определим общее количество строк
-       $this -> count_lines = $gl_['db'] -> get_var( "SELECT COUNT(*)
-                                                      FROM " . $db_table_name . "
-                                                      WHERE
-                                                         $query_additional
-                                                         $query_search
-                                                     ");
-       // массив с данными таблицы
-       $array_table = $gl_['db'] -> get_results("SELECT
-                                                     " . $db_table_name . ".*
-                                                  FROM
-                                                     " . $db_table_name . "
-                                                  WHERE
-                                                     $query_additional
-                                                     $query_search
-                                                  LIMIT " . $this->per_page . " OFFSET " . $this->paged_query
-                                                 , ARRAY_A );
-       $data = $array_table;
+       // часть запроса для определения общего количества строк
+       $query_count  = "SELECT COUNT(*)";
+
+       // часть запроса для формирования полей
+       $query_select = "SELECT " . $db_table_name . ".*";
+
+       // часть запроса с общей структурой
+       $query_structure = "FROM " . $db_table_name . "
+                           WHERE ";
+
+       // Получим количество строк в таблице запроса
+       $this -> count_lines = $gl_['db'] -> get_var( $query_count . " " . $query_structure . " " . $query_additional . " " . $query_search );
+
+       // Получим данные
+       $data = $gl_['db'] -> get_results( $query_select . " " . $query_structure . " " . $query_additional . " " . $query_search .
+                                          " LIMIT " . $this -> per_page . " OFFSET " . $this -> paged_query, ARRAY_A);
        return $data;
     }
 

@@ -10,7 +10,7 @@ if ( ! class_exists('WP_List_Table')) {
 // Таблица журнала документов
 class class_table_journal_doc extends WP_List_Table {
     // глобальные переменные
-    public $action, $page, $paged, $per_page;
+    public $action, $page, $paged, $per_page, $paged_query;
     public $search_value, $count_lines;
     public $color;
     public $journal_date1, $journal_date2;
@@ -36,6 +36,7 @@ class class_table_journal_doc extends WP_List_Table {
         $total_items = $this -> count_lines;
         // количество страниц
         $total_pages = ceil($total_items / $this -> per_page);
+        //print_r($this -> paged_query);
         $this -> set_pagination_args( array(
             'total_items' => $total_items,
             'total_pages' => $total_pages,
@@ -67,6 +68,9 @@ class class_table_journal_doc extends WP_List_Table {
         // если сохраненной настройки нет, берем по умолчанию
         if( empty ( $this -> per_page))
            $this -> per_page = $per_page_option['default'];
+
+        // номер текущей страницы для запроса
+        $this -> paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
 
         // получим id пользователя WP
         $user_id = get_current_user_id();
@@ -242,8 +246,6 @@ class class_table_journal_doc extends WP_List_Table {
     public function table_data() {
        global $gl_;
 
-       // Номер текущей страницы для запроса
-       $paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
        // Если есть то получим значение ID
        $id = isset( $_REQUEST['id'] ) ? wp_unslash( trim( $_REQUEST['id'] )) : '';
 
@@ -270,33 +272,28 @@ class class_table_journal_doc extends WP_List_Table {
                                  " . $db_table_name . ".modify  LIKE    '%" . $this-> search_value . "%' OR
                                  " . $db_table_name . ".commentary LIKE '%" . $this-> search_value . "%' )";
 
-       // Определим общее количество строк
-       $this -> count_lines = $gl_['db'] -> get_var( "SELECT COUNT(*)
-                                                      FROM " . $db_table_name . "
-                                                         LEFT JOIN storages ON " . $db_table_name . ".id_storage = storages.id
-                                                         LEFT JOIN products ON " . $db_table_name . ".id_product = products.id
-                                                      WHERE
-                                                         $query_additional
-                                                         $query_search
-                                                     ");
-       // Массив с данными таблицы
-       $query = "SELECT
-                    " . $db_table_name . ".*,
-                    storages.name   AS storage,
-                    products.name   AS product
-                 FROM
-                    " . $db_table_name . "
-                    LEFT JOIN storages ON " . $db_table_name . ".id_storage = storages.id
-                    LEFT JOIN products ON " . $db_table_name . ".id_product = products.id
-                 WHERE
-                    (" . $db_table_name . ".doc_date >= '" . $this -> journal_date1 . "' AND
-                    " . $db_table_name . ".doc_date <= '" . $this -> journal_date2  . "') AND
-                    $query_additional
-                    $query_search
-                    LIMIT " . $this->per_page . " OFFSET $paged_query";
-       //print($query); exit;
-       $array_table = $gl_['db'] -> get_results( $query, ARRAY_A );
-       $data = $array_table;
+       // часть запроса для определения общего количества строк
+       $query_count  = "SELECT COUNT(*)";
+
+       // часть запроса для формирования полей
+       $query_select = "SELECT " . $db_table_name . ".*,
+                               storages.name   AS storage,
+                               products.name   AS product";
+       // часть запроса с общей структурой
+       $query_structure = "FROM
+                              " . $db_table_name . "
+                              LEFT JOIN storages ON " . $db_table_name . ".id_storage = storages.id
+                              LEFT JOIN products ON " . $db_table_name . ".id_product = products.id
+                           WHERE
+                              (" . $db_table_name . ".doc_date >= '" . $this -> journal_date1 . "' AND
+                               " . $db_table_name . ".doc_date <= '" . $this -> journal_date2  . "') AND ";
+
+       // Получим количество строк в таблице запроса
+       $this -> count_lines = $gl_['db'] -> get_var( $query_count . " " . $query_structure . " " . $query_additional . " " . $query_search );
+
+       // Получим данные
+       $data = $gl_['db'] -> get_results( $query_select . " " . $query_structure . " " . $query_additional . " " . $query_search .
+                                          " LIMIT " . $this -> per_page . " OFFSET " . $this -> paged_query, ARRAY_A );
        return $data;
     }
 
