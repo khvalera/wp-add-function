@@ -1378,7 +1378,9 @@ class add_admin_submenu_class_table {
 // Управление сессиями
 function management_session($sess) {
    //обработка сессий
-   session_start();
+   if ( ! session_id() ) {
+      session_start();
+   }
    if ( session_id() != $sess) {
       if (session_status() == PHP_SESSION_ACTIVE) {
           session_destroy();
