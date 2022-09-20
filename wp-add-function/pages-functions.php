@@ -28,7 +28,7 @@ $form_message = new WP_Error;
 
 //===========================================
 // Функция подготавливает часть URL-запроса для передачи
-// параметров в открываемую форму страницы. (аналог _http_build_query)
+// параметров в открываемую форму страницы. (аналог http_build_query)
 // parameters   - массив с передаваемыми параметрами и значениями.
 //                пример: array('id'=>1, 'name'=> 'test', 'description' => '')
 // return_value - параметр или параметры которые форма (страница) должна вернуть (не обязателен).
@@ -46,7 +46,7 @@ function http_values_query( $parameters, $return_value = '', $key_name = 'field'
 
 //===========================================
 // Функция возвращает массив значений созданных с помощью http_values_query.
-// field_name - вернуть определенное значение (если не указано возвращает все значения ввиде массива)
+// field    - вернуть определенное значение (если не указано возвращает все значения ввиде массива)
 // key_name - имя массива которое потом можно открыть с помощью $_GET[$key_name](не обязателен, по умолчания field).
 function get_http_values( $field = '', $key_name = 'field'){
    $array_fields = isset( $_GET[$key_name] ) ? $_GET[$key_name] : array();
@@ -58,6 +58,34 @@ function get_http_values( $field = '', $key_name = 'field'){
          return '';
    } else
       return $array_fields;
+}
+
+//=============================================
+// Функция отображает массив фильтра в виде строки
+function filter_str( $array_filter ) {
+
+   $str_filter = "";
+   foreach ( $array_filter as $field => $value ) {
+      if (! empty( $value )) {
+         // если в имени поля первый знак *, то не используем таблицу
+         if ( $field[0] == "*"){
+            if ( !empty($str_filter))
+               $str_filter =  $str_filter . " ";
+            $str_filter =  $str_filter . substr($field, 1 ) . " = " . $value;
+         // если есть точка, значит с полем указана таблица
+         } elseif ( strpos($field, ".") != false ){
+            if ( !empty($str_filter))
+               $str_filter =  $str_filter . " ";
+            $str_filter =  $str_filter . $field . " = " . $value;
+         } else {
+            if ( !empty($str_filter))
+               $str_filter =  $str_filter . " ";
+
+           $str_filter = $str_filter . " " . $field . " = " . $value;
+         }
+      }
+   }
+   return $str_filter;
 }
 
 //===========================================
@@ -428,13 +456,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
 
    $search_results = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
 
-   // получим значение фильтра (передается имя поля таблицы)
-   $filter = isset( $_REQUEST['f'] ) ? wp_unslash( trim( $_REQUEST['f'] )) : '';
-
-   // для фильтра получим значение value
-   $filter_value = isset( $_REQUEST['v'] ) ? wp_unslash( trim( $_REQUEST['v'] )) : '';
-
-   $action       = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
+   $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
 
    // Получим $page из $class_table
    $page   = $class_table -> page;
@@ -443,7 +465,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
 
    // parent - страница родитель для дальнейшего возврата
-   $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+   $parent    = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
    // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
    $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
 
@@ -508,25 +530,8 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
                    printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $search_results ) );
                 }
                 // если используется фильтр
-                if ( ! empty( $filter ) and ! empty( $filter_value )){
-                   // преобразуем filter в массив
-                  $array_filter = explode( "|", $filter );
-                  $array_value  = explode( "|", $filter_value );
-                  $filter_str = "";
-                  foreach ( $array_filter as $index => $f ) {
-                     if ( ! empty( $f ) and ! empty( $array_value[$index] ) ) {
-                        // если первый знак *, то не используем таблицу
-                        if ( $f[0] == "*"){
-                           if ( ! empty($filter_str))
-                              $filter_str =  $filter_str . " , ";
-                              $filter_str =  $filter_str . substr($f, 1 ) . " = " . $array_value[$index];
-                        } else {
-                           if ( ! empty($filter_str))
-                              $filter_str =  $filter_str . " , ";
-                              $filter_str = $filter_str . $f . " = " . $array_value[$index];
-                        }
-                     }
-                   }
+                if ( ! empty( $class_table -> filter )){
+                   $filter_str = filter_str( $class_table -> filter );
                    /* translators: %s: search keywords */
                    printf( '<span class="subtitle" style="color: #336699;font-weight:bold">' . __( 'Filter by &#8220;%s&#8221;', $gl_['plugin_name'] ) . '</span>', esc_html( $filter_str ) );
                 }
@@ -1474,9 +1479,9 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
 }
 
 //===================================================
-// Функция формирующая в указанном поле кнопку фильтр для class-wp-list-table
+// Функция формирует для class-wp-list-table в указанном поле кнопку фильтр
 // $this_table  - переменная с сылкой на объект class-wp-list-table
-// $item        - массив с структурой и значениями выделенной строки строки таблицы
+// $item        - массив с структурой и значениями выделенной строки таблицы
 // $column_name - имя выбранного поля таблицы
 // $column_db   - имя поля таблицы базы данных
 // $page        - имя страницы на которую переходим (если не выбрано то текущая)
@@ -1488,20 +1493,17 @@ function column_button_filter( $this_table, $item, $column_name, $column_db, $pa
 
    if ( empty( $page ))
       $page = $this_table -> page;
-// => [page] 
-  // $column_name  = 'cardId';
-   //$column_value = '<font color="'. $color .'">' . $item[ 'purseDiscountCount' ] . '</font>';
-//       $actions = array(
-//                'view'   => sprintf('<a href="?page=%s&p=%s&f=%s&v=%s">' . __( 'View', 'card-manager' ) . '</a>', 'cm-purses-discount', $parent, $column_name, $item['objectId']),
-//                'add'    => sprintf('<a href="?page=%s&p=%s&action=%s&f=%s&v=%s">' . __( 'Add', 'card-manager' ) . '</a>', 'cm-purses-discount', $parent, 'new', $column_name, $item[ 'objectId' ] ),
-//                );
-//       return sprintf('%1$s %2$s', $column_value, $this -> row_actions( $actions ) );
-   //print_r( $column_db ); exit;
-   // если нет значения
-   //if ( $item[ $column_name ] = '')
-//      return '';
+
+   // Получим фильтр который уже используется
+   $old_filter = get_http_values( '', 'f');
+
+   // Добавим выбранное значение к уже существующему фильтру
+   $old_filter[$column_db] = $item[ $column_db ];
+
+   $filter = http_values_query( $old_filter, '', 'f');
    $column_value = '<font color="'. $color . '">' . $item[ $column_name ] . '</font>';
-   $actions      = array( 'filter' => sprintf('<a href="?page=%s&f=%s&v=%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $page, $column_db, $item[ $column_db ]));
+   $actions      = array( 'filter' => sprintf('<a href="?page=%s%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $page, $filter));
+
    return sprintf('%1$s %2$s', $column_value, $this_table -> row_actions($actions) );
 }
 

@@ -3,34 +3,28 @@
 // Функции для работы с базой данных
 
 //=============================================
-// Функция добавляет фильтр в запрос
-// если в значении $array_filter первый знак *, то не используем таблицу
-function add_query_filter( $this_ ) {
+// Функция создает часть запроса MySQL для фильтра
+function add_query_filter( $array_filter ) {
    global $gl_;
 
-   // преобразуем filter в массив
-   $array_filter = explode( "|", $this_ -> filter );
-   $array_value  = explode( "|", $this_ -> filter_value );
-
-   // если есть фильтр по значению поля таблицы
    $query_filter = "";
-   foreach ( $array_filter as $index => $f ) {
-      if ( ! empty( $f ) and ! empty( $array_value[$index] ) ) {
-         // если первый знак *, то не используем таблицу
-         if ( $f[0] == "*"){
+   foreach ( $array_filter as $field => $value ) {
+      if (! empty( $value )) {
+         // если в имени поля первый знак *, то не используем таблицу
+         if ( $field[0] == "*"){
             if ( !empty($query_filter))
                $query_filter =  $query_filter . " AND ";
-            $query_filter =  $query_filter . substr($f, 1 ) . " = " . $array_value[$index];
+            $query_filter =  $query_filter . substr($field, 1 ) . " = " . $value;
          // если есть точка, значит с полем указана таблица
-         } elseif ( strpos($f, ".") != false ){
+         } elseif ( strpos($field, ".") != false ){
             if ( !empty($query_filter))
                $query_filter =  $query_filter . " AND ";
-            $query_filter =  $query_filter . $f . " = " . $array_value[$index];
+            $query_filter =  $query_filter . $field . " = " . $value;
          } else {
             if ( !empty($query_filter))
                $query_filter =  $query_filter . " AND ";
 
-           $query_filter = $query_filter . $gl_['db_table_name'] . "." . $f . " = " . $array_value[$index];
+           $query_filter = $query_filter . $gl_['db_table_name'] . "." . $field . " = " . $value;
          }
       }
    }
