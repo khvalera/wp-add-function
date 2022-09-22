@@ -112,13 +112,13 @@ TABLE OF CONTENTS:
 /* ----------------------------------------------------------------------------
   2.0 - Default Button Style
 ---------------------------------------------------------------------------- */
-
+/*  заменил vertical-align: top;*/
 .wp-core-ui .button,
 .wp-core-ui .button-secondary {
 	color: #2271b1;
 	border-color: #2271b1;
 	background: #f6f7f7;
-	vertical-align: top;
+	vertical-align: revert;
 }
 
 .wp-core-ui p .button {

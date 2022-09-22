@@ -103,6 +103,14 @@ add_filter( 'set-screen-option', function( $status, $option, $value ){
 }, 10, 3 );
 
 //====================================
+// Функция отображения простой кнопки
+function button_action( string $text = null, string $type = 'primary', string $name = 'submit' ){
+  ?>
+     <button type="submit" id="<?php echo $name;?>" name="<?php echo $name;?>" class="page-title-action"><?php echo $text;?></button>
+  <?php
+}
+
+//====================================
 // Класс для создания кнопки с текстом (используется совместно с class_dialogue_form)
 // button_text      - текст на кнопке
 // button_title     - всплывающая подсказка
