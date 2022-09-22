@@ -1581,6 +1581,8 @@ add_action( 'admin_head', function() {
    echo '<link rel="stylesheet" type="text/css" href="' . WPMU_PLUGIN_URL . '/wp-add-function/css/forms.css' .  '">';
    // внешний вид таблицы
    echo '<link rel="stylesheet" type="text/css" href="' . WPMU_PLUGIN_URL . '/wp-add-function/css/common.css' . '">';
+   // внешний вид кнопок
+   echo '<link rel="stylesheet" type="text/css" href="' . WPMU_PLUGIN_URL . '/wp-add-function/css/buttons.css' . '">';
 });
 
 //=============================================

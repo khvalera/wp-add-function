@@ -608,7 +608,7 @@ code {
 	line-height: 1;
 }
 
-/* top: -3px; - опустил кнопку ниже */
+/* top: -3px; - опустил кнопку ниже и border-radius: 2px;*/
 .wrap .add-new-h2, /* deprecated */
 .wrap .add-new-h2:active, /* deprecated */
 .wrap .page-title-action,
@@ -620,7 +620,7 @@ code {
 	text-decoration: none;
 	border: none;
 	border: 1px solid #ccc;
-	border-radius: 2px;
+	border-radius: 4px;
 	background: #f7f7f7;
 	text-shadow: none;
 	font-weight: 600;
