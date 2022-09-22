@@ -104,9 +104,9 @@ add_filter( 'set-screen-option', function( $status, $option, $value ){
 
 //====================================
 // Функция отображения простой кнопки
-function button_action( string $text = null, string $type = 'primary', string $name = 'submit' ){
+function button_action( string $text = null, string $name = 'submit', string $type = 'submit' ){
   ?>
-     <button type="submit" id="<?php echo $name;?>" name="<?php echo $name;?>" class="page-title-action"><?php echo $text;?></button>
+     <button type="<?php echo $type;?>" id="<?php echo $name;?>" name="<?php echo $name;?>" class="page-title-action"><?php echo $text;?></button>
   <?php
 }
 
