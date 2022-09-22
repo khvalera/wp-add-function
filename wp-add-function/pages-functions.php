@@ -742,10 +742,12 @@ function post_form_actions(){
    $POST_FILTER = isset( $_POST['button_filter'] );
    if ( ! empty( $POST_FILTER )) {
       // Заполним в массив данные значений полей формы
-      $data = post_array();
-      print_r($data);
-      echo "Работает!!! :)";
-      //wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+      $array_data = post_array();
+
+      // cоздадим часть ссылки
+      $link = http_values_query( $array_data, '', 'f');
+
+      wp_redirect( get_admin_url( null, 'admin.php?page=' . $page .$link));
    }
 
    // обработаем нажатие кнопки Save
