@@ -869,7 +869,7 @@ function post_get_str($par) {
 // link_page    - Cсылка на страницу
 // style        - Стиль
 // class        - Класс
-function html_button($display_name, $link_page, $style = '', $class = 'page-title-action' ){
+function button_html($display_name, $link_page, $style = '', $class = 'page-title-action' ){
    ?><a href="<?php echo $link_page;?>" class="<?php echo $class;?>">
       <?php echo $display_name;?>
    </a><?php
