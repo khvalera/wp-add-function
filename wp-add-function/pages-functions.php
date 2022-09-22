@@ -870,9 +870,11 @@ function post_get_str($par) {
 // style        - Стиль
 // class        - Класс
 function button_html($display_name, $link_page, $style = '', $class = 'page-title-action' ){
-   ?><a href="<?php echo $link_page;?>" class="<?php echo $class;?>">
-      <?php echo $display_name;?>
-   </a><?php
+   ?>
+      <a href="<?php echo $link_page;?>" class="<?php echo $class;?>">
+         <?php echo $display_name;?>
+      </a>
+   <?php
 }
 
 //===================================================
@@ -892,17 +894,17 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
    $array_extra_options = explode( "|", $extra_options );
    // Проверим что бы переданное количество значений совпадало
    if ( count ( $array_type ) <> count ( $array_name ) or count ( $array_name ) <> count ( $array_display_name )) {
-      display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
+      display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'wp-add-function'  ), 'error');
    }
 
    if ( ! empty( $value ) )
       if ( count ( $array_name ) <> count ( $array_value )) {
-         display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
+         display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'wp-add-function'  ), 'error');
       }
 
    if ( ! empty( $extra_options ) )
       if ( count ( $array_name ) <> count ( $array_extra_options )) {
-         display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'operative-accounting' ), 'error');
+         display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'wp-add-function'  ), 'error');
       }
    if ( ! empty( $onchange ) ){
       $onchange = 'onchange="' . $onchange.'"';
