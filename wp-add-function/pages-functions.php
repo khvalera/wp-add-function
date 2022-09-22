@@ -730,6 +730,16 @@ function post_form_actions(){
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
    }
 
+   // обработаем нажатие кнопки фильтр для справочника
+   $POST_FILTER = isset( $_POST['button_filter'] );
+   if ( ! empty( $POST_FILTER )) {
+      // Заполним в массив данные значений полей формы
+      $data = post_array();
+      print_r($data);
+      echo "Работает!!! :)";
+      //wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+   }
+
    // обработаем нажатие кнопки Save
    $POST_SAVE = isset( $_POST['button_save'] );
    if ( ! empty( $POST_SAVE )) {
@@ -1553,7 +1563,8 @@ add_action( 'admin_enqueue_scripts', function() {
    wp_enqueue_script( 'select2_js' );
 
    //Select2 CSS
-   wp_register_style( 'select2_css', WPMU_PLUGIN_URL . '/wp-add-function/css/select2.min.css' );
+   //wp_register_style( 'select2_css', WPMU_PLUGIN_URL . '/wp-add-function/css/select2.min.css' );
+   wp_register_style( 'select2_css', WPMU_PLUGIN_URL . '/wp-add-function/css/select2-mod.css' );
    wp_enqueue_style( 'select2_css' );
 
    // language select2
