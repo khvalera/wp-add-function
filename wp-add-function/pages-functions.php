@@ -447,13 +447,23 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
 //====================================
 // Відобразити кнопки на формі
 // $buttons - задается в виде массива, пример: array('new' => 'New item', 'new1' => 'New item 1')
-function display_form_buttons($buttons = array(), $perm_button, $page, $paged, $parent){
+function display_form_buttons($buttons = array(), $perm_button, $page ){
   global $gl_;
+
+  // Зафиксируем текущий paged, (номер страницы пагинации)
+  $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
+
+  // parent - страница родитель для дальнейшего возврата
+  $parent    = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+
+  // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
+  $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
 
   $n = 0;
   if ( current_user_can( $perm_button )){
      foreach ($buttons as $button_action => $button_name) {
-        ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
+        ?>
+           <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
               <?php echo _e($button_name, $gl_['plugin_name'] );?>
            </a>
         <?php
@@ -503,15 +513,6 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
    // Получим $page из $class_table
    $page   = $class_table -> page;
 
-   // Зафиксируем текущий paged, (номер страницы пагинации)
-   $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
-
-   // parent - страница родитель для дальнейшего возврата
-   $parent    = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
-
-   // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
-   $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
-
    $class_table -> prepare_items();
 
    ?>
@@ -520,7 +521,7 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
        <h2>
           <?php echo $title; ?>
           <?php
-             display_form_buttons($buttons, $perm_button, $page, $paged, $parent);
+             display_form_buttons($buttons, $perm_button, $page );
           ?>
        </h2>
         <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:2px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
