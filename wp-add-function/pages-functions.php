@@ -445,6 +445,41 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
 }
 
 //====================================
+// Відобразити кнопки на формі
+// $buttons - задается в виде массива, пример: array('new' => 'New item', 'new1' => 'New item 1')
+function display_form_buttons($buttons = array(), $perm_button, $page, $paged, $parent){
+  global $gl_;
+
+  $n = 0;
+  if ( current_user_can( $perm_button )){
+     foreach ($buttons as $button_action => $button_name) {
+        ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
+              <?php echo _e($button_name, $gl_['plugin_name'] );?>
+           </a>
+        <?php
+        $n++;
+     }
+     // если пустое значение $buttons
+     if (empty($buttons)){
+        $button_action = 'new';
+        $button_name   = __('New item', "wp-add-function" );
+          ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
+                <?php echo _e($button_name, $gl_['plugin_name'] );?>
+             </a>
+          <?php
+     }
+  }
+  // если есть страница родитель, выводим кнопку для возврата
+  if (! empty($parent)){
+     ?> <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
+           <?php echo _e( 'Return', 'wp-add-function' ); ?>
+        </a>
+     <?php
+  }
+  //print_r($buttons );
+}
+
+//====================================
 // Форма списка справочника
 // $name            - Имя формы (пример: users)
 // $gl_['class-table']     - Имя класса таблицы
@@ -452,10 +487,9 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
 // $title           - Заглавие
 // $description1    - Описание 1
 // $description2    - Описание 2
-// $button1         - Свое имя для кнопки 1 (задается в виде массива, пример: array('new', 'New item'))
-// $button2         - Свое имя для кнопки 2 (задается в виде массива, пример: array('new', 'New item'))
+// $buttons         - Задается в виде массива, пример: array('new' => 'New item', 'new1' => 'New item 1')
 // $search_box_name - Имя кнопки поиска
-function form_directory( $name, $class_table, $perm_button, $title, $description1, $description2 = '', $button1 = array(), $button2 = array(), $search_box_name = '' ) {
+function form_directory( $name, $class_table, $perm_button, $title, $description1, $description2 = '', $buttons = array(), $search_box_name = '' ) {
    global $gl_;
 
    if ( $search_box_name == '' ) {
@@ -474,41 +508,19 @@ function form_directory( $name, $class_table, $perm_button, $title, $description
 
    // parent - страница родитель для дальнейшего возврата
    $parent    = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+
    // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
    $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
 
    $class_table -> prepare_items();
-   // если пустое значение $button1
-   if (empty($button1)){
-      $button1_action = 'new';
-      $button1_name   = __('New item', "wp-add-function" );
-   } else {
-      $button1_action = $button1[0];
-      $button1_name   = $button1[1];
-   }
+
    ?>
    <div class="wrap">
    <div id="icon-users" class="icon32"><br/></div>
        <h2>
           <?php echo $title; ?>
           <?php
-             if ( current_user_can( $perm_button )){
-                ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button1_action);?>" class="page-title-action">
-                   <?php echo _e($button1_name, $gl_['plugin_name'] );?>
-                </a> <?php
-                // если не пустое значение $button2
-                if (! empty($button2)){
-                   ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button2[0]);?>" class="page-title-action">
-                      <?php echo _e($button2[1], $gl_['plugin_name'] );?>
-                   </a> <?php
-                }
-             }
-             // если есть страница родитель, выводим кнопку для возврата
-             if (! empty($parent)){
-                ?> <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
-                   <?php echo _e( 'Return', 'wp-add-function' ); ?>
-                </a> <?php
-             }
+             display_form_buttons($buttons, $perm_button, $page, $paged, $parent);
           ?>
        </h2>
         <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:2px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
@@ -719,6 +731,8 @@ function post_form_actions(){
    $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
    // это paged для $parent (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
    $parent_n  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
+   // если использовался фильтр, используем его
+   $link_filter = http_values_query(get_http_values( '', 'f'), '', 'f');
 
    // обработаем нажатие кнопки применить для периода в журнале документов
    $POST_PERIOD = isset( $_POST['button_period'] );
@@ -756,7 +770,7 @@ function post_form_actions(){
       save_edit_data();
       // Если есть ошибки или сообщения покажем все
       display_message();
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter ));
    }
 
    // обработаем нажатие кнопки Save New
@@ -791,7 +805,7 @@ function post_form_actions(){
       } else $link_values = "";
 
       // если нужно вернуться на страницу родитель
-      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
+      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values . $link_filter));
    }
 
    // обработаем нажатие кнопки Сancel
@@ -820,7 +834,7 @@ function post_form_actions(){
       $link_values = http_values_query( $fields_values );
 
       // если нужно вернуться на страницу родитель
-      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values));
+      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values . $link_filter));
    }
 
    // обработаем нажатие кнопки Delete
@@ -829,7 +843,7 @@ function post_form_actions(){
       delete_form_data();
       // Если есть ошибки или сообщения покажем все
       display_message();
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter));
    }
 
    // Обработаем нажатие кнопки Cancel Delete
@@ -838,7 +852,7 @@ function post_form_actions(){
       delete_form_data();
       // Если есть ошибки или сообщения покажем все
       display_message();
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter));
    }
 
    // Если есть ошибки или сообщения покажем все
