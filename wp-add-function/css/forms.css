@@ -312,7 +312,7 @@ input[type="radio"].disabled:checked:before {
 	padding: 2px;
 	line-height: 28px;
 	height: 28px;
-	vertical-align: middle;
+	vertical-align: unset;
 }
 
 .wp-admin .button-cancel {
