@@ -8,6 +8,8 @@ function add_query_filter( $array_filter ) {
    global $gl_;
 
    $query_filter = "";
+   if ( empty( $array_filter ))
+      return;
    foreach ( $array_filter as $field => $value ) {
       if (! empty( $value )) {
          // если в имени поля первый знак *, то не используем таблицу
