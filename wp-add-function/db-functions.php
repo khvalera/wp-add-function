@@ -4,7 +4,7 @@
 
 //=============================================
 // Функция создает часть запроса MySQL для фильтра
-function add_query_filter( $array_filter ) {
+function add_query_filter( $array_filter, $array_filter_tables ) {
    global $gl_;
 
    $query_filter = "";
@@ -12,12 +12,12 @@ function add_query_filter( $array_filter ) {
       return;
    foreach ( $array_filter as $field => $value ) {
       if (! empty( $value )) {
-         // если в имени поля первый знак *, то не используем таблицу
+         // если в имени поля первый знак *, то не используем таблицу (устарело)
          if ( $field[0] == "*"){
             if ( !empty($query_filter))
                $query_filter =  $query_filter . " AND ";
             $query_filter =  $query_filter . substr($field, 1 ) . " = " . $value;
-         // если есть точка, значит с полем указана таблица
+         // если есть точка, значит с полем указана таблица (устарело)
          } elseif ( strpos($field, ".") != false ){
             if ( !empty($query_filter))
                $query_filter =  $query_filter . " AND ";
@@ -25,8 +25,15 @@ function add_query_filter( $array_filter ) {
          } else {
             if ( !empty($query_filter))
                $query_filter =  $query_filter . " AND ";
-
-           $query_filter = $query_filter . $gl_['db_table_name'] . "." . $field . " = " . $value;
+            if ( empty( $array_filter_tables )){
+               $query_filter = $query_filter . $gl_['db_table_name'] . "." . $field . " = " . $value;
+             }else {
+               // если для фильтра нужно указать конкретную таблицу
+               if (array_key_exists($field, $array_filter_tables)){
+                  $query_filter = $query_filter . $array_filter_tables[$field] . "." . $field . " = " . $value;}
+               else
+                  $query_filter = $query_filter . $gl_['db_table_name'] . "." . $field . " = " . $value;
+            }
          }
       }
    }

@@ -11,7 +11,7 @@ if ( ! class_exists('WP_List_Table')) {
 class class_table_directory extends WP_List_Table {
     // глобальные переменные
     public $action, $page, $paged, $per_page, $paged_query;
-    public $search_value, $filter, $count_lines;
+    public $search_value, $filter, $filter_tables, $count_lines;
     public $color;
 
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
@@ -74,6 +74,9 @@ class class_table_directory extends WP_List_Table {
 
         // получим массив с фильтром
         $this -> filter = get_http_values( '', 'f');
+
+        // получим таблицы для фильтра
+        $this -> filter_tables = get_http_values( '', 't');
 
         // получим значение из диалога поиска
         $this -> search_value = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] )) : '';

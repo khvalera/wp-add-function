@@ -1520,9 +1520,10 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
 // $this_table  - переменная с сылкой на объект class-wp-list-table
 // $item        - массив с структурой и значениями выделенной строки таблицы
 // $column_name - имя выбранного поля таблицы
-// $column_db   - имя поля таблицы базы данных
+// $column_db   - имена полей таблицы базы данных для фильтра. пример: array('id'=>'user', 'name'=> '')
+// $tables_db   - если для column_db нужно указать определённую таблицу. пример: array('id'=>'table_name')
 // $page        - имя страницы на которую переходим (если не выбрано то текущая)
-function column_button_filter( $this_table, $item, $column_name, $column_db, $page = '' ){
+function column_button_filter( $this_table, $item, $column_name, $column_db, $tables_db = array(), $page = '' ){
    global $color;
 
    // Станица родитель, используется для дальнейшего возврата
@@ -1535,11 +1536,18 @@ function column_button_filter( $this_table, $item, $column_name, $column_db, $pa
    $old_filter = get_http_values( '', 'f');
 
    // Добавим выбранное значение к уже существующему фильтру
-   $old_filter[$column_db] = $item[ $column_db ];
+   if (is_array($column_db))
+      foreach ( $column_db as $field => $table ) {
+         $old_filter[$field] = $item[ $field ];
+      }
+   else
+      $old_filter[$column_db] = $item[ $column_db ];
 
    $filter = http_values_query( $old_filter, '', 'f');
+   $filter_tables = http_values_query( $tables_db, '', 't');
+
    $column_value = '<font color="'. $color . '">' . $item[ $column_name ] . '</font>';
-   $actions      = array( 'filter' => sprintf('<a href="?page=%s%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $page, $filter));
+   $actions      = array( 'filter' => sprintf('<a href="?page=%s%s%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $page, $filter, $filter_tables));
 
    return sprintf('%1$s %2$s', $column_value, $this_table -> row_actions($actions) );
 }
