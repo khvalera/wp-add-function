@@ -739,15 +739,15 @@ function post_form_actions(){
    $POST_PERIOD = isset( $_POST['button_period'] );
    if ( ! empty( $POST_PERIOD )) {
       // Заполним в массив данные значений полей формы
-      $data = post_array();
+      [$data_field, $data_table] = post_array();
 
       // Запишем даты журнала
       // Получим id пользователя WP
       $user_id = get_current_user_id();
-      if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date1', $data['date1'] ) ){
+      if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date1', $data_field['date1'] ) ){
         add_message('insufficient_permission', sprintf(__( "Failed to update meta field for user %s", 'card-manager' ), "date1"), 'error');
       }
-      if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date2', $data['date2'] ) ){
+      if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date2', $data_field['date2'] ) ){
         add_message('insufficient_permission', sprintf(__( "Failed to update meta field for user %s", 'card-manager' ), "date2"), 'error');
       }
       wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
@@ -757,12 +757,14 @@ function post_form_actions(){
    $POST_FILTER = isset( $_POST['button_filter'] );
    if ( ! empty( $POST_FILTER )) {
       // Заполним в массив данные значений полей формы
-      $array_data = post_array();
+      [$data_field, $data_table] = post_array();
 
       // cоздадим часть ссылки
-      $link = http_values_query( $array_data, '', 'f');
+      $link_field = http_values_query( $data_field, '', 'f');
 
-      wp_redirect( get_admin_url( null, 'admin.php?page=' . $page .$link));
+      $link_table = http_values_query( $data_table, '', 't');
+      //print_r($link_table);exit;
+      wp_redirect( get_admin_url( null, 'admin.php?page=' . $page . $link_field . $link_table));
    }
 
    // обработаем нажатие кнопки Save
@@ -861,18 +863,20 @@ function post_form_actions(){
 }
 
 //===========================================
-// Функция перебирает все поля на форме с префиксом и записывает в массив
-// для дальнейшей записи в базу данных
-function post_array($prefix = 'tfield-'){
-   $data = array();
+// Функция перебирает все поля на форме с префиксами и записывает в два массива для дальнейшей записи в базу данных
+function post_array($prefix_field = 'field', $prefix_table = 'table'){
+   $data_field = array();
+   $data_table = array();
    foreach ($_POST as $key => $value) {
-      if ( stristr($key, $prefix )) {
-          $key_str = str_replace($prefix, '', $key);
-          $data[$key_str] = $value;
+      if ( stristr($key, $prefix_field )) {
+          $field = str_to_value($key, $prefix_field);
+          $table = str_to_value($key, $prefix_table);
+          $data_field[$field] = $value;
+          if ( ! empty($table))
+             $data_table[$field] = $table;
       }
    }
-
-   return $data;
+   return [$data_field, $data_table];
 }
 
 //===================================================
@@ -901,8 +905,8 @@ function button_html($display_name, $link_page, $style = '', $class = 'page-titl
 // $value         - Значение (можно указывать несколько, через |)
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через |)
 // $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
-// $not_tfield    - Если равно true не использовать tfield
-function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_tfield = '' ) {
+// $not_field    - Если равно true не использовать field
+function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_field = '' ) {
    // Преобразуем строку с пробелами в массив
    $array_display_name  = explode( "|", $display_name );
    $array_type          = explode( "|", $type );
@@ -950,10 +954,10 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
                      $_value = $array_value[$key];
                   else
                      $_value = '';
-                  // Добавим 'tfield-' если в имени его нет
-                  if ( $not_tfield != true )
-                     if ( strpos( $_name, 'tfield-' ) === false )
-                        $_name = 'tfield-' . $_name;
+                  // Добавим 'field-' если в имени его нет
+                  if ( $not_field != true )
+                     if ( strpos( $_name, 'field-' ) === false )
+                        $_name = 'field-' . $_name;
                   if ( $key == 0 ){
                      ?>
                         <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> <?php echo $onchange ?> >
@@ -999,9 +1003,9 @@ function html_textarea( $display_name, $name, $cols = '', $rows = '', $value='' 
          <th scope="row"><?php echo $display_name; ?></th>
          <td>
             <?php
-               // Добавим 'tfield-' если в имени его нет
-               if ( strpos( $name, 'tfield-' ) === false )
-                  $name = 'tfield-' . $name;
+               // Добавим 'field-' если в имени его нет
+               if ( strpos( $name, 'field-' ) === false )
+                  $name = 'field-' . $name;
                   ?>
                      <textarea name="<?php echo $name ?>" id="<?php echo $name ?>"  cols="<?php echo $cols ?>" rows="<?php echo $rows ?>"><?php echo $value ?></textarea>
                   <?php
@@ -1018,11 +1022,11 @@ function html_textarea( $display_name, $name, $cols = '', $rows = '', $value='' 
 // $value_id      - id выбранной позиции
 // $value_name    - имя выбранной позиции
 // $extra_options - дополнительные параметры (стиль тут тоже указывается style="width:352px;")
-function html_select($display_name, $name, $array_data, $extra_options = '', $value_id = '', $id_field = '', $value_field = '', $not_tfield = '' ){
-   // Добавим 'tfield-' если в имени его нет
-   if ( $not_tfield != true )
-      if ( strpos( $name, 'tfield-' ) === false )
-         $name = 'tfield-' . $name;
+function html_select($display_name, $name, $array_data, $extra_options = '', $value_id = '', $id_field = '', $value_field = '', $not_field = '' ){
+   // Добавим 'field-' если в имени его нет
+   if ( $not_field != true )
+      if ( strpos( $name, 'field-' ) === false )
+         $name = 'field-' . $name;
    // если стиль не указан используем width:352px;
    if ( stripos($extra_options, 'style') == false )
       $extra_options = $extra_options . ' style="width:352px;" ';
@@ -1074,12 +1078,12 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 }
 
 //===================================================
-// Функція повертає значення параметра закодованого http_build_query
+// Функція повертає значення параметра закодованого array_to_string
 // $str   - рядок у якому шукаємо
 // $param - параметр який шукаємо
 function str_to_value($str, $param){
-    foreach (explode('&', $str) as $chunk) {
-       $arr = explode("=", $chunk);
+    foreach (explode('__', $str) as $chunk) {
+       $arr = explode("-", $chunk);
        if ($arr) {
           if ( $arr[0] == $param)
              return $arr[1];
@@ -1089,22 +1093,42 @@ function str_to_value($str, $param){
 }
 
 //===================================================
+// Преобразовать массив в строку
+function array_to_string($arr){
+   $str=''; $nom=0;
+   foreach($arr as $n => $val) {
+     if ( $nom > 0)
+        $str=$str."__";
+     $str="$str$n-$val";
+
+     $nom++;
+   }
+   return $str;
+}
+
+//===================================================
 // $display_name  - отображаемое имя реквизита
 // $table_name    - имя таблицы базы данных
-// $name          - имя класса и имя объекта на форме
+// $name          - имя объекта, строка или  массив состоящий из имени поля и таблицы базы данных. пример: array("objectId", "table")
 // $extra_options - дополнительные параметры (тут тоже указывается стиль: style="width:352px;")
 // $select_id     - id выбранной позиции
 // $select_name   - строка или масив с именами полей из таблицы базы данных для добавления как name (по умолчанию name). пример: array("objectId", "holderName")
 // $php_file      - путь к ajax файлу (не обязательно)
 // $if_select     - имя поля для отбора, если не указано то используется objectId
 // $params        - параметры для передачи в ajax_php (пример: "?f=objectId&v=1")
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '', $not_tfield = '' ) {
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '', $not_field = '' ) {
    global $gl_;
 
-   // Добавим 'tfield-' если в имени его нет
-   if ( $not_tfield != true )
-      if ( strpos( $name, 'tfield' ) === false )
-         $name = 'tfield-' . $name ;
+   if ( is_array( $name )){
+      if ( ! empty( $name[1] ))
+         $item_name = array_to_string(array('field' => $name[0], 'table' => $name[1]));
+      else
+         $item_name = array_to_string(array('field' => $name[0]));
+   } else
+   // Добавим 'field-' если в имени его нет
+   if ( $not_field != true )
+      if ( strpos( $name, 'field-' ) === false )
+         $item_name = array_to_string(array('field' => $name));
 
    // если указан $select_id
    if ( ! empty( $select_id )) {
@@ -1146,7 +1170,7 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
       <tr class="rich-editing-wrap">
          <th scope="row"><?php echo $display_name; ?></th>
             <td>
-               <select class="<?php echo 'item_' . $name; ?> form-control" name="<?php echo $name; ?>" <?php echo $extra_options ; ?> >
+               <select class="<?php echo 'item_' . $item_name; ?> form-control" name="<?php echo $item_name; ?>" <?php echo $extra_options ; ?> >
                   <?php
                     // Выберем нужную строку таблицы по $id из массива
                     if ( ! empty( $data )) {
@@ -1171,7 +1195,7 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
          display_message('file not found', sprintf(__( "File not found '%s'", 'wp-add-function' ), $gl_['plugin_name'] . '/includes/' . $php_file), 'error');
       }
    }
-   java_item($name, $ajax_php, $params);
+   java_item($item_name, $ajax_php, $params);
 }
 
 //===================================================
@@ -1208,7 +1232,7 @@ function java_item($item_name, $ajax_php = '', $params = '' ){
       });
       // обработка выбора значения
       $(class_name).on("select2:select", function(e) {
-         //console.log(e); // весь объект
+         console.log(e); // весь объект
          //console.log(e.params.data); // вот тут обычно полезные данные
       });
 
