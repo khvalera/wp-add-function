@@ -1074,10 +1074,25 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 }
 
 //===================================================
+// Функція повертає значення параметра закодованого http_build_query
+// $str   - рядок у якому шукаємо
+// $param - параметр який шукаємо
+function str_to_value($str, $param){
+    foreach (explode('&', $str) as $chunk) {
+       $arr = explode("=", $chunk);
+       if ($arr) {
+          if ( $arr[0] == $param)
+             return $arr[1];
+       }
+   }
+   return "";
+}
+
+//===================================================
 // $display_name  - отображаемое имя реквизита
 // $table_name    - имя таблицы базы данных
 // $name          - имя класса и имя объекта на форме
-// $extra_options - дополнительные параметры (тут указывается стиль тоже: style="width:352px;")
+// $extra_options - дополнительные параметры (тут тоже указывается стиль: style="width:352px;")
 // $select_id     - id выбранной позиции
 // $select_name   - строка или масив с именами полей из таблицы базы данных для добавления как name (по умолчанию name). пример: array("objectId", "holderName")
 // $php_file      - путь к ajax файлу (не обязательно)
@@ -1088,8 +1103,9 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
 
    // Добавим 'tfield-' если в имени его нет
    if ( $not_tfield != true )
-      if ( strpos( $name, 'tfield-' ) === false )
-         $name = 'tfield-' . $name;
+      if ( strpos( $name, 'tfield' ) === false )
+         $name = 'tfield-' . $name ;
+
    // если указан $select_id
    if ( ! empty( $select_id )) {
       // если функция указана в $gl_ используем ее
@@ -1117,14 +1133,12 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
            $select_name = $data[$select_name];
       }
    }
-   //print_r($data); exit;
    // если есть objectId будем использовать его
    if ( ! empty( $data['objectId'] ))
       $name_id = 'objectId';
    else
       $name_id = 'id';
 
-   //print_r($data['id']);
    // если стиль не указан используем width:352px;
    if ( stripos($extra_options, 'style') == false )
       $extra_options = $extra_options . ' style="width:352px;" ';
@@ -1587,7 +1601,7 @@ function display_column_picture( $item, $column_name, $picture ){
 }
 
 //===========================================
-// Добавим select2
+// Добавим поддержку select2
 add_action( 'admin_enqueue_scripts', function() {
    //Our own JS file
    wp_register_script( 'select_search', WPMU_PLUGIN_URL . '/wp-add-function/js/jquery-3.5.1.js', array( 'jquery' ), 3.5, false );
