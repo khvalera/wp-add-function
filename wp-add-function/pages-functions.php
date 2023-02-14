@@ -1116,7 +1116,7 @@ function array_to_string($arr){
 // $php_file      - путь к ajax файлу (не обязательно)
 // $if_select     - имя поля для отбора, если не указано то используется objectId
 // $params        - параметры для передачи в ajax_php (пример: "?f=objectId&v=1")
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '', $not_field = '' ) {
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '', $not_field = false ) {
    global $gl_;
 
    if ( is_array( $name )){
@@ -1125,10 +1125,13 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
       else
          $item_name = array_to_string(array('field' => $name[0]));
    } else
-   // Добавим 'field-' если в имени его нет
-   if ( $not_field != true )
+   // Добавим 'fiel=d-' если в имени его нет
+   if ( $not_field == true )
+        $item_name = array_to_string(array('not_field' => $name));
+   else {
       if ( strpos( $name, 'field-' ) === false )
          $item_name = array_to_string(array('field' => $name));
+    }
 
    // если указан $select_id
    if ( ! empty( $select_id )) {
