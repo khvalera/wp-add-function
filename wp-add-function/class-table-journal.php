@@ -132,7 +132,7 @@ class class_table_journal_doc extends WP_List_Table {
                  // Период в журнале
                  html_input(__('Period from: ', 'wp-add-function' ) . "|" . __(' by: ', 'wp-add-function' ), "date|date", "date1|date2",
                             $this -> journal_date1 . "|" . $this -> journal_date2,
-                           'style="width:120px; min-width: 110px;" required|style="width:120px; min-width: 110px;" required' );
+                           'style="width:130px; min-width: 120px;" required|style="width:130px; min-width: 120px;" required' );
                  submit_button(__( 'Apply', 'wp-add-function' ), 'button',  'button_period', false);
               ?>
           </ul>
