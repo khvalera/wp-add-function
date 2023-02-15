@@ -108,6 +108,7 @@ class class_table_directory extends WP_List_Table {
        add_action( 'admin_head', array( &$this, 'admin_header' ) );
     }
 
+    //====================================
     // Дополнительные элементы управления таблицей, которые расположены между групповыми действиями и пагинацией.
     // Обычно сюда располагают фильтры данных таблицы.
     public function extra_tablenav( $which ){
@@ -120,15 +121,15 @@ class class_table_directory extends WP_List_Table {
        ?>
           <form id="form-extra_tablenav" action="" method="post">
           <ul class="subsubsub">
-             <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
-             <?php if ( $this -> action != 'filter-deletion' ) {
+             <?php echo __( 'Filter', 'wp-add-function' ) . ': ';
+             if ( $this -> action != 'filter-deletion' ) {
                 ?> <a href="<?php echo sprintf('?page=%s&action=%s', $_REQUEST['page'], 'filter-deletion');?>" class="page-title-action" style="color: <?php echo $color_all['red'];?>">
-                      <?php echo _e("Marked for deletion", 'wp-add-function' );?>
-                   </a>
-             <?php } ?>
-             <a href="<?php echo sprintf('?page=%s', $_REQUEST['page']);?>" class="page-title-action">
-                  <?php echo _e("Reset", 'wp-add-function' );?>
-             </a>
+                      <?php echo _e("Marked for deletion", 'card-manager' );?>
+                   </a> &nbsp;
+                <?php
+                //button_action( __('Filter', 'card-manager' ), "button_filter" );
+             }
+             button_html(__("Reset", 'card-manager' ), sprintf('?page=%s', $_REQUEST['page']));?>
           </ul>
           </form>
        <?php
@@ -228,6 +229,51 @@ class class_table_directory extends WP_List_Table {
         return $sortable_columns;
     }
 
+    /** Метод который отвечает за то что содержит отдельная ячейка колонки,
+    когда для вывода её данных не определен отдельный метод.
+    Можно так же это сделать в function column_имя колонки.
+     * @param  Array $item  Data
+     * @param  String $column_name - Current column name
+     * @return Mixed */
+    public function column_default( $item, $column_name ) {
+       if ( $column_name == "modify" ) {
+          if (( $this -> action == 'history' ) or ( $this -> action == 'filter-deletion' ))
+             return display_column_default( $item, $column_name );
+          else
+             return display_column_button( $this, $item, $column_name, array('history'), 'id' );
+       } elseif ( $column_name == "name" ) {
+          if ( $this -> action == 'filter-deletion' )
+             return display_column_button( $this, $item, $column_name, array('cancel-deletion'), 'id' );
+          elseif ( $this -> action == 'history' )
+             return display_column_default( $item, $column_name );
+          else
+             return display_column_button( $this, $item, $column_name, array('edit','delete','filter_s'), 'id' );
+       } else
+             return display_column_default( $item, $column_name );
+    }
+
+    //====================================
+    /** Позволяет сортировать данные по переменным, установленным в $_GET
+     * @return Mixed */
+    function sort_data( $a, $b ){
+        // Set defaults
+        $orderby = 'id';
+        $order = 'asc';
+        // If orderby is set, use this as the sort column
+        if(!empty($_GET['orderby'])){
+            $orderby = $_GET['orderby'];
+        }
+        // If order is set use this as the order
+        if(!empty($_GET['order'])) {
+            $order = $_GET['order'];
+        }
+        $result = strnatcmp( $a[$orderby], $b[$orderby] );
+        if($order === 'asc') {
+            return $result;
+        }
+        return -$result;
+    }
+
     // Заполняем данные таблицы
     public function table_data() {
        global $gl_;
@@ -276,48 +322,4 @@ class class_table_directory extends WP_List_Table {
        return $data;
     }
 
-    /** Метод который отвечает за то что содержит отдельная ячейка колонки,
-    когда для вывода её данных не определен отдельный метод.
-    Можно так же это сделать в function column_имя колонки.
-     * @param  Array $item  Data
-     * @param  String $column_name - Current column name
-     * @return Mixed */
-    public function column_default( $item, $column_name ) {
-       if ( $column_name == "modify" ) {
-          if (( $this -> action == 'history' ) or ( $this -> action == 'filter-deletion' ))
-             return display_column_default( $item, $column_name );
-          else
-             return display_column_button( $this, $item, $column_name, array('history'), 'id' );
-       } elseif ( $column_name == "name" ) {
-          if ( $this -> action == 'filter-deletion' )
-             return display_column_button( $this, $item, $column_name, array('cancel-deletion'), 'id' );
-          elseif ( $this -> action == 'history' )
-             return display_column_default( $item, $column_name );
-          else
-             return display_column_button( $this, $item, $column_name, array('edit','delete','filter_s'), 'id' );
-       } else
-             return display_column_default( $item, $column_name );
-    }
-
-    //====================================
-    /** Позволяет сортировать данные по переменным, установленным в $_GET
-     * @return Mixed */
-    function sort_data( $a, $b ){
-        // Set defaults
-        $orderby = 'id';
-        $order = 'asc';
-        // If orderby is set, use this as the sort column
-        if(!empty($_GET['orderby'])){
-            $orderby = $_GET['orderby'];
-        }
-        // If order is set use this as the order
-        if(!empty($_GET['order'])) {
-            $order = $_GET['order'];
-        }
-        $result = strnatcmp( $a[$orderby], $b[$orderby] );
-        if($order === 'asc') {
-            return $result;
-        }
-        return -$result;
-    }
 } //class

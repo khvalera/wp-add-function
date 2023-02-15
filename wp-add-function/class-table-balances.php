@@ -10,7 +10,7 @@ if ( ! class_exists('WP_List_Table')) {
 // Таблица получения остатков
 class class_table_balances extends WP_List_Table {
     // глобальные переменные
-    public $action, $page, $paged, $per_page;
+    public $action, $page, $paged, $per_page, $paged_query;
     public $search_value, $count_lines;
     public $color;
 
@@ -48,6 +48,7 @@ class class_table_balances extends WP_List_Table {
 
     //===========================================
     function __construct(){
+        // глобальные переменные
         global $color_all, $color;
 
         // action используется для фильтров и нажатия кнопок
@@ -65,8 +66,11 @@ class class_table_balances extends WP_List_Table {
         $this -> per_page = get_user_meta( get_current_user_id(), $per_page_option['option'], true );
 
         // если сохраненной настройки нет, берем по умолчанию
-        if( ! $this -> per_page )
+        if ( ! $this -> per_page )
            $this -> per_page = $per_page_option['default'];
+
+        // номер текущей страницы для запроса
+        $this -> paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
 
         // получим значение из диалога поиска
         $this -> search_value = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] )) : '';
@@ -97,7 +101,7 @@ class class_table_balances extends WP_List_Table {
        add_action( 'admin_head', array( &$this, 'admin_header' ) );
     }
 
-    //===========================================
+    //====================================
     // Дополнительные элементы управления таблицей, которые расположены между групповыми действиями и пагинацией.
     // Обычно сюда располагают фильтры данных таблицы.
     public function extra_tablenav( $which ){
@@ -105,11 +109,16 @@ class class_table_balances extends WP_List_Table {
 
        if ( 'top' != $which )
           return;
+       if ( $this -> action == 'history' )
+          return;
        ?>
           <form id="form-extra_tablenav" action="" method="post">
           <ul class="subsubsub">
-             <?php echo __( 'Filter', 'wp-add-function' ) . ': '; ?>
-             <?php echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']); ?>
+             <?php echo __( 'Filter', 'wp-add-function' ) . ': ';
+             if ( $this -> action != 'filter-deletion' ) {
+                //button_action( __('Filter', 'card-manager' ), "button_filter" );
+             }
+             button_html(__("Reset", 'card-manager' ), sprintf('?page=%s', $_REQUEST['page']));?>
           </ul>
           </form>
        <?php
@@ -207,6 +216,42 @@ class class_table_balances extends WP_List_Table {
     }
 
     //===========================================
+    /** Метод который отвечает за то что содержит отдельная ячейка колонки,
+    когда для вывода её данных не определен отдельный метод.
+    Можно так же это сделать в function column_имя колонки.
+     * @param  Array $item  Data
+     * @param  String $column_name - Current column name
+     * @return Mixed */
+    public function column_default( $item, $column_name ) {
+       if (( $column_name == "storage_name" ) or ( $column_name == "product_name" ))
+          return display_column_button( $this, $item, $column_name, array('filter_s'), 'id' );
+       else
+          return display_column_default( $item, $column_name, );
+    }
+
+    //===========================================
+    /** Позволяет сортировать данные по переменным, установленным в $_GET
+     * @return Mixed */
+    public function sort_data( $a, $b ) {
+        // Set defaults
+        $orderby = 'num';
+        $order   = 'asc';
+        // If orderby is set, use this as the sort column
+        if ( ! empty( $_GET[ 'orderby' ] )) {
+            $orderby = $_GET['orderby'];
+        }
+        // If order is set use this as the order
+        if ( ! empty($_GET[ 'order' ])) {
+            $order = $_GET[ 'order' ];
+        }
+        $result = strnatcmp( $a[$orderby], $b[$orderby] );
+        if($order === 'asc') {
+            return $result;
+        }
+        return -$result;
+    }
+
+    //===========================================
     // Заполняем данные таблицы
     public function table_data() {
        global $gl_;
@@ -279,41 +324,5 @@ class class_table_balances extends WP_List_Table {
        //print_r($query); exit;
        $data = $array_table;
        return $data;
-    }
-
-    //===========================================
-    /** Метод который отвечает за то что содержит отдельная ячейка колонки,
-    когда для вывода её данных не определен отдельный метод.
-    Можно так же это сделать в function column_имя колонки.
-     * @param  Array $item  Data
-     * @param  String $column_name - Current column name
-     * @return Mixed */
-    public function column_default( $item, $column_name ) {
-       if (( $column_name == "storage_name" ) or ( $column_name == "product_name" ))
-          return display_column_button( $this, $item, $column_name, array('filter_s'), 'id' );
-       else
-          return display_column_default( $item, $column_name, );
-    }
-
-    //===========================================
-    /** Позволяет сортировать данные по переменным, установленным в $_GET
-     * @return Mixed */
-    public function sort_data( $a, $b ) {
-        // Set defaults
-        $orderby = 'num';
-        $order   = 'asc';
-        // If orderby is set, use this as the sort column
-        if ( ! empty( $_GET[ 'orderby' ] )) {
-            $orderby = $_GET['orderby'];
-        }
-        // If order is set use this as the order
-        if ( ! empty($_GET[ 'order' ])) {
-            $order = $_GET[ 'order' ];
-        }
-        $result = strnatcmp( $a[$orderby], $b[$orderby] );
-        if($order === 'asc') {
-            return $result;
-        }
-        return -$result;
     }
 } //class

@@ -114,7 +114,7 @@ class class_table_journal_doc extends WP_List_Table {
        add_action( 'admin_head', array( &$this, 'admin_header' ) );
     }
 
-    /**********************************/
+    //====================================
     // Дополнительные элементы управления таблицей, которые расположены между групповыми действиями и пагинацией.
     // Обычно сюда располагают фильтры данных таблицы.
     public function extra_tablenav( $which ){
@@ -122,19 +122,26 @@ class class_table_journal_doc extends WP_List_Table {
 
        if ( 'top' != $which )
           return;
+       if ( $this -> action == 'history' )
+          return;
        ?>
           <form id="form-extra_tablenav" action="" method="post">
           <ul class="subsubsub">
-             <?php
-                 echo __( 'Filter', 'wp-add-function' ) . ': ';
-                 echo sprintf('<a href="?page=%s&action=%s" style="color: ' . $color_all['red'] . '">' . __( 'Marked for deletion', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'filter-deletion');
-                 echo sprintf('<a href="?page=%s">' . __( 'Reset', 'wp-add-function' ) . '</a>', $_REQUEST['page']);
+             <?php echo __( 'Filter', 'wp-add-function' ) . ': ';
+             button_html(__("Reset", 'card-manager' ), sprintf('?page=%s', $_REQUEST['page']));
+             if ( $this -> action != 'filter-deletion' ) {
+                ?> <a href="<?php echo sprintf('?page=%s&action=%s', $_REQUEST['page'], 'filter-deletion');?>" class="page-title-action" style="color: <?php echo $color_all['red'];?>">
+                      <?php echo _e("Marked for deletion", 'card-manager' );?>
+                   </a> &nbsp;
+                <?php
                  // Период в журнале
                  html_input(__('Period from: ', 'wp-add-function' ) . "|" . __(' by: ', 'wp-add-function' ), "date|date", "date1|date2",
                             $this -> journal_date1 . "|" . $this -> journal_date2,
                            'style="width:130px; min-width: 120px;" required|style="width:130px; min-width: 120px;" required' );
                  submit_button(__( 'Apply', 'wp-add-function' ), 'button',  'button_period', false);
-              ?>
+                //button_action( __('Filter', 'card-manager' ), "button_filter" );
+             }
+             ?>
           </ul>
           </form>
        <?php
@@ -241,6 +248,57 @@ class class_table_journal_doc extends WP_List_Table {
         return $sortable_columns;
     }
 
+    /** Метод который отвечает за то что содержит отдельная ячейка колонки,
+    когда для вывода её данных не определен отдельный метод.
+    Можно так же это сделать в function column_имя колонки.
+     * @param  Array $item  Data
+     * @param  String $column_name - Current column name
+     * @return Mixed */
+    public function column_default( $item, $column_name ) {
+       if ( $column_name == "modify" ) {
+          if (( $this -> action == 'history' ) or ( $this -> action == 'filter-deletion' ))
+             return display_column_default( $item, $column_name );
+          else
+             return display_column_button( $this, $item, $column_name, array('history'), 'id' );
+       } elseif ( $column_name == "doc_type" ) {
+            // 1 - Приход
+            if ( $item['doc_type'] == 1 )
+               return display_column_picture( $item, $column_name, 'plus' );
+            // 2 - Расход
+            elseif ( $item['doc_type'] == 2 )
+               return display_column_picture( $item, $column_name, 'minus' );
+       } elseif ( $column_name == "doc_date_time" ) {
+          if ( $this -> action == 'filter-deletion' )
+             return display_column_button( $this, $item, $column_name, array('cancel-deletion'), 'id' );
+          elseif ( $this -> action == 'history' )
+             return display_column_default( $item, $column_name );
+          else
+             return display_column_button( $this, $item, $column_name, array('edit','delete','filter_s'), 'id' );
+       } else
+             return display_column_default( $item, $column_name );
+    }
+
+    /** Позволяет сортировать данные по переменным, установленным в $_GET
+     * @return Mixed */
+    public function sort_data( $a, $b ) {
+        // Set defaults
+        $orderby = 'doc_date_time';
+        $order   = 'asc';
+        // If orderby is set, use this as the sort column
+        if ( ! empty( $_GET[ 'orderby' ] )) {
+            $orderby = $_GET['orderby'];
+        }
+        // If order is set use this as the order
+        if ( ! empty($_GET[ 'order' ])) {
+            $order = $_GET[ 'order' ];
+        }
+        $result = strnatcmp( $a[$orderby], $b[$orderby] );
+        if($order === 'asc') {
+            return $result;
+        }
+        return -$result;
+    }
+
     /**********************************/
     // Заполняем данные таблицы
     public function table_data() {
@@ -295,56 +353,5 @@ class class_table_journal_doc extends WP_List_Table {
        $data = $gl_['db'] -> get_results( $query_select . " " . $query_structure . " " . $query_additional . " " . $query_search .
                                           " LIMIT " . $this -> per_page . " OFFSET " . $this -> paged_query, ARRAY_A );
        return $data;
-    }
-
-    /** Метод который отвечает за то что содержит отдельная ячейка колонки,
-    когда для вывода её данных не определен отдельный метод.
-    Можно так же это сделать в function column_имя колонки.
-     * @param  Array $item  Data
-     * @param  String $column_name - Current column name
-     * @return Mixed */
-    public function column_default( $item, $column_name ) {
-       if ( $column_name == "modify" ) {
-          if (( $this -> action == 'history' ) or ( $this -> action == 'filter-deletion' ))
-             return display_column_default( $item, $column_name );
-          else
-             return display_column_button( $this, $item, $column_name, array('history'), 'id' );
-       } elseif ( $column_name == "doc_type" ) {
-            // 1 - Приход
-            if ( $item['doc_type'] == 1 )
-               return display_column_picture( $item, $column_name, 'plus' );
-            // 2 - Расход
-            elseif ( $item['doc_type'] == 2 )
-               return display_column_picture( $item, $column_name, 'minus' );
-       } elseif ( $column_name == "doc_date_time" ) {
-          if ( $this -> action == 'filter-deletion' )
-             return display_column_button( $this, $item, $column_name, array('cancel-deletion'), 'id' );
-          elseif ( $this -> action == 'history' )
-             return display_column_default( $item, $column_name );
-          else
-             return display_column_button( $this, $item, $column_name, array('edit','delete','filter_s'), 'id' );
-       } else
-             return display_column_default( $item, $column_name );
-    }
-
-    /** Позволяет сортировать данные по переменным, установленным в $_GET
-     * @return Mixed */
-    public function sort_data( $a, $b ) {
-        // Set defaults
-        $orderby = 'doc_date_time';
-        $order   = 'asc';
-        // If orderby is set, use this as the sort column
-        if ( ! empty( $_GET[ 'orderby' ] )) {
-            $orderby = $_GET['orderby'];
-        }
-        // If order is set use this as the order
-        if ( ! empty($_GET[ 'order' ])) {
-            $order = $_GET[ 'order' ];
-        }
-        $result = strnatcmp( $a[$orderby], $b[$orderby] );
-        if($order === 'asc') {
-            return $result;
-        }
-        return -$result;
     }
 } //class
