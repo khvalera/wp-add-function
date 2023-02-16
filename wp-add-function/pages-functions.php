@@ -763,7 +763,7 @@ function post_form_actions(){
       $link_field = http_values_query( $data_field, '', 'f');
 
       $link_table = http_values_query( $data_table, '', 't');
-      //print_r($link_table);exit;
+
       wp_redirect( get_admin_url( null, 'admin.php?page=' . $page . $link_field . $link_table));
    }
 
@@ -899,34 +899,18 @@ function button_html($display_name, $link_page, $style = '', $class = 'page-titl
 }
 
 //===================================================
-// $display_name  - Отображаемое имя реквизита на форме (можно указывать несколько, через |)
-// $type          - Тип реквизита (number, text, date, time...) (можно указывать несколько, через |)
-// $name          - Имя input (можно указывать несколько, через |)
+// $display_name  - Отображаемое имя реквизита на форме , массив (можно указывать несколько значений), пример: array( date1 => "Период с:", date2 => "по:" )
+// $type          - Тип реквизита (number, text, date, time...), массив (можно указывать несколько значений), пример: array( date1 => "date", date2 => "date" )
 // $value         - Значение (можно указывать несколько, через |)
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через |)
 // $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
-// $not_field    - Если равно true не использовать field
-function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_field = '' ) {
-   // Преобразуем строку с пробелами в массив
-   $array_display_name  = explode( "|", $display_name );
-   $array_type          = explode( "|", $type );
-   $array_name          = explode( "|", $name );
-   $array_value         = explode( "|", $value );
-   $array_extra_options = explode( "|", $extra_options );
+// $not_field     - Если равно true не использовать field, пример: array( date1 => false, date2 => true )
+function html_input( $display_name, $type, $value=array(), $extra_options = array(), $onchange = '', $not_field = array()) {
+
    // Проверим что бы переданное количество значений совпадало
-   if ( count ( $array_type ) <> count ( $array_name ) or count ( $array_name ) <> count ( $array_display_name )) {
+   if ( count ( $display_name ) <> count ( $type ) or count ( $display_name ) <> count ( $type )) {
       display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'wp-add-function'  ), 'error');
    }
-
-   if ( ! empty( $value ) )
-      if ( count ( $array_name ) <> count ( $array_value )) {
-         display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'wp-add-function'  ), 'error');
-      }
-
-   if ( ! empty( $extra_options ) )
-      if ( count ( $array_name ) <> count ( $array_extra_options )) {
-         display_message('number_of_values_function_incorrect', __( 'In the function "html_input" number of values is incorrect', 'wp-add-function'  ), 'error');
-      }
    if ( ! empty( $onchange ) ){
       $onchange = 'onchange="' . $onchange.'"';
       // Добавим javascript
@@ -934,40 +918,48 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
    }
    ?>
       <tr class="rich-editing-wrap">
-         <th scope="row"><?php echo $array_display_name[0]; ?></th>
+         <th scope="row"><?php echo $display_name[array_key_first($display_name)]; ?></th>
          <td>
             <?php
-               foreach ( $array_name as $key => $_name ) {
-                  $_display_name = $array_display_name[$key];
-                  $_type         = $array_type[$key];
-                  // Если пустой extra_options используем style="width:350px; min-width: 100px;"
-                  if ( ! empty( $extra_options ) )
-                     // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
-                     if (( strrpos($array_extra_options[$key], "style=") === false ) and (strrpos($array_extra_options[$key], "size") === false))
-                        $_extra_options='style="width:350px; min-width: 100px;"' . $array_extra_options[$key];
-                     else
-                        $_extra_options= $array_extra_options[$key];
-                  else
-                     $_extra_options='style="width:350px; min-width: 100px;"';
-
-                  if ( ! empty( $value ) )
-                     $_value = $array_value[$key];
+               $nom=0;
+               foreach ($display_name as $key => $val) {
+                  $_name          = $key;
+                  $_display_name  = $val;
+                  $_type          = $type[$key];
+                  if (array_key_exists($key, $value))
+                     $_value = $value[$key];
                   else
                      $_value = '';
-                  // Добавим 'field-' если в имени его нет
-                  if ( $not_field != true )
+                  if (array_key_exists($key, $extra_options))
+                     $_extra_options = $extra_options[$key];
+                  else
+                     $_extra_options = '';
+                  if (array_key_exists($key, $not_field))
+                     $_not_field = $not_field[$key];
+                  else
+                     $_not_field = false;
+
+                  // Если пустой extra_options используем style="width:350px; min-width: 100px;"
+                  if ( empty( $_extra_options ))
+                     // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
+                     if (( strrpos($_extra_options, "style=") === false ) and (strrpos($_extra_options, "size=") === false))
+                        $_extra_options='style="width:350px; min-width: 100px;"' . $_extra_options;
+                  else
+                     $_extra_options='style="width:350px; min-width: 100px;"';
+                  if ( $_not_field != true )
                      if ( strpos( $_name, 'field-' ) === false )
                         $_name = 'field-' . $_name;
-                  if ( $key == 0 ){
+
+                  if ( $nom == 0 ){
                      ?>
                         <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> <?php echo $onchange ?> >
                      <?php
                   } else{
-                    ?>
-                       <b style="margin-left: 6px;"><?php echo $_display_name ?></b>
+                    ?> <span style="font-weight: normal"><?php echo $_display_name ?></span>
                        <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> <?php echo $onchange ?> >
                      <?php
                   }
+                  $nom++;
                }
             ?>
          </td>
@@ -1125,7 +1117,7 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
       else
          $item_name = array_to_string(array('field' => $name[0]));
    } else
-   // Добавим 'fiel=d-' если в имени его нет
+   // Добавим 'field-' если в имени его нет
    if ( $not_field == true )
         $item_name = array_to_string(array('not_field' => $name));
    else {
@@ -1160,12 +1152,12 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
            $select_name = $data[$select_name];
       }
    }
+
    // если есть objectId будем использовать его
    if ( ! empty( $data['objectId'] ))
       $name_id = 'objectId';
    else
       $name_id = 'id';
-
    // если стиль не указан используем width:352px;
    if ( stripos($extra_options, 'style') == false )
       $extra_options = $extra_options . ' style="width:352px;" ';
@@ -1235,7 +1227,7 @@ function java_item($item_name, $ajax_php = '', $params = '' ){
       });
       // обработка выбора значения
       $(class_name).on("select2:select", function(e) {
-         console.log(e); // весь объект
+         //console.log(e); // весь объект
          //console.log(e.params.data); // вот тут обычно полезные данные
       });
 

@@ -48,13 +48,10 @@ function add_query_filter( $array_filter, $array_filter_tables ) {
 function get_row_table_id( $db_table_name = '', $output_type = '', $id = '' ) {
    global $gl_;
 
-   print_r($db_table_name);
-
    if ( empty( $db_table_name ))
       $db_table_name = $gl_['db_table_name'];
    if ( empty( $output_type ))
       $output_type = ARRAY_A;
-   //print_r($output_type);
 
    // получим id
    if ( empty($id) )
