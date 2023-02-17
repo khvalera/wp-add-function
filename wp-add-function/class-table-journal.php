@@ -135,11 +135,10 @@ class class_table_journal_doc extends WP_List_Table {
                    </a> &nbsp;
                 <?php
                  // Период в журнале
-                                 // Период в журнале
-                 html_input(array( "date1" => __('Period from: ', 'wp-add-function' ), "date2" => __(' by: ', 'wp-add-function' )),
-                            array( "date1" => 'date', "date2" => 'date'),
-                            array( "date1" => $this -> journal_date1, "date2" => $this -> journal_date2),
-                            array( "date1" => 'style="width:135px; min-width: 120px;" required', "date2" => 'style="width:135px; min-width: 120px;" required' ));
+                 html_input_multi(array( "date1" => __('Period from: ', 'wp-add-function' ), "date2" => __(' by: ', 'wp-add-function' )),
+                                  array( "date1" => 'date', "date2" => 'date'),
+                                  array( "date1" => $this -> journal_date1, "date2" => $this -> journal_date2),
+                                  array( "date1" => 'style="width:135px; min-width: 120px;" required', "date2" => 'style="width:135px; min-width: 120px;" required' ));
                  submit_button(__( 'Apply', 'wp-add-function' ), 'button',  'button_period', false);
                 //button_action( __('Filter', 'card-manager' ), "button_filter" );
              }

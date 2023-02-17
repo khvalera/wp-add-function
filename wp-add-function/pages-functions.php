@@ -899,13 +899,54 @@ function button_html($display_name, $link_page, $style = '', $class = 'page-titl
 }
 
 //===================================================
+// Служить для відображення одинарного поля input (якщо потрібно вивести кілька значень input використовуйте html_input_multi).
+// $display_name  - Отображаемое имя реквизита на форме
+// $type          - Тип реквизита (number, text, date, time...)
+// $name          - Имя input
+// $value         - Значение
+// $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;"
+// $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
+// $not_field    - Если равно true не использовать field
+function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_field = '' ) {
+   if ( ! empty( $onchange ) ){
+      $onchange = 'onchange="' . $onchange.'"';
+      // Добавим javascript
+      javascript_arithmetic_input();
+   }
+   ?>
+      <tr class="rich-editing-wrap">
+         <th scope="row"><?php echo $display_name; ?></th>
+         <td>
+            <?php
+               // Если пустой extra_options используем style="width:350px; min-width: 100px;"
+               if ( empty( $extra_options ) )
+                  // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
+                  if (( strrpos($extra_options, "style=") === false ) and (strrpos($extra_options, "size=") === false))
+                     $extra_options='style="width:350px; min-width: 100px;"' . $extra_options;
+               else
+                  $extra_options='style="width:350px; min-width: 100px;"';
+
+               // Добавим 'field-' если в имени его нет
+               if ( $not_field  != true )
+                  if ( strpos( $name, 'field-' ) === false )
+                     $name = 'field-' . $name;
+                  ?>
+                     <input type="<?php echo $type ?>" name="<?php echo $name ?>" id="<?php echo $name ?>" value="<?php echo $value ?>" <?php echo $extra_options ?> <?php echo $onchange ?> >
+                  <?php
+            ?>
+         </td>
+      </tr>
+   <?php
+}
+
+//===================================================
 // $display_name  - Отображаемое имя реквизита на форме , массив (можно указывать несколько значений), пример: array( date1 => "Период с:", date2 => "по:" )
 // $type          - Тип реквизита (number, text, date, time...), массив (можно указывать несколько значений), пример: array( date1 => "date", date2 => "date" )
 // $value         - Значение (можно указывать несколько, через |)
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через |)
 // $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
 // $not_field     - Если равно true не использовать field, пример: array( date1 => false, date2 => true )
-function html_input( $display_name, $type, $value=array(), $extra_options = array(), $onchange = '', $not_field = array()) {
+function html_input_multi( $display_name, $type, $value=array(), $extra_options = array(), $onchange = '', $not_field = array()) {
 
    // Проверим что бы переданное количество значений совпадало
    if ( count ( $display_name ) <> count ( $type ) or count ( $display_name ) <> count ( $type )) {
