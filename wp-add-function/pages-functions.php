@@ -981,13 +981,13 @@ function html_input_multi( $display_name, $type, $value=array(), $extra_options 
                   else
                      $_not_field = false;
 
-                  if (! empty( $extra_options )) {
+                  if (! empty( $_extra_options )) {
                      // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
-                     if (( strrpos($extra_options, "style=") === false ) and (strrpos($extra_options, "size=") === false))
-                        $extra_options='style="width:350px; min-width: 100px;"' . $extra_options;
+                     if (( strrpos($_extra_options, "style=") === false ) and (strrpos($_extra_options, "size=") === false))
+                        $_extra_options='style="width:350px; min-width: 100px;"' . $_extra_options;
                   } else
                      // Если пустой extra_options используем style="width:350px; min-width: 100px;"
-                     $extra_options='style="width:350px; min-width: 100px;"';
+                     $_extra_options='style="width:350px; min-width: 100px;"';
 
                   if ( $_not_field != true )
                      if ( strpos( $_name, 'field-' ) === false )
