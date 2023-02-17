@@ -739,7 +739,7 @@ function post_form_actions(){
    $POST_PERIOD = isset( $_POST['button_period'] );
    if ( ! empty( $POST_PERIOD )) {
       // Заполним в массив данные значений полей формы
-      [$data_field, $data_table] = post_array();
+      [$data_field, $data_table] = post_array('pdate');
 
       // Запишем даты журнала
       // Получим id пользователя WP
@@ -907,7 +907,7 @@ function button_html($display_name, $link_page, $style = '', $class = 'page-titl
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;"
 // $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
 // $not_field    - Если равно true не использовать field
-function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $not_field = '' ) {
+function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $field = '' ) {
    if ( ! empty( $onchange ) ){
       $onchange = 'onchange="' . $onchange.'"';
       // Добавим javascript
@@ -927,13 +927,17 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
                   // Если пустой extra_options используем style="width:350px; min-width: 100px;"
                   $extra_options='style="width:350px; min-width: 100px;"';
 
-               // Добавим 'field-' если в имени его нет
-               if ( $not_field  != true )
-                  if ( strpos( $name, 'field-' ) === false )
+               // если $_field неравно true
+               if ( $field !== true ){
+                  // если $field не пустое
+                  if ( ! empty( $field ))
+                     $name = $field . '-' . $name;
+                  else
                      $name = 'field-' . $name;
-                  ?>
-                     <input type="<?php echo $type ?>" name="<?php echo $name ?>" id="<?php echo $name ?>" value="<?php echo $value ?>" <?php echo $extra_options ?> <?php echo $onchange ?> >
-                  <?php
+               }
+               ?>
+                  <input type="<?php echo $type ?>" name="<?php echo $name ?>" id="<?php echo $name ?>" value="<?php echo $value ?>" <?php echo $extra_options ?> <?php echo $onchange ?> >
+               <?php
             ?>
          </td>
       </tr>
@@ -946,8 +950,8 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
 // $value         - Значение (можно указывать несколько, через |)
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;" (можно указывать несколько, через |)
 // $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
-// $not_field     - Если равно true не использовать field, пример: array( date1 => false, date2 => true )
-function html_input_multi( $display_name, $type, $value=array(), $extra_options = array(), $onchange = '', $not_field = array()) {
+// $field         - Если равно true не использовать field, пример: array( date1 => false, date2 => true )
+function html_input_multi( $display_name, $type, $value=array(), $extra_options = array(), $onchange = '', $field = array()) {
 
    // Проверим что бы переданное количество значений совпадало
    if ( count ( $display_name ) <> count ( $type ) or count ( $display_name ) <> count ( $type )) {
@@ -976,11 +980,10 @@ function html_input_multi( $display_name, $type, $value=array(), $extra_options 
                      $_extra_options = $extra_options[$key];
                   else
                      $_extra_options = '';
-                  if (array_key_exists($key, $not_field))
-                     $_not_field = $not_field[$key];
+                  if (array_key_exists($key, $field))
+                     $_field = $field[$key];
                   else
-                     $_not_field = false;
-
+                     $_field = false;
                   if (! empty( $_extra_options )) {
                      // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
                      if (( strrpos($_extra_options, "style=") === false ) and (strrpos($_extra_options, "size=") === false))
@@ -989,10 +992,14 @@ function html_input_multi( $display_name, $type, $value=array(), $extra_options 
                      // Если пустой extra_options используем style="width:350px; min-width: 100px;"
                      $_extra_options='style="width:350px; min-width: 100px;"';
 
-                  if ( $_not_field != true )
-                     if ( strpos( $_name, 'field-' ) === false )
+                  // если $_field неравно true
+                  if ( $_field !== true ){
+                     // если $field не пустое
+                     if ( ! empty( $_field ))
+                        $_name = $_field . '-' . $_name;
+                     else
                         $_name = 'field-' . $_name;
-
+                  }
                   if ( $nom == 0 ){
                      ?>
                         <input type="<?php echo $_type ?>" name="<?php echo $_name ?>" id="<?php echo $_name ?>" value="<?php echo $_value ?>" <?php echo $_extra_options ?> <?php echo $onchange ?> >
