@@ -918,12 +918,13 @@ function html_input( $display_name, $type, $name, $value='', $extra_options = ''
          <th scope="row"><?php echo $display_name; ?></th>
          <td>
             <?php
-               // Если пустой extra_options используем style="width:350px; min-width: 100px;"
-               if ( empty( $extra_options ) )
+
+               if (! empty( $extra_options )) {
                   // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
                   if (( strrpos($extra_options, "style=") === false ) and (strrpos($extra_options, "size=") === false))
                      $extra_options='style="width:350px; min-width: 100px;"' . $extra_options;
-               else
+               } else
+                  // Если пустой extra_options используем style="width:350px; min-width: 100px;"
                   $extra_options='style="width:350px; min-width: 100px;"';
 
                // Добавим 'field-' если в имени его нет
@@ -980,13 +981,14 @@ function html_input_multi( $display_name, $type, $value=array(), $extra_options 
                   else
                      $_not_field = false;
 
-                  // Если пустой extra_options используем style="width:350px; min-width: 100px;"
-                  if ( empty( $_extra_options ))
+                  if (! empty( $extra_options )) {
                      // Если не найдено style и size добавим style="width:350px; min-width: 100px;"
-                     if (( strrpos($_extra_options, "style=") === false ) and (strrpos($_extra_options, "size=") === false))
-                        $_extra_options='style="width:350px; min-width: 100px;"' . $_extra_options;
-                  else
-                     $_extra_options='style="width:350px; min-width: 100px;"';
+                     if (( strrpos($extra_options, "style=") === false ) and (strrpos($extra_options, "size=") === false))
+                        $extra_options='style="width:350px; min-width: 100px;"' . $extra_options;
+                  } else
+                     // Если пустой extra_options используем style="width:350px; min-width: 100px;"
+                     $extra_options='style="width:350px; min-width: 100px;"';
+
                   if ( $_not_field != true )
                      if ( strpos( $_name, 'field-' ) === false )
                         $_name = 'field-' . $_name;
