@@ -713,14 +713,15 @@ function view_form( $plural_name_lang, $name_id ) {
          form_delete( $plural_name_lang, $name_id );
       elseif ( $action == 'cancel-deletion' )
          form_cancel_deletion( $plural_name_lang, $name_id );
-      elseif ( substr($action, 0, 3) == 'new' ){
+      elseif ( $action == 'history' )
+         view_form_history();
+      elseif ( $action == 'filter-deletion' )
+         view_form_list();
+      else {
          // Выполним функцию с префиксом $action
          $func = 'view_form_' . $action ;
          $func();
-      }elseif ( $action == 'history' )
-         view_form_history();
-      else
-         view_form_list();
+      }
     }
     else
        view_form_list();
