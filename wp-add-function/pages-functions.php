@@ -730,8 +730,10 @@ function post_form_actions(){
 
    // parent - страница родитель для дальнейшего возврата
    $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+
    // это paged для $parent (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
    $parent_n  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
+
    // если использовался фильтр, используем его
    $link_filter = http_values_query(get_http_values( '', 'f'), '', 'f');
 
@@ -750,7 +752,7 @@ function post_form_actions(){
       if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date2', $data_field['date2'] ) ){
         add_message('insufficient_permission', sprintf(__( "Failed to update meta field for user %s", 'card-manager' ), "date2"), 'error');
       }
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged ));
+      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter));
    }
 
    // обработаем нажатие кнопки фильтр для справочника
