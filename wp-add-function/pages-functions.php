@@ -622,7 +622,70 @@ function form_directory_history( $class_table, $title, $description, $search_box
            </p>
        </div>
        <p>
-          <form id="form-filter" action="" method="get">
+          <form id="form-filter" action="" method="post">
+             <?php
+                if ( strlen( $search_value )) {
+                   /* translators: %s: search keywords */
+                   printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $search_value ) );
+                }
+             ?>
+             <?php $class_table -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
+             <?php $class_table -> display() ?>
+          </form>
+       </p>
+    </div>
+   <?php
+}
+
+//====================================
+// Форма списка помеченных на удаление элементов
+// $class_table     - Имя класса таблицы
+// $search_box_name - Имя кнопки поиска
+function form_deletion( $class_table, $title, $description, $search_box_name = '' ) {
+   global $gl_;
+
+   // поиск для истории пока не реализован
+   $search_value = '';
+
+   if ( $search_box_name == '' ) {
+      $search_box_name = __( "Search", 'wp-add-function' );
+   }
+
+   // текущая страница
+   $page  = get_page_name( $gl_['prefix'] );
+
+   // страница родитель на которую возвращаемся
+   $parent = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+
+   // это paged для $parent (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
+   $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
+
+   $class_table -> prepare_items();
+
+   ?>
+    <div class="wrap">
+    <div id="icon-users" class="icon32"><br/></div>
+       <h2>
+           <?php echo $title ?>
+           <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
+              <?php echo _e( 'Return', 'wp-add-function' ); ?>
+           </a>
+       </h2>
+       <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
+           <p>
+              <table class="wpuf-table">
+                 <th>
+                    <?php echo '<img src="' . WP_PLUGIN_URL . '/' . $gl_['plugin_name'] . '/images/' . $page . '-64x64.png' . '"name="picture_title"
+                    align="top" hspace="2" width="48" height="48" border="2"/>'; ?>
+                 </th>
+                 <td>
+                   <?php echo $description ?>
+                 </td>
+              </table>
+           </p>
+       </div>
+       <p>
+          <form id="form-filter" action="" method="post">
              <?php
                 if ( strlen( $search_value )) {
                    /* translators: %s: search keywords */
@@ -716,7 +779,7 @@ function view_form( $plural_name_lang, $name_id ) {
       elseif ( $action == 'history' )
          view_form_history();
       elseif ( $action == 'filter-deletion' )
-         view_form_list();
+         view_form_deletion();
       else {
          // Выполним функцию с префиксом $action
          $func = 'view_form_' . $action ;
@@ -731,6 +794,9 @@ function view_form( $plural_name_lang, $name_id ) {
 // Обработка действий POST формы
 function post_form_actions(){
    global $gl_;
+
+   // получим $action
+   $action = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
 
    // получим текущую страницу (вместе с префиксом)
    $page   = get_page_name();
@@ -761,7 +827,11 @@ function post_form_actions(){
       if( ! update_user_meta( $user_id, str_replace('-','_', $page) . '_date2', $data_field['date2'] ) ){
         add_message('insufficient_permission', sprintf(__( "Failed to update meta field for user %s", 'card-manager' ), "date2"), 'error');
       }
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter));
+      if (( $action == 'filter-deletion') or ($action == 'history'))
+         // Повертаємось на поточну сторінку
+         wp_redirect(((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+      else
+         wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter));
    }
 
    // обработаем нажатие кнопки фильтр для справочника
@@ -1574,14 +1644,19 @@ function display_message( $str_code = '', $view = '', $type = '' ) {
 
 //===================================================
 // Выводит разные типы кнопок в поле для class-wp-list-table
-// $name_id - Имя поля ID (пример: objectId)
-// $perm    - Права
-function display_column_button( $this_column, $item, $column_name, $buttons, $name_id, $perm = '' ){
+// $this_table  - переменная с сылкой на объект class-wp-list-table
+// $item        - массив с структурой и значениями выделенной строки таблицы
+// $column_name - имя выбранного поля таблицы
+// $name_id     - имя поля ID (пример: objectId)
+// $perm        - права
+function display_column_button( $this_table, $item, $column_name, $buttons, $name_id, $perm = '' ){
    global $gl_, $action, $color, $paged;
 
    // Если разрешение не указано используем read
    if ( empty ( $perm ))
       $perm = 'read';
+
+   $id = http_values_query( array( $name_id => $item[ $name_id ] ));
 
    // Если есть то получим значение ID
    $item_id      = isset( $_REQUEST[$name_id] ) ? wp_unslash( trim( $_REQUEST[$name_id] )) : '';
@@ -1597,7 +1672,7 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
             else
                $actions[$name] = sprintf( '<a href="?page=%s&paged=%s&s=%s">' . __( 'Filter', 'wp-add-function' ) . '</a>', $_REQUEST['page'], $paged, $item[ $column_name ]);
          } elseif ( $name == 'history' )
-               $actions[$name] = sprintf( '<a href="?page=%s&action=%s&p=%s&n=%s&'.$name_id.'=%s">' . __( 'History', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'history', $_REQUEST['page'], $paged, $item[ $name_id ] );
+               $actions[$name] = sprintf( '<a href="?page=%s&action=%s&p=%s&n=%s%s">' . __( 'History', 'wp-add-function' ) . '</a>', $_REQUEST['page'], 'history', $_REQUEST['page'], $paged, $id );
          else
             if ( current_user_can( $perm ))
                if ( $name == 'cancel-deletion')
@@ -1606,7 +1681,7 @@ function display_column_button( $this_column, $item, $column_name, $buttons, $na
                   $actions[$name] = sprintf('<a href="?page=%s&paged=%s&action=%s&'.$name_id.'=%s">' . __( str_replace('-', ' ', ucfirst($name)), $gl_['plugin_name'] ) . '</a>', $_REQUEST['page'], $paged, $name, $item[$name_id]);
 
          }
-   return sprintf('%1$s %2$s', $column_value, $this_column -> row_actions($actions) );
+   return sprintf('%1$s %2$s', $column_value, $this_table -> row_actions($actions) );
 }
 
 //===================================================

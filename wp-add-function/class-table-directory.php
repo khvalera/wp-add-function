@@ -13,6 +13,7 @@ class class_table_directory extends WP_List_Table {
     public $action, $page, $paged, $per_page, $paged_query;
     public $search_value, $filter, $filter_tables, $count_lines;
     public $color;
+    public $report_date1, $report_date2;
 
     /** Подготавливает данные для таблицы. Метод должен быть описан в дочернем классе.
     Это важный метод на нем строиться вся таблица. Тут обычно устанавливаются все данные таблицы.
@@ -71,6 +72,19 @@ class class_table_directory extends WP_List_Table {
 
         // номер текущей страницы для запроса
         $this -> paged_query = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] -1) * $this -> per_page) : 0;
+
+        // получим id пользователя WP
+        $user_id = get_current_user_id();
+
+        // пробуем получить сохраненную настройку
+        $this -> report_date1 = get_user_meta( $user_id, str_replace('-','_', $this->page) . '_date1', true );
+        $this -> report_date2 = get_user_meta( $user_id, str_replace('-','_', $this->page) . '_date2', true );
+
+        // если сохраненной настройки нет, берем текущую дату
+        if ( ! $this -> report_date1 )
+           $this -> report_date1 = current_date_time("Y-m-d");
+        if ( ! $this -> report_date2 )
+           $this -> report_date2 = current_date_time("Y-m-d");
 
         // получим массив с фильтром
         $this -> filter = get_http_values( '', 'f');
