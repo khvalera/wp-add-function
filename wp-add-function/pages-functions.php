@@ -297,6 +297,51 @@ class class_dialogue_form {
 }
 
 //====================================
+// Відобразити кнопки на формі
+// $buttons - задается в виде массива, пример: array('new' => 'New item', 'new1' => 'New item 1')
+function display_form_buttons($buttons = array(), $perm_button, $page ){
+  global $gl_;
+
+  // Зафиксируем текущий paged, (номер страницы пагинации)
+  $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
+
+  // parent - страница родитель для дальнейшего возврата
+  $parent    = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
+
+  // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
+  $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
+
+  $n = 0;
+  if ( current_user_can( $perm_button )){
+     foreach ($buttons as $button_action => $button_name) {
+        ?>
+           <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
+              <?php echo _e($button_name, $gl_['plugin_name'] );?>
+           </a>
+        <?php
+        $n++;
+     }
+     // если пустое значение $buttons
+     if (empty($buttons)){
+        $button_action = 'new';
+        $button_name   = __('New item', "wp-add-function" );
+          ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
+                <?php echo _e($button_name, $gl_['plugin_name'] );?>
+             </a>
+          <?php
+     }
+  }
+  // если есть страница родитель, выводим кнопку для возврата
+  if (! empty($parent)){
+     ?> <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
+           <?php echo _e( 'Return', 'wp-add-function' ); ?>
+        </a>
+     <?php
+  }
+  //print_r($buttons );
+}
+
+//====================================
 // Форма отчета
 // $name            - Имя формы (пример: balances)
 // $title           - Заглавие
@@ -314,7 +359,8 @@ function form_report( $name, $title, $description1, $description2 = '', $search_
    $action         = isset( $_REQUEST['action'] ) ? wp_unslash( trim( $_REQUEST['action'] )) : '';
    $page   = get_page_name();
 
-   $gl_['class-table'] -> prepare_items();
+   $class_table = $gl_['class-table'];
+   $class_table -> prepare_items();
    ?>
    <div class="wrap">
    <div id="icon-users" class="icon32"><br/></div>
@@ -340,16 +386,22 @@ function form_report( $name, $title, $description1, $description2 = '', $search_
        <p>
           <form id="form-filter" action="" method="post">
              <?php
-                if ( $action == 'filter-deletion' ){
+               if ( $action == 'filter-deletion' ){
                    printf( '<span class="subtitle" style="color: #ce181e">' . __( 'Marked for deletion' , $gl_['plugin_name']) . '</span>' );
                 }
                 if ( strlen( $search_results )) {
                    /* translators: %s: search keywords */
                    printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $search_results ) );
                 }
+                // если используется фильтр
+                if ( ! empty( $class_table -> filter )){
+                   $filter_str = filter_str( $class_table -> filter );
+                   /* translators: %s: search keywords */
+                   printf( '<span class="subtitle" style="color: #336699;font-weight:bold">' . __( 'Filter by &#8220;%s&#8221;', $gl_['plugin_name'] ) . '</span>', esc_html( $filter_str ) );
+                }
              ?>
-             <?php $gl_['class-table'] -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
-             <?php $gl_['class-table'] -> display() ?>
+             <?php $class_table -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
+             <?php $class_table -> display() ?>
           </form>
        </p>
    </div>
@@ -380,7 +432,8 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
    $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
    $page   = get_page_name();
 
-   $gl_['class-table'] -> prepare_items();
+   $class_table = $gl_['class-table'];
+   $class_table -> prepare_items();
    // если пустое значение $button1
    if (empty($button1)){
       $button1_action = 'new';
@@ -436,8 +489,8 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
                    printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $search_results ) );
                 }
              ?>
-             <?php $gl_['class-table'] -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
-             <?php $gl_['class-table'] -> display() ?>
+             <?php $class_table -> search_box( $search_box_name, $gl_['plugin_name'] ); ?>
+             <?php $class_table -> display() ?>
           </form>
        </p>
    </div>
@@ -445,54 +498,9 @@ function form_journal( $name, $perm_button, $title, $description1, $description2
 }
 
 //====================================
-// Відобразити кнопки на формі
-// $buttons - задается в виде массива, пример: array('new' => 'New item', 'new1' => 'New item 1')
-function display_form_buttons($buttons = array(), $perm_button, $page ){
-  global $gl_;
-
-  // Зафиксируем текущий paged, (номер страницы пагинации)
-  $paged  = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged'] )) : 1;
-
-  // parent - страница родитель для дальнейшего возврата
-  $parent    = isset( $_REQUEST['p'] ) ? wp_unslash( trim( $_REQUEST['p'] )) : '';
-
-  // это paged для $p (номер страницы пагинации, используется для дальнейшего возврата на родительскую страницу)
-  $numbered  = isset($_REQUEST['n']) ? max(0, intval($_REQUEST['n'] )) : 1;
-
-  $n = 0;
-  if ( current_user_can( $perm_button )){
-     foreach ($buttons as $button_action => $button_name) {
-        ?>
-           <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
-              <?php echo _e($button_name, $gl_['plugin_name'] );?>
-           </a>
-        <?php
-        $n++;
-     }
-     // если пустое значение $buttons
-     if (empty($buttons)){
-        $button_action = 'new';
-        $button_name   = __('New item', "wp-add-function" );
-          ?> <a href="<?php echo sprintf('?page=%s&paged=%s&action=%s', $page, $paged, $button_action);?>" class="page-title-action">
-                <?php echo _e($button_name, $gl_['plugin_name'] );?>
-             </a>
-          <?php
-     }
-  }
-  // если есть страница родитель, выводим кнопку для возврата
-  if (! empty($parent)){
-     ?> <a href="<?php echo sprintf('?page=%s&paged=%s', $parent, $numbered );?>" class="page-title-action">
-           <?php echo _e( 'Return', 'wp-add-function' ); ?>
-        </a>
-     <?php
-  }
-  //print_r($buttons );
-}
-
-//====================================
 // Форма списка справочника
 // $name            - Имя формы (пример: users)
-// $gl_['class-table']     - Имя класса таблицы
+// $class_table     - Имя класса таблицы
 // $perm_button     - Права на кнопки
 // $title           - Заглавие
 // $description1    - Описание 1
