@@ -1636,7 +1636,7 @@ function display_message( $str_code = '', $view = '', $type = '' ) {
          if ( $data == 'error' )
             echo '<p>
                      <font color=" $color_all["red"]">
-                        <u><b><strong>'. __( "Error: ", 'wp-add-function' ) . '</strong>'. $message . '</b></u>
+                        <u><b><strong>'. __( "Error:", 'wp-add-function' ) . ' ' . '</strong>'. $message . '</b></u>
                      </font>
                   </p>';
          else

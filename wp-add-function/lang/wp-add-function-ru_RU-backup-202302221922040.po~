@@ -1,126 +1,128 @@
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: wp-add-function\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-22 19:21+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: \n"
-"Language: \n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"POT-Creation-Date: 2020-11-11 20:29+0000\n"
+"PO-Revision-Date: 2023-02-22 19:21+0000\n"
+"Last-Translator: \n"
+"Language-Team: Русский\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
+"n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.4.2; wp-5.4.4"
+"X-Loco-Version: 2.6.2; wp-6.1.1"
 
 #: wp-add-function/class-table-journal.php:137
 msgid " by: "
-msgstr ""
+msgstr "по:"
 
 #: wp-add-function/class-table-balances.php:216
 #: wp-add-function/class-table-journal.php:232
 #: wp-add-function/class-table-directory.php:226
 msgid "Action"
-msgstr ""
+msgstr "Действие"
 
 #. Description of the plugin
 msgid "Additional common function WP"
-msgstr ""
+msgstr "Дополнительные общие функции WP"
 
 #: wp-add-function/class-table-journal.php:227
 msgid "Amount"
-msgstr ""
+msgstr "Количество"
 
 #: wp-add-function/pages-functions.php:758
 #: wp-add-function/class-table-journal.php:143
 msgid "Apply"
-msgstr ""
+msgstr "Применять"
 
 #: wp-add-function/class-table-balances.php:116
 #: wp-add-function/class-table-journal.php:108
 #: wp-add-function/class-table-directory.php:117
 msgid "book"
-msgstr ""
+msgstr "книга"
 
 #: wp-add-function/class-table-balances.php:117
 #: wp-add-function/class-table-journal.php:109
 #: wp-add-function/class-table-directory.php:118
 msgid "books"
-msgstr ""
+msgstr "книги"
 
 #: wp-add-function/pages-functions.php:728
 #: wp-add-function/pages-functions.php:759
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 #: wp-add-function/pages-functions.php:1683
 msgid "Cancel delete"
-msgstr ""
+msgstr "Отмена удаления"
 
 #: wp-add-function/db-functions.php:97
 msgid "Cancel deletion"
-msgstr ""
+msgstr "Отмена удаления"
 
 #: wp-add-function/pages-functions.php:749
 msgid "Cancel deletion item"
-msgstr ""
+msgstr "Отменить пометку на удаление элемента"
 
 #: wp-add-function/class-table-journal.php:228
 #: wp-add-function/class-table-directory.php:222
 msgid "Comment"
-msgstr ""
+msgstr "Комментарий"
 
 #: wp-add-function/db-functions.php:95
 msgid "Data correction"
-msgstr ""
+msgstr "Коррекция данных"
 
 #: wp-add-function/class-table-journal.php:224
 msgid "Date and time document"
-msgstr ""
+msgstr "Дата и время документа"
 
 #: wp-add-function/pages-functions.php:727
 msgid "Delete"
-msgstr ""
+msgstr "Удалять"
 
 #: wp-add-function/pages-functions.php:715
 msgid "Delete item"
-msgstr ""
+msgstr "Удалить элемент"
 
 #: wp-add-function/db-functions.php:99
 msgid "Delete mark"
-msgstr ""
+msgstr "Пометка на удаление"
 
 #: wp-add-function/pages-functions.php:754
 #, php-format
 msgid ""
 "Do you want to cancel the deletion of the directory entry '%s' with the "
 "number '%s'?"
-msgstr ""
+msgstr "Вы хотите отменить удаление записи справочника '%s' с номером '%s'?"
 
 #: wp-add-function/pages-functions.php:722
 #, php-format
 msgid "Do you want to delete the directory entry '%s' with the number '%s'?"
-msgstr ""
+msgstr "Вы желаете удалить элемент справочника '%s' с номером '%s'?"
 
 #: wp-add-function/class-table-journal.php:223
 msgid "Document type"
-msgstr ""
+msgstr "Тип документа"
 
 #: wp-add-function/db-functions.php:103
 msgid "Error inserting history data!"
-msgstr ""
+msgstr "Ошибка при добавлении данных в историю!"
 
 #: wp-add-function/pages-functions.php:1639
+#, fuzzy
+#| msgid "Error: "
 msgid "Error:"
-msgstr ""
+msgstr "Ошибка:"
 
 #: wp-add-function/pages-functions.php:1319
 #: wp-add-function/pages-functions.php:1325
 #, php-format
 msgid "File not found '%s'"
-msgstr ""
+msgstr "Не найден файл '%s'"
 
 #: wp-add-function/class-table-balances.php:137
 #: wp-add-function/pages-functions.php:1675
@@ -129,80 +131,84 @@ msgstr ""
 #: wp-add-function/class-table-journal.php:129
 #: wp-add-function/class-table-directory.php:138
 msgid "Filter"
-msgstr ""
+msgstr "Фильтр"
 
 #: wp-add-function/pages-functions.php:1679
 msgid "History"
-msgstr ""
+msgstr "История"
 
 #. Author URI of the plugin
 msgid "http://khv.pp.ua"
-msgstr ""
+msgstr "http://khv.pp.ua"
 
 #: wp-add-function/pages-functions.php:1038
 msgid "In the function \"html_input\" number of values is incorrect"
-msgstr ""
+msgstr "В функции \"html_input\" неправильное количество значений"
 
 #: wp-add-function/pages-functions.php:751
 msgid ""
 "In this dialog box you can remove the mark for deletion from the selected "
 "directory entry."
 msgstr ""
+"В этом диалоговом окне вы можете убрать признак удаления выбранной записи "
+"справочника."
 
 #: wp-add-function/pages-functions.php:717
 msgid "In this dialog, you can mark the selected directory entry for deletion."
 msgstr ""
+"В этом диалоговом окне вы можете пометить на удаление выбранную запись "
+"справочника ."
 
 #. Author of the plugin
 msgid "Khomenko Valery"
-msgstr ""
+msgstr "Хоменко Валерий"
 
 #: wp-add-function/class-table-journal.php:229
 #: wp-add-function/class-table-directory.php:223
 msgid "Modified"
-msgstr ""
+msgstr "Модифицирован"
 
 #: wp-add-function/class-table-directory.php:221
 msgid "Name"
-msgstr ""
+msgstr "Имя"
 
 #: wp-add-function/pages-functions.php:327
 #: wp-add-function/pages-functions.php:439
 msgid "New item"
-msgstr ""
+msgstr "Новый элемент"
 
 #: wp-add-function/class-table-balances.php:210
 #: wp-add-function/class-table-journal.php:222
 #: wp-add-function/class-table-directory.php:220
 msgid "Number"
-msgstr ""
+msgstr "Номер"
 
 #: wp-add-function/pages-functions.php:1558
 msgid "Number of lines per page"
-msgstr ""
+msgstr "Количество строк на странице"
 
 #: wp-add-function/class-table-journal.php:137
 msgid "Period from: "
-msgstr ""
+msgstr "Период с:"
 
 #: wp-add-function/class-table-balances.php:212
 #: wp-add-function/class-table-journal.php:226
 msgid "Product"
-msgstr ""
+msgstr "Товар"
 
 #: wp-add-function/db-functions.php:93
 msgid "Record new"
-msgstr ""
+msgstr "Новая запись"
 
 #: wp-add-function/class-table-balances.php:213
 msgid "Rest"
-msgstr ""
+msgstr "Остаток"
 
 #: wp-add-function/pages-functions.php:337
 #: wp-add-function/pages-functions.php:607
 #: wp-add-function/pages-functions.php:670
 msgid "Return"
-msgstr ""
+msgstr "Возврат"
 
 #: wp-add-function/pages-functions.php:354
 #: wp-add-function/pages-functions.php:424
@@ -211,29 +217,30 @@ msgstr ""
 #: wp-add-function/pages-functions.php:650
 #: wp-add-function/pages-functions.php:1426
 msgid "Search"
-msgstr ""
+msgstr "Поиск"
 
 #: wp-add-function/pages-functions.php:1160
 #: wp-add-function/pages-functions.php:1335
 msgid "Select value"
-msgstr ""
+msgstr "Выберите значение"
 
 #: wp-add-function/class-table-balances.php:211
 #: wp-add-function/class-table-journal.php:225
 msgid "Storage"
-msgstr ""
+msgstr "Место хранения"
 
 #: wp-add-function/pages-functions.php:718
 msgid ""
 "The directory element is not deleted completely, but only marked for "
 "deletion."
 msgstr ""
+"Элемент справочника не удаляется полностью, а только помечается для удаления."
 
 #: wp-add-function/class-table-balances.php:201
 #: wp-add-function/class-table-journal.php:213
 #: wp-add-function/class-table-directory.php:212
 msgid "There is not a single value."
-msgstr ""
+msgstr "Нет ни одного значения."
 
 #. Name of the plugin
 msgid "wp-add-function"
