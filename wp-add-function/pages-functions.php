@@ -36,9 +36,9 @@ $form_message = new WP_Error;
 // key_name     - имя массива которое потом можно открыть с помощью $_GET[$array_name](не обязателен, по умолчанию field).
 // first_char   - первый знак в запросе (по умолчанию &)
 function http_values_query( $parameters, $return_value = '', $key_name = 'field', $first_char = '&'){
-    if ( ! empty( $return_value ))
+    if ( ! empty( $return_value )){
        $data = array($key_name => $parameters, 'return_value' => $return_value);
-    else
+    } else
        $data = array($key_name => $parameters);
 
     return empty(http_build_query($data)) ? '' : $first_char . http_build_query($data);
@@ -338,7 +338,6 @@ function display_form_buttons($buttons = array(), $perm_button, $page ){
         </a>
      <?php
   }
-  //print_r($buttons );
 }
 
 //====================================
@@ -1239,7 +1238,8 @@ function array_to_string($arr){
 // $php_file      - путь к ajax файлу (не обязательно)
 // $if_select     - имя поля для отбора, если не указано то используется objectId
 // $params        - параметры для передачи в ajax_php (пример: "?f=objectId&v=1")
-function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '', $not_field = false ) {
+// $name_function - если нужно указать свою функцию
+function html_select2( $display_name, $table_name, $name, $extra_options = '', $select_id = '', $select_name = '', $php_file = '', $if_select = '', $params = '', $not_field = false, $name_function = '') {
    global $gl_;
 
    if ( is_array( $name )){
@@ -1258,8 +1258,11 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
 
    // если указан $select_id
    if ( ! empty( $select_id )) {
+      if ( ! empty( $name_function )) {
+         $func = $name_function;
+         $data = $func($table_name, ARRAY_A, $select_id, $if_select);
       // если функция указана в $gl_ используем ее
-      if ( ! empty( $gl_['name_function_get_table_row_id'] )){
+      } elseif ( ! empty( $gl_['name_function_get_table_row_id'] )){
          $func = $gl_['name_function_get_table_row_id'];
          $data = $func($table_name, ARRAY_A, $select_id, $if_select);
       } else

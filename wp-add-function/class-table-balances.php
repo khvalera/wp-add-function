@@ -315,7 +315,6 @@ class class_table_balances extends WP_List_Table {
                          products.name
                     ) AS number";
 
-       //print_r($query); exit;
        $this -> count_lines = $gl_['db'] -> get_var( $query );
 
        // массив с данными таблицы
@@ -341,8 +340,7 @@ class class_table_balances extends WP_List_Table {
                  LIMIT " . $this->per_page . " OFFSET $paged_query";
 
        $array_table = $gl_['db'] -> get_results( $query, ARRAY_A );
-       //print_r($query); exit;
-       $data = $array_table;
-       return $data;
+
+       return $array_table;
     }
 } //class

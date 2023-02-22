@@ -36,7 +36,6 @@ class class_table_journal_doc extends WP_List_Table {
         $total_items = $this -> count_lines;
         // количество страниц
         $total_pages = ceil($total_items / $this -> per_page);
-        //print_r($this -> paged_query);
         $this -> set_pagination_args( array(
             'total_items' => $total_items,
             'total_pages' => $total_pages,

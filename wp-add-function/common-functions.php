@@ -91,28 +91,28 @@ function form_add_picture( $type_name ) {
 //===========================================
 // Удаление метабоксов из консоли сайта
 function clear_wp_dash(){
-    $dash_side   = & $GLOBALS['wp_meta_boxes']['dashboard']['side']['core'];
-    $dash_normal = & $GLOBALS['wp_meta_boxes']['dashboard']['normal']['core'];
-    // Быстрая публикация
-    unset( $dash_side['dashboard_quick_press'] );
-    // Последние черновики
-    unset( $dash_side['dashboard_recent_drafts'] );
-    // Блог WordPress
-    unset( $dash_side['dashboard_primary'] );
-    // Другие Новости WordPress
-    unset( $dash_side['dashboard_secondary'] );
-    // Входящие ссылки
-    unset( $dash_normal['dashboard_incoming_links'] );
-    // Прямо сейчас
-    unset( $dash_normal['dashboard_right_now'] );
-    // Последние комментарии
-    unset( $dash_normal['dashboard_recent_comments'] );
-    // Последние Плагины
-    unset( $dash_normal['dashboard_plugins'] );
-    // Активность
-    unset( $dash_normal['dashboard_activity'] );
+   $dash_side   = & $GLOBALS['wp_meta_boxes']['dashboard']['side']['core'];
+   $dash_normal = & $GLOBALS['wp_meta_boxes']['dashboard']['normal']['core'];
+   // Быстрая публикация
+   unset( $dash_side['dashboard_quick_press'] );
+   // Последние черновики
+   unset( $dash_side['dashboard_recent_drafts'] );
+   // Блог WordPress
+   unset( $dash_side['dashboard_primary'] );
+   // Другие Новости WordPress
+   unset( $dash_side['dashboard_secondary'] );
+   // Входящие ссылки
+   unset( $dash_normal['dashboard_incoming_links'] );
+   // Прямо сейчас
+   unset( $dash_normal['dashboard_right_now'] );
+   // Последние комментарии
+   unset( $dash_normal['dashboard_recent_comments'] );
+   // Последние Плагины
+   unset( $dash_normal['dashboard_plugins'] );
+   // Активность
+   unset( $dash_normal['dashboard_activity'] );
 
-    remove_action( 'welcome_panel', 'wp_welcome_panel' );
+   remove_action( 'welcome_panel', 'wp_welcome_panel' );
 }
 
 //===================================================
