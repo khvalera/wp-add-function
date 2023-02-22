@@ -1255,7 +1255,6 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
       if ( strpos( $name, 'field-' ) === false )
          $item_name = array_to_string(array('field' => $name));
     }
-
    // если указан $select_id
    if ( ! empty( $select_id )) {
       if ( ! empty( $name_function )) {
@@ -1276,10 +1275,12 @@ function html_select2( $display_name, $table_name, $name, $extra_options = '', $
            $data_names=""; $nom = 0;
            foreach ($select_name as $n) {
               $nom++;
-              if ( $nom == 1 )
-                 $data_names = $data_names . $data[$n];
-              else
-                 $data_names = $data_names . " - " . $data[$n];
+              if ( $nom == 1 ){
+                 if ( ! empty( $data))
+                    $data_names = $data_names . $data[$n];
+              } else
+                 if ( ! empty( $data))
+                    $data_names = $data_names . " - " . $data[$n];
            }
            $select_name = $data_names;
          } else
