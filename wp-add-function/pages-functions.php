@@ -877,15 +877,20 @@ function post_form_actions(){
 
       // получим все значения переданные раньше
       $fields_values = get_http_values();
-
      // получим имя поля для возврата в parent
      $return_field = get_http_return_value();
      if (! empty( $return_field )){
-        $fields_values[$return_field] = $gl_[$return_field];
-
-        // cоздадим часть ссылки
-        $link_values = http_values_query( $fields_values );
-      } else $link_values = "";
+        if (! empty($gl_[$return_field])){
+           $fields_values[$return_field] = $gl_[$return_field];
+           // cоздадим часть ссылки
+           $link_values = http_values_query( $fields_values );
+        }
+      } else
+         if (! empty($fields_values))
+            // cоздадим часть ссылки
+            $link_values = http_values_query( $fields_values );
+         else
+            $link_values = "";
 
       // если нужно вернуться на страницу родитель
       wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values . $link_filter));
