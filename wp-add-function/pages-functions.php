@@ -810,6 +810,7 @@ function post_form_actions(){
 
    // если использовался фильтр, используем его
    $link_filter = http_values_query(get_http_values( '', 'f'), '', 'f');
+   $link_filter_t = http_values_query(get_http_values( '', 't'), '', 't');
 
    // обработаем нажатие кнопки применить для периода в журнале документов
    $POST_PERIOD = isset( $_POST['button_period'] );
@@ -893,7 +894,7 @@ function post_form_actions(){
             $link_values = "";
 
       // если нужно вернуться на страницу родитель
-      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values . $link_filter));
+      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values . $link_filter. $link_filter_t));
    }
 
    // обработаем нажатие кнопки Сancel
@@ -922,7 +923,7 @@ function post_form_actions(){
       $link_values = http_values_query( $fields_values );
 
       // если нужно вернуться на страницу родитель
-      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values . $link_filter));
+      wp_redirect( get_admin_url( null, 'admin.php' . $link_page . $link_paged . $link_action . $link_values . $link_filter . $link_filter_t));
    }
 
    // обработаем нажатие кнопки Delete
@@ -931,7 +932,7 @@ function post_form_actions(){
       delete_form_data();
       // Если есть ошибки или сообщения покажем все
       display_message();
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter));
+      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter . $link_filter_t));
    }
 
    // Обработаем нажатие кнопки Cancel Delete
@@ -940,7 +941,7 @@ function post_form_actions(){
       delete_form_data();
       // Если есть ошибки или сообщения покажем все
       display_message();
-      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter));
+      wp_redirect(get_admin_url(null, 'admin.php?page=' . $page . '&paged=' . $paged . $link_filter . $link_filter_t));
    }
 
    // Если есть ошибки или сообщения покажем все
