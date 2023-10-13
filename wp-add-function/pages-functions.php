@@ -208,7 +208,7 @@ class class_dialogue_form {
     public $display_description = false;
     public $display_controls = false;
     // переменные описания
-    public $plugin_name, $image_file, $description_text1, $description_text2, $description1_font_size, $description2_font_size ;
+    public $plugin_name, $image_file, $header_text, $footer_button, $description_text1, $description_text2, $description1_font_size, $description2_font_size ;
     // переменные элементы управления
     public $item_controls;
 
