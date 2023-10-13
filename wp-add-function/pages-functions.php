@@ -1,6 +1,9 @@
 <?php
 
-// функции для работы с страницами
+// Функції для роботи зі сторінками
+
+//===================================================
+// У wordpress роботу із сесіями замінили на механізм https://developer.wordpress.org/apis/transients/
 
 // Создаем экземпляр для оброботки ошибок
 global $form_message;
@@ -299,7 +302,7 @@ class class_dialogue_form {
 //====================================
 // Відобразити кнопки на формі
 // $buttons - задается в виде массива, пример: array('new' => 'New item', 'new1' => 'New item 1')
-function display_form_buttons($buttons = array(), $perm_button, $page ){
+function display_form_buttons($buttons, $perm_button, $page ){
   global $gl_;
 
   // Зафиксируем текущий paged, (номер страницы пагинации)
@@ -1499,6 +1502,8 @@ class add_admin_submenu_class_table {
     public $parent_page;
     public $page;
     public $settings_fields;
+    public $position;
+    public $set_fields;
 
     //===================================================
     function __construct($item_name, $item_Name_menu_lang, $current_user_can, $plugin_name, $plugin_prefix, $parent_page, $position = 'admin_bar', $set_fields = array()){
@@ -1543,13 +1548,11 @@ class add_admin_submenu_class_table {
          if ( $this->position == 'admin_bar')
             $hook_menu = add_submenu_page(null, $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
                             function(){
-                               management_session($this->page);
                                require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
                             });
          else
             $hook_menu = add_submenu_page($this->parent_page, $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
                             function(){
-                               management_session($this->page);
                                require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
                             });
 
@@ -1588,24 +1591,6 @@ class add_admin_submenu_class_table {
             ${$perName} = new $className;
         });
     }
-}
-
-//===================================================
-// Управление сессиями
-function management_session($sess) {
-   //обработка сессий
-   if ( ! session_id() ) {
-      session_start();
-   }
-   if ( session_id() != $sess) {
-      if (session_status() == PHP_SESSION_ACTIVE) {
-          session_destroy();
-      }
-   }
-   if (session_status() != PHP_SESSION_ACTIVE) {
-      session_id($sess);
-      session_start();
-   }
 }
 
 //===================================================
@@ -1817,4 +1802,3 @@ add_action('wp_default_scripts', function ($scripts) {
 });
 
 ?>
-
