@@ -1541,12 +1541,13 @@ class add_admin_submenu_class_table {
     }
 
     //===================================================
-    // Добавляет дочернюю страницу (без отображения в меню) указанного главного меню в админ-панели.
+    // Додає дочірню сторінку (без відображення меню) вказаного головного меню в адмін-панелі.
     public function submenu_page(){
          // var_dump( $this);
          // добавим страницу в admin_bar
          if ( $this->position == 'admin_bar')
-            $hook_menu = add_submenu_page(null, $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
+            // Щоб сховати посилання підменю з основного меню адмін-панелі, використовуйте перший параметр 'options.php'
+            $hook_menu = add_submenu_page('options.php', $this->item_Name_menu_lang, $this->item_Name_menu_lang, $this->current_user_can, $this->page,
                             function(){
                                require_once( WP_PLUGIN_DIR .'/'. $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
                             });
