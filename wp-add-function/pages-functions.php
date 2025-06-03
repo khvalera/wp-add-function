@@ -995,7 +995,7 @@ function button_html($display_name, $link_page, $style = '', $class = 'page-titl
 // $value         - Значение
 // $extra_options - Дополнительные параметры, стиль тут тоже указывается style="width:352px;"
 // $onchange      - Название функции, выполняется после изменения значения элемента формы, когда это изменение зафиксировано.
-// $not_field    - Если равно true не использовать field
+// $field         - Если равно true не использовать field, пример: date1 )
 function html_input( $display_name, $type, $name, $value='', $extra_options = '', $onchange = '', $field = '' ) {
    if ( ! empty( $onchange ) ){
       $onchange = 'onchange="' . $onchange.'"';
@@ -1153,6 +1153,7 @@ function html_textarea( $display_name, $name, $cols = '', $rows = '', $value='' 
 // $value_id      - id выбранной позиции
 // $value_name    - имя выбранной позиции
 // $extra_options - дополнительные параметры (стиль тут тоже указывается style="width:352px;")
+// $not_field     - если равно true не использовать field
 function html_select($display_name, $name, $array_data, $extra_options = '', $value_id = '', $id_field = '', $value_field = '', $not_field = '' ){
    // Добавим 'field-' если в имени его нет
    if ( $not_field != true )
