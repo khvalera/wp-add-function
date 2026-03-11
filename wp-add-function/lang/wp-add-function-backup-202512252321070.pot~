@@ -1,0 +1,254 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-add-function\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-25 22:56+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.8.0; wp-6.8; php-8.4.7\n"
+"X-Domain: wp-add-function"
+
+#. Description of the plugin
+msgid "Additional common function WP"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:442
+msgid "Apply"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:412
+#: wp-add-function/pages/pages-forms.php:443
+msgid "Cancel"
+msgstr ""
+
+#: wp-add-function/db-functions.php:173
+msgid "Cancel deletion"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:433
+msgid "Cancel deletion item"
+msgstr ""
+
+#: wp-add-function/class-base-list-table.php:301
+msgid "Card account"
+msgstr ""
+
+#: wp-add-function/db-functions.php:35
+#, php-format
+msgid "Could not connect to external database for \"%s\": %s"
+msgstr ""
+
+#: wp-add-function/db-functions.php:171
+msgid "Data correction"
+msgstr ""
+
+#: wp-add-function/db-functions.php:49
+#, php-format
+msgid "DB config file not found for plugin \"%s\""
+msgstr ""
+
+#: wp-add-function/db-functions.php:65
+#, php-format
+msgid "DB config missing key \"%s\" in %s"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:411
+msgid "Delete"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:399
+msgid "Delete item"
+msgstr ""
+
+#: wp-add-function/db-functions.php:175
+msgid "Delete mark"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:438
+#, php-format
+msgid ""
+"Do you want to cancel the deletion of the directory entry '%s' with the "
+"number '%s'?"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:406
+#, php-format
+msgid "Do you want to delete the directory entry '%s' with the number '%s'?"
+msgstr ""
+
+#: wp-add-function/db-functions.php:179
+msgid "Error inserting history data!"
+msgstr ""
+
+#: wp-add-function/class-base-list-table.php:262
+#: wp-add-function/pages/pages-export.php:233
+msgid "Export"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:388
+#: wp-add-function/pages/pages-export.php:489
+msgid "Exported:"
+msgstr ""
+
+#: wp-add-function/pages/pages-elements.php:375
+#, php-format
+msgid "File not found \"%s\""
+msgstr ""
+
+#: wp-add-function/pages/pages-actions.php:451
+msgid "Filter"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:411
+#: wp-add-function/pages/pages-export.php:505
+msgid "Filters:"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:175
+#, php-format
+msgid "from '%1$s' to '%2$s'"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:178
+#, php-format
+msgid "from '%s'"
+msgstr ""
+
+#: wp-add-function/db-functions.php:56
+#, php-format
+msgid "Function get_db_conf() not found in %s"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://khv.pp.ua"
+msgstr ""
+
+#: wp-add-function/pages/pages-elements.php:81
+msgid "In the function \"html_input\" number of values is incorrect"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:435
+msgid ""
+"In this dialog box you can remove the mark for deletion from the selected "
+"directory entry."
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:401
+msgid "In this dialog, you can mark the selected directory entry for deletion."
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:622
+msgid "Invalid export request."
+msgstr ""
+
+#. Author of the plugin
+msgid "Khomenko Valery"
+msgstr ""
+
+#: wp-add-function/pages/pages-elements.php:419
+#, php-format
+msgid "Loading ID %s..."
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:103
+#: wp-add-function/pages/pages-core.php:246
+msgid "New item"
+msgstr ""
+
+#: wp-add-function/pages/pages-classes.php:391
+msgid "Number of lines per page"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:397
+#: wp-add-function/pages/pages-export.php:492
+#, php-format
+msgid "Page %1$d of %2$d"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:399
+#: wp-add-function/pages/pages-export.php:494
+msgid "Page %d"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:405
+#: wp-add-function/pages/pages-export.php:501
+msgid "Period:"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:573
+msgid "Quantity for period"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:559
+msgid "Quantity on this page"
+msgstr ""
+
+#: wp-add-function/db-functions.php:169
+msgid "Record new"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:291
+#: wp-add-function/pages/pages-forms.php:354
+#: wp-add-function/pages/pages-core.php:264
+msgid "Return"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:565
+msgid "Rows on this page"
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:17
+#: wp-add-function/pages/pages-forms.php:87
+#: wp-add-function/pages/pages-forms.php:177
+#: wp-add-function/pages/pages-forms.php:272
+#: wp-add-function/pages/pages-forms.php:334
+msgid "Search"
+msgstr ""
+
+#: wp-add-function/pages/pages-elements.php:210
+#: wp-add-function/pages/pages-elements.php:442
+msgid "Select value"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:575
+msgid "Sum for period"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:567
+msgid "Sum on this page"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:627
+msgid "Table not found for export."
+msgstr ""
+
+#: wp-add-function/pages/pages-forms.php:402
+msgid ""
+"The directory element is not deleted completely, but only marked for "
+"deletion."
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:181
+#, php-format
+msgid "to '%s'"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:553
+msgid "Total"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:557
+msgid "Total rows for period"
+msgstr ""
+
+#. Name of the plugin
+msgid "wp-add-function"
+msgstr ""

@@ -1,0 +1,262 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-add-function\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-25 18:13+0000\n"
+"PO-Revision-Date: 2026-03-11 12:46+0000\n"
+"Last-Translator: \n"
+"Language-Team: Українська\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
+"n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.8.0; wp-6.8; php-8.4.7\n"
+"X-Domain: wp-add-function"
+
+#: wp-add-function/pages/pages-export.php:726
+#, php-format
+msgid "%s for period"
+msgstr "%s за період"
+
+#. Description of the plugin
+msgid "Additional common function WP"
+msgstr "Додаткові загальні функції для WP"
+
+#: wp-add-function/pages/pages-forms.php:512
+msgid "Apply"
+msgstr "Застосувати"
+
+#: wp-add-function/pages/pages-forms.php:482
+#: wp-add-function/pages/pages-forms.php:513
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: wp-add-function/db-functions.php:173
+msgid "Cancel deletion"
+msgstr "Скасувати видалення"
+
+#: wp-add-function/pages/pages-forms.php:503
+msgid "Cancel deletion item"
+msgstr "Скасувати видалення елемента"
+
+#: wp-add-function/class-base-list-table.php:398
+msgid "Card account"
+msgstr "Картковий рахунок"
+
+#: wp-add-function/db-functions.php:35
+#, php-format
+msgid "Could not connect to external database for \"%s\": %s"
+msgstr "Не вдалося підключитися до зовнішньої бази даних для \"%s\": %s"
+
+#: wp-add-function/db-functions.php:171
+msgid "Data correction"
+msgstr "Корекція даних"
+
+#: wp-add-function/db-functions.php:49
+#, php-format
+msgid "DB config file not found for plugin \"%s\""
+msgstr "Файл конфігурації бази даних для плагіна \"%s\" не знайдено"
+
+#: wp-add-function/db-functions.php:65
+#, php-format
+msgid "DB config missing key \"%s\" in %s"
+msgstr "У конфігурації бази даних відсутній ключ \"%s\" у %s"
+
+#: wp-add-function/pages/pages-forms.php:481
+msgid "Delete"
+msgstr "Видалити"
+
+#: wp-add-function/pages/pages-forms.php:469
+msgid "Delete item"
+msgstr "Видалити елемент"
+
+#: wp-add-function/db-functions.php:175
+msgid "Delete mark"
+msgstr "Видалити позначку"
+
+#: wp-add-function/pages/pages-forms.php:508
+#, php-format
+msgid ""
+"Do you want to cancel the deletion of the directory entry '%s' with the "
+"number '%s'?"
+msgstr "Ви хочете скасувати видалення запису каталогу '%s' з номером '%s'?"
+
+#: wp-add-function/pages/pages-forms.php:476
+#, php-format
+msgid "Do you want to delete the directory entry '%s' with the number '%s'?"
+msgstr "Ви хочете видалити запис каталогу '%s' з номером '%s'?"
+
+#: wp-add-function/db-functions.php:179
+msgid "Error inserting history data!"
+msgstr "Помилка вставки даних історії!"
+
+#: wp-add-function/class-base-list-table.php:359
+#: wp-add-function/pages/pages-export.php:285
+msgid "Export"
+msgstr "Експорт"
+
+#: wp-add-function/pages/pages-classes.php:428
+msgid "Export buttons"
+msgstr "Кнопки експорту"
+
+#: wp-add-function/pages/pages-export.php:594
+#: wp-add-function/pages/pages-export.php:669
+#: wp-add-function/pages/pages-export.php:786
+msgid "Exported:"
+msgstr "Експортовано:"
+
+#: wp-add-function/pages/pages-elements.php:375
+#, php-format
+msgid "File not found \"%s\""
+msgstr "Файл не знайдено \"%s\""
+
+#: wp-add-function/pages/pages-actions.php:451
+msgid "Filter"
+msgstr "Фільтр"
+
+#: wp-add-function/pages/pages-export.php:603
+#: wp-add-function/pages/pages-export.php:679
+#: wp-add-function/pages/pages-export.php:836
+msgid "Filters:"
+msgstr "Фільтри:"
+
+#: wp-add-function/pages/pages-export.php:905
+msgid "for period"
+msgstr "за період"
+
+#: wp-add-function/pages/pages-export.php:221
+#, php-format
+msgid "from '%1$s' to '%2$s'"
+msgstr "з '%1$s' по '%2$s'"
+
+#: wp-add-function/pages/pages-export.php:224
+#, php-format
+msgid "from '%s'"
+msgstr "з '%s'"
+
+#: wp-add-function/db-functions.php:56
+#, php-format
+msgid "Function get_db_conf() not found in %s"
+msgstr "Функцію get_db_conf() не знайдено в %s"
+
+#: wp-add-function/pages/pages-classes.php:435
+msgid "Hide CSV button"
+msgstr "Приховати кнопку «CSV»"
+
+#: wp-add-function/pages/pages-classes.php:440
+msgid "Hide HTML button"
+msgstr "Приховати кнопку «HTML»"
+
+#: wp-add-function/pages/pages-classes.php:445
+msgid "Hide PDF button"
+msgstr " Приховати кнопку PDF"
+
+#. Author URI of the plugin
+msgid "http://khv.pp.ua"
+msgstr ""
+
+#: wp-add-function/pages/pages-elements.php:81
+msgid "In the function \"html_input\" number of values is incorrect"
+msgstr "У функції \"html_input\" кількість значень неправильна"
+
+#: wp-add-function/pages/pages-forms.php:505
+msgid ""
+"In this dialog box you can remove the mark for deletion from the selected "
+"directory entry."
+msgstr ""
+"У цьому діалоговому вікні ви можете зняти позначку для видалення з вибраного "
+"запису каталогу."
+
+#: wp-add-function/pages/pages-forms.php:471
+msgid "In this dialog, you can mark the selected directory entry for deletion."
+msgstr ""
+"У цьому діалоговому вікні ви можете позначити вибраний запис каталогу для "
+"видалення."
+
+#: wp-add-function/pages/pages-export.php:1097
+msgid "Invalid export request."
+msgstr "Недійсний запит на експорт."
+
+#. Author of the plugin
+msgid "Khomenko Valery"
+msgstr "Хоменко Валерій"
+
+#: wp-add-function/pages/pages-elements.php:419
+#, php-format
+msgid "Loading ID %s..."
+msgstr "Завантаження ID %s..."
+
+#: wp-add-function/pages/pages-forms.php:117
+#: wp-add-function/pages/pages-core.php:314
+msgid "New item"
+msgstr "Новий елемент"
+
+#: wp-add-function/pages/pages-export.php:732
+msgid "No additional totals provided by the table."
+msgstr "У таблиці не наведено жодних додаткових підсумків."
+
+#: wp-add-function/pages/pages-classes.php:392
+msgid "Number of lines per page"
+msgstr "Кількість рядків на сторінці"
+
+#: wp-add-function/pages/pages-export.php:598
+#: wp-add-function/pages/pages-export.php:675
+#: wp-add-function/pages/pages-export.php:819
+msgid "Period:"
+msgstr "Період:"
+
+#: wp-add-function/db-functions.php:169
+msgid "Record new"
+msgstr "Новий запис"
+
+#: wp-add-function/pages/pages-forms.php:333
+#: wp-add-function/pages/pages-forms.php:410
+#: wp-add-function/pages/pages-core.php:332
+msgid "Return"
+msgstr "Повернутися"
+
+#: wp-add-function/pages/pages-forms.php:17
+#: wp-add-function/pages/pages-forms.php:101
+#: wp-add-function/pages/pages-forms.php:205
+#: wp-add-function/pages/pages-forms.php:314
+#: wp-add-function/pages/pages-forms.php:390
+msgid "Search"
+msgstr "Пошук"
+
+#: wp-add-function/pages/pages-elements.php:210
+#: wp-add-function/pages/pages-elements.php:442
+msgid "Select value"
+msgstr "Виберіть значення"
+
+#: wp-add-function/pages/pages-export.php:1102
+msgid "Table not found for export."
+msgstr "Таблицю не знайдено для експорту."
+
+#: wp-add-function/pages/pages-forms.php:472
+msgid ""
+"The directory element is not deleted completely, but only marked for "
+"deletion."
+msgstr ""
+"Елемент каталогу не видаляється повністю, а лише позначається для видалення."
+
+#: wp-add-function/pages/pages-export.php:227
+#, php-format
+msgid "to '%s'"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:711
+#: wp-add-function/pages/pages-export.php:892
+msgid "Total"
+msgstr "Всього"
+
+#: wp-add-function/pages/pages-export.php:714
+#: wp-add-function/pages/pages-export.php:893
+msgid "Total rows for period"
+msgstr "Загальна кількість рядків за період"
+
+#. Name of the plugin
+msgid "wp-add-function"
+msgstr ""

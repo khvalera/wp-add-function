@@ -4,7 +4,7 @@
 * Description: Additional common function WP
 * Version: 0.0.1
 * Author: Khomenko Valery
-* Author URI: http://khv.pp.ua
+* Author URI: https://github.com/khvalera/wp-add-function
 * Domain Path: /lang/
 * License: Trial
 */
@@ -28,10 +28,24 @@ if( ! function_exists( 'wp_get_current_user' )) {
 //===========================================
 // Подключение общих функций
 //===========================================
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/wp-hide.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/custom-login.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/wp-disable-auto-update.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/disable-translations.php' );
 require_once( WPMU_PLUGIN_DIR . '/wp-add-function/common-functions.php' );
-require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages-functions.php' );
-require_once( WPMU_PLUGIN_DIR . '/wp-add-function/db-functions.php' );
-require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-table-directory.php' );
-require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-table-journal.php' );
-require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-table-balances.php' );
 
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages/pages-actions.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages/pages-core.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages/pages-forms.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages/pages-classes.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages/pages-elements.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/pages/pages-export.php' );
+
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/db-functions.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-list-table-state-manager.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-base-list-table.php' );
+
+//===========================================
+// TCPDF для експорту в PDF
+//===========================================
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/lib/tcpdf/tcpdf.php' );
