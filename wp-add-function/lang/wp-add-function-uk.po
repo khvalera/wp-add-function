@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: wp-add-function\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-25 18:13+0000\n"
-"PO-Revision-Date: 2026-03-11 13:00+0000\n"
+"PO-Revision-Date: 2026-03-12 10:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: Українська\n"
 "Language: uk\n"
@@ -42,7 +42,7 @@ msgstr "Скасувати видалення"
 msgid "Cancel deletion item"
 msgstr "Скасувати видалення елемента"
 
-#: wp-add-function/class-base-list-table.php:398
+#: wp-add-function/class-base-list-table.php:405
 msgid "Card account"
 msgstr "Картковий рахунок"
 
@@ -50,6 +50,11 @@ msgstr "Картковий рахунок"
 #, php-format
 msgid "Could not connect to external database for \"%s\": %s"
 msgstr "Не вдалося підключитися до зовнішньої бази даних для \"%s\": %s"
+
+#: wp-add-function/pages/pages-export.php:669
+#: wp-add-function/pages/pages-export.php:786
+msgid "Created:"
+msgstr "Створено:"
 
 #: wp-add-function/db-functions.php:171
 msgid "Data correction"
@@ -93,18 +98,16 @@ msgstr "Ви хочете видалити запис каталогу '%s' з �
 msgid "Error inserting history data!"
 msgstr "Помилка вставки даних історії!"
 
-#: wp-add-function/class-base-list-table.php:359
+#: wp-add-function/class-base-list-table.php:366
 #: wp-add-function/pages/pages-export.php:285
 msgid "Export"
 msgstr "Експорт"
 
-#: wp-add-function/pages/pages-classes.php:428
+#: wp-add-function/pages/pages-classes.php:457
 msgid "Export buttons"
 msgstr "Кнопки експорту"
 
 #: wp-add-function/pages/pages-export.php:594
-#: wp-add-function/pages/pages-export.php:669
-#: wp-add-function/pages/pages-export.php:786
 msgid "Exported:"
 msgstr "Експортовано:"
 
@@ -142,21 +145,21 @@ msgstr "з '%s'"
 msgid "Function get_db_conf() not found in %s"
 msgstr "Функцію get_db_conf() не знайдено в %s"
 
-#: wp-add-function/pages/pages-classes.php:435
+#: wp-add-function/pages/pages-classes.php:464
 msgid "Hide CSV button"
 msgstr "Приховати кнопку «CSV»"
 
-#: wp-add-function/pages/pages-classes.php:440
+#: wp-add-function/pages/pages-classes.php:469
 msgid "Hide HTML button"
 msgstr "Приховати кнопку «HTML»"
 
-#: wp-add-function/pages/pages-classes.php:445
+#: wp-add-function/pages/pages-classes.php:474
 msgid "Hide PDF button"
 msgstr " Приховати кнопку «PDF»"
 
 #. Author URI of the plugin
-msgid "http://khv.pp.ua"
-msgstr ""
+msgid "https://github.com/khvalera/wp-add-function"
+msgstr "https://github.com/khvalera/wp-add-function"
 
 #: wp-add-function/pages/pages-elements.php:81
 msgid "In the function \"html_input\" number of values is incorrect"
@@ -190,7 +193,7 @@ msgid "Loading ID %s..."
 msgstr "Завантаження ID %s..."
 
 #: wp-add-function/pages/pages-forms.php:117
-#: wp-add-function/pages/pages-core.php:314
+#: wp-add-function/pages/pages-core.php:324
 msgid "New item"
 msgstr "Новий елемент"
 
@@ -198,7 +201,7 @@ msgstr "Новий елемент"
 msgid "No additional totals provided by the table."
 msgstr "У таблиці не наведено жодних додаткових підсумків."
 
-#: wp-add-function/pages/pages-classes.php:392
+#: wp-add-function/pages/pages-classes.php:415
 msgid "Number of lines per page"
 msgstr "Кількість рядків на сторінці"
 
@@ -214,7 +217,7 @@ msgstr "Новий запис"
 
 #: wp-add-function/pages/pages-forms.php:333
 #: wp-add-function/pages/pages-forms.php:410
-#: wp-add-function/pages/pages-core.php:332
+#: wp-add-function/pages/pages-core.php:342
 msgid "Return"
 msgstr "Повернутися"
 

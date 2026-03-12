@@ -122,7 +122,7 @@ abstract class BaseExporter {
      * Повертає масив контексту експорту:
      *  - search/sort/paging
      *  - активні filter-* / pdate-* і f[]/t[]
-     *  - period_from / period_to (з pdate-date1 / pdate-date2)
+     *  - period_from / period_to (з pdate-date1 / pdate-date2 або зі стану таблиці)
      */
     protected function build_export_context(): array {
 
@@ -192,8 +192,25 @@ abstract class BaseExporter {
             }
         }
 
-        $d1 = isset( $filters['pdate-date1'] ) ? (string) $filters['pdate-date1'] : '';
-        $d2 = isset( $filters['pdate-date2'] ) ? (string) $filters['pdate-date2'] : '';
+        $d1 = isset( $filters['pdate-date1'] ) ? trim( (string) $filters['pdate-date1'] ) : '';
+        $d2 = isset( $filters['pdate-date2'] ) ? trim( (string) $filters['pdate-date2'] ) : '';
+
+        // ВАЖЛИВО:
+        // Період у журналах відновлюється з state (user_meta) і зазвичай НЕ присутній у $_REQUEST,
+        // тому беремо нормалізований період безпосередньо з інстанса таблиці.
+        try {
+            $table_period = (array) $this->table->get_export_period();
+        } catch ( Throwable $e ) {
+            $table_period = [];
+        }
+
+        $tp_from = isset( $table_period['from'] ) ? trim( (string) $table_period['from'] ) : '';
+        $tp_to   = isset( $table_period['to'] ) ? trim( (string) $table_period['to'] ) : '';
+
+        if ( $tp_from !== '' || $tp_to !== '' ) {
+            $d1 = $tp_from;
+            $d2 = $tp_to;
+        }
 
         if ( $d1 !== '' ) {
             $ctx['period_from'] = $d1;
@@ -666,7 +683,7 @@ class HTMLExporter extends BaseExporter {
 
         echo '<div class="export-header">';
         echo '<div class="export-meta">';
-        echo '<div>' . esc_html__( 'Exported:', 'wp-add-function' ) . ' ' . esc_html( wp_date( 'Y-m-d H:i:s' ) ) . '</div>';
+        echo '<div>' . esc_html__( 'Created:', 'wp-add-function' ) . ' ' . esc_html( wp_date( 'Y-m-d H:i:s' ) ) . '</div>';
         echo '</div>';
 
         echo '<div class="export-title">' . esc_html( $title ) . '</div>';
@@ -760,7 +777,7 @@ class PDFExporter extends BaseExporter {
         $pdf = new \TCPDF( 'L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false );
 
         $pdf->SetCreator( PDF_CREATOR );
-        $pdf->SetAuthor( 'Counterparty Cards' );
+        $pdf->SetAuthor( 'PDF CREATOR' );
         $pdf->SetTitle( $this->get_export_title() );
         $pdf->SetSubject( 'Export' );
         $pdf->SetKeywords( '' );
@@ -783,7 +800,7 @@ class PDFExporter extends BaseExporter {
             0,
             '',
             '',
-            '<span><strong>' . esc_html__( 'Exported:', 'wp-add-function' ) . '</strong> ' . esc_html( wp_date( 'Y-m-d H:i:s' ) ) . '</span>',
+            '<span><strong>' . esc_html__( 'Created:', 'wp-add-function' ) . '</strong> ' . esc_html( wp_date( 'Y-m-d H:i:s' ) ) . '</span>',
                             0,
                             1,
                             false,

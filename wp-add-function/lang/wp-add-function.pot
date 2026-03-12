@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wp-add-function\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-11 12:38+0000\n"
+"POT-Creation-Date: 2026-03-12 10:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -42,13 +42,18 @@ msgstr ""
 msgid "Cancel deletion item"
 msgstr ""
 
-#: wp-add-function/class-base-list-table.php:398
+#: wp-add-function/class-base-list-table.php:405
 msgid "Card account"
 msgstr ""
 
 #: wp-add-function/db-functions.php:35
 #, php-format
 msgid "Could not connect to external database for \"%s\": %s"
+msgstr ""
+
+#: wp-add-function/pages/pages-export.php:669
+#: wp-add-function/pages/pages-export.php:786
+msgid "Created:"
 msgstr ""
 
 #: wp-add-function/db-functions.php:171
@@ -93,18 +98,16 @@ msgstr ""
 msgid "Error inserting history data!"
 msgstr ""
 
-#: wp-add-function/class-base-list-table.php:359
+#: wp-add-function/class-base-list-table.php:366
 #: wp-add-function/pages/pages-export.php:285
 msgid "Export"
 msgstr ""
 
-#: wp-add-function/pages/pages-classes.php:428
+#: wp-add-function/pages/pages-classes.php:457
 msgid "Export buttons"
 msgstr ""
 
 #: wp-add-function/pages/pages-export.php:594
-#: wp-add-function/pages/pages-export.php:669
-#: wp-add-function/pages/pages-export.php:786
 msgid "Exported:"
 msgstr ""
 
@@ -142,20 +145,20 @@ msgstr ""
 msgid "Function get_db_conf() not found in %s"
 msgstr ""
 
-#: wp-add-function/pages/pages-classes.php:435
+#: wp-add-function/pages/pages-classes.php:464
 msgid "Hide CSV button"
 msgstr ""
 
-#: wp-add-function/pages/pages-classes.php:440
+#: wp-add-function/pages/pages-classes.php:469
 msgid "Hide HTML button"
 msgstr ""
 
-#: wp-add-function/pages/pages-classes.php:445
+#: wp-add-function/pages/pages-classes.php:474
 msgid "Hide PDF button"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "http://khv.pp.ua"
+msgid "https://github.com/khvalera/wp-add-function"
 msgstr ""
 
 #: wp-add-function/pages/pages-elements.php:81
@@ -186,7 +189,7 @@ msgid "Loading ID %s..."
 msgstr ""
 
 #: wp-add-function/pages/pages-forms.php:117
-#: wp-add-function/pages/pages-core.php:314
+#: wp-add-function/pages/pages-core.php:324
 msgid "New item"
 msgstr ""
 
@@ -194,7 +197,7 @@ msgstr ""
 msgid "No additional totals provided by the table."
 msgstr ""
 
-#: wp-add-function/pages/pages-classes.php:392
+#: wp-add-function/pages/pages-classes.php:415
 msgid "Number of lines per page"
 msgstr ""
 
@@ -210,7 +213,7 @@ msgstr ""
 
 #: wp-add-function/pages/pages-forms.php:333
 #: wp-add-function/pages/pages-forms.php:410
-#: wp-add-function/pages/pages-core.php:332
+#: wp-add-function/pages/pages-core.php:342
 msgid "Return"
 msgstr ""
 
