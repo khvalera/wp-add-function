@@ -46,6 +46,14 @@ require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-list-table-state-manager
 require_once( WPMU_PLUGIN_DIR . '/wp-add-function/class-base-list-table.php' );
 
 //===========================================
+// WAF Tiles — універсальний механізм плиток
+//===========================================
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/tiles/tiles-functions.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/tiles/class-waf-tiles-renderer.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/tiles/class-waf-tiles-engine.php' );
+require_once( WPMU_PLUGIN_DIR . '/wp-add-function/tiles/class-waf-tiles-ajax-controller.php' );
+
+//===========================================
 // TCPDF для експорту в PDF
 //===========================================
 require_once( WPMU_PLUGIN_DIR . '/wp-add-function/lib/tcpdf/tcpdf.php' );
