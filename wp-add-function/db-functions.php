@@ -78,40 +78,58 @@ class external_db {
 //=============================================
 // Функция создает часть запроса MySQL для фильтра
 function add_query_filter( $array_filter, $array_filter_tables ) {
+    $gl_ = gl_form_array::get();
+    $db  = $gl_['db'] ?? null;
 
-   $gl_ = gl_form_array::get();
+    if ( empty( $array_filter ) || ! ( $db instanceof wpdb ) ) {
+        return '';
+    }
 
-   $query_filter = "";
-   if ( empty( $array_filter ))
-      return;
-   foreach ( $array_filter as $field => $value ) {
-      if (! empty( $value )) {
-         // если в имени поля первый знак *, то не используем таблицу (устарело)
-         if ( $field[0] == "*"){
-            if ( !empty($query_filter))
-               $query_filter =  $query_filter . " AND ";
-            $query_filter =  $query_filter . substr($field, 1 ) . " = " . $value;
-         // если есть точка, значит с полем указана таблица (устарело)
-         } elseif ( strpos($field, ".") != false ){
-            if ( !empty($query_filter))
-               $query_filter =  $query_filter . " AND ";
-            $query_filter =  $query_filter . $field . " = " . $value;
-         } else {
-            if ( !empty($query_filter))
-               $query_filter =  $query_filter . " AND ";
-            if ( empty( $array_filter_tables )){
-               $query_filter = $query_filter . $gl_['db_table_name'] . "." . $field . " = " . $value;
-             }else {
-               // если для фильтра нужно указать конкретную таблицу
-               if (array_key_exists($field, $array_filter_tables)){
-                  $query_filter = $query_filter . $array_filter_tables[$field] . "." . $field . " = " . $value;}
-               else
-                  $query_filter = $query_filter . $gl_['db_table_name'] . "." . $field . " = " . $value;
-            }
-         }
-      }
-   }
-   return $query_filter;
+    $default_table = isset( $gl_['db_table_name'] )
+    ? preg_replace( '/[^a-z0-9_]/i', '', (string) $gl_['db_table_name'] )
+    : '';
+
+    $query_parts = [];
+
+    foreach ( (array) $array_filter as $field => $value ) {
+        if ( $value === '' || $value === null ) {
+            continue;
+        }
+
+        $field = (string) $field;
+        $table = $default_table;
+
+        // *field => без таблиці
+        if ( isset( $field[0] ) && $field[0] === '*' ) {
+            $field = substr( $field, 1 );
+            $table = '';
+        } elseif ( strpos( $field, '.' ) !== false ) {
+            // table.field
+            list( $table_name, $field_name ) = explode( '.', $field, 2 );
+            $table = preg_replace( '/[^a-z0-9_]/i', '', (string) $table_name );
+            $field = $field_name;
+        } elseif ( ! empty( $array_filter_tables ) && array_key_exists( $field, $array_filter_tables ) ) {
+            $table = preg_replace( '/[^a-z0-9_]/i', '', (string) $array_filter_tables[ $field ] );
+        }
+
+        $field = preg_replace( '/[^a-z0-9_]/i', '', $field );
+
+        if ( $field === '' ) {
+            continue;
+        }
+
+        $left = $table !== '' ? "{$table}.{$field}" : $field;
+
+        if ( is_numeric( $value ) && (string) (int) $value === trim( (string) $value ) ) {
+            $query_parts[] = $left . ' = ' . (int) $value;
+        } elseif ( is_numeric( $value ) ) {
+            $query_parts[] = $left . ' = ' . (float) $value;
+        } else {
+            $query_parts[] = $left . ' = ' . $db->prepare( '%s', wp_unslash( $value ) );
+        }
+    }
+
+    return implode( ' AND ', $query_parts );
 }
 
 //=============================================

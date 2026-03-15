@@ -32,7 +32,49 @@ const WAF_BLOCK_DIRECT_WP_LOGIN = true;
  * ============================================================
  * Деякі security-плагіни для сторінки розблокування/lockout можуть підставляти
  * свій CSS пізніше. Тому друкуємо інлайн-CSS максимально пізно та з !important.
+ *
+ * Сумісність:
+ * - старий filter `waf_login_logo_url` збережено;
+ * - новий filter `waf_login_branding_args` дозволяє змінювати URL, розміри і тексти.
  */
+function waf_login__get_branding_args(): array {
+    $args = array(
+        'logo_url'        => WPMU_PLUGIN_URL . '/wp-add-function/pictures/logo.png',
+        'width'           => '100%',
+        'height'          => '84px',
+        'background_size' => 'contain',
+        'margin'          => '0 auto 25px',
+        'header_url'      => home_url( '/' ),
+                  'header_text'     => get_bloginfo( 'name' ),
+    );
+
+    // Backward compatibility: старий filter для URL логотипа.
+    $args['logo_url'] = apply_filters( 'waf_login_logo_url', $args['logo_url'] );
+
+    // Новий filter для повного брендингу login-сторінки.
+    $args = apply_filters( 'waf_login_branding_args', $args );
+
+    // Страхуємося від некоректних значень.
+    if ( ! is_array( $args ) ) {
+        $args = array();
+    }
+
+    $args = wp_parse_args(
+        $args,
+        array(
+            'logo_url'        => WPMU_PLUGIN_URL . '/wp-add-function/pictures/logo.png',
+            'width'           => '100%',
+            'height'          => '84px',
+            'background_size' => 'contain',
+            'margin'          => '0 auto 25px',
+            'header_url'      => home_url( '/' ),
+              'header_text'     => get_bloginfo( 'name' ),
+        )
+    );
+
+    return $args;
+}
+
 function waf_login__print_login_logo_css(): void {
     static $printed = false;
     if ( $printed ) {
@@ -40,19 +82,18 @@ function waf_login__print_login_logo_css(): void {
     }
     $printed = true;
 
-    $logo_url = WPMU_PLUGIN_URL . '/wp-add-function/pictures/logo.png';
-    $logo_url = apply_filters( 'waf_login_logo_url', $logo_url );
+    $args = waf_login__get_branding_args();
     ?>
     <style id="waf-login-logo-css">
     body.login #login h1 a,
     body.login .login h1 a {
-        background-image: url('<?php echo esc_url( $logo_url ); ?>') !important;
+        background-image: url('<?php echo esc_url( $args['logo_url'] ); ?>') !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        background-size: contain !important;
-        width: 100% !important;
-        height: 84px !important;
-        margin: 0 auto 25px !important;
+        background-size: <?php echo esc_attr( $args['background_size'] ); ?> !important;
+        width: <?php echo esc_attr( $args['width'] ); ?> !important;
+        height: <?php echo esc_attr( $args['height'] ); ?> !important;
+        margin: <?php echo esc_attr( $args['margin'] ); ?> !important;
     }
     </style>
     <?php
@@ -60,11 +101,13 @@ function waf_login__print_login_logo_css(): void {
 add_action( 'login_head', 'waf_login__print_login_logo_css', 99999 );
 
 add_filter( 'login_headerurl', static function () {
-    return home_url( '/' );
+    $args = waf_login__get_branding_args();
+    return (string) $args['header_url'];
 } );
 
 add_filter( 'login_headertext', static function () {
-    return get_bloginfo( 'name' );
+    $args = waf_login__get_branding_args();
+    return (string) $args['header_text'];
 } );
 
 /**
@@ -111,7 +154,7 @@ function waf_login__should_block_direct_wp_login_request(): bool {
         return false;
     }
 
-    $method = strtoupper( (string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) );
+    $method = strtoupper( (string) ( $_SERVER['REQUEST_METHOD'] ?? '' ) );
     if ( $method !== 'GET' && $method !== 'HEAD' ) {
         return false; // POST та інші методи не блокуємо
     }
@@ -132,7 +175,6 @@ function waf_login__should_block_direct_wp_login_request(): bool {
     // щоб не ламати старі лінки, але все одно прибирати wp-login.php з адресного рядка.
     return false;
 }
-
 
 function waf_login__is_login_slug_request(): bool {
     $request = parse_url( rawurldecode( (string) ( $_SERVER['REQUEST_URI'] ?? '' ) ) );
@@ -165,12 +207,13 @@ add_action( 'plugins_loaded', static function () {
     }
 
     // 2) Наш /login — змушуємо WP працювати як на wp-login.php.
-    if ( waf_login__is_login_slug_request()
-        || ( ! get_option( 'permalink_structure' ) && isset( $_GET[ WAF_LOGIN_SLUG ] ) && $_GET[ WAF_LOGIN_SLUG ] === '' ) ) {
-
+    if (
+        waf_login__is_login_slug_request()
+        || ( ! get_option( 'permalink_structure' ) && isset( $_GET[ WAF_LOGIN_SLUG ] ) && $_GET[ WAF_LOGIN_SLUG ] === '' )
+    ) {
         $_SERVER['SCRIPT_NAME'] = WAF_LOGIN_SLUG;
-    $pagenow                = 'wp-login.php';
-        }
+        $pagenow                = 'wp-login.php';
+    }
 }, 9999 );
 
 /**
@@ -203,8 +246,8 @@ add_action( 'wp_loaded', static function () {
         // WP core wp-login.php у деяких сценаріях звертається до $user_login без попередньої ініціалізації.
         // Щоб уникнути Warning при підвищеному error_reporting, задамо дефолти.
         $user_login = $user_login ?? '';
-        $user_pass  = $user_pass  ?? '';
-        $error      = $error      ?? '';
+        $user_pass  = $user_pass ?? '';
+        $error      = $error ?? '';
 
         require_once ABSPATH . 'wp-login.php';
         exit;
@@ -336,4 +379,3 @@ add_action( 'template_redirect', static function () {
 add_filter( 'login_redirect', static function ( $redirect_to, $requested_redirect_to, $user ) {
     return home_url( '/' );
 }, 10, 3 );
-
