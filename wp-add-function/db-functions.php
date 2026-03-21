@@ -75,6 +75,154 @@ class external_db {
     }
 }
 
+
+
+//=============================================
+// Валідація SQL-ідентифікатора (таблиця/поле)
+//=============================================
+function waf_db_sanitize_identifier( $identifier ) {
+    $identifier = preg_replace( '/[^a-zA-Z0-9_]/', '', (string) $identifier );
+    return (string) $identifier;
+}
+
+//=============================================
+// Отримати останній рядок versioned-таблиці за objectId/іншим полем
+//
+// @param wpdb   $db
+// @param string $table_name
+// @param int|string $object_id
+// @param string $object_field
+// @param string $output_type
+// @param int    $object_type
+// @param int    $object_status
+// @return mixed|null
+//=============================================
+function waf_db_get_versioned_row( $db, $table_name, $object_id = '', $object_field = 'objectId', $output_type = OBJECT, $object_type = null, $object_status = null ) {
+    if ( ! ( $db instanceof wpdb ) ) {
+        return null;
+    }
+
+    $table_name   = waf_db_sanitize_identifier( $table_name );
+    $object_field = waf_db_sanitize_identifier( $object_field );
+
+    if ( $table_name === '' || $object_field === '' || $object_id === '' || $object_id === null ) {
+        return null;
+    }
+
+    if ( null === $object_type ) {
+        $object_type = defined( 'OBJECT_TYPE_ACTUAL' ) ? (int) OBJECT_TYPE_ACTUAL : 140;
+    }
+
+    if ( null === $object_status ) {
+        $object_status = defined( 'OBJECT_STATUS_ACTIVE' ) ? (int) OBJECT_STATUS_ACTIVE : 150;
+    }
+
+    $query = $db->prepare(
+        "SELECT * FROM {$table_name}
+         WHERE id = (
+             SELECT MAX(id)
+             FROM {$table_name}
+             WHERE objectType = %d
+               AND objectStatus = %d
+               AND {$object_field} = %s
+         )",
+        (int) $object_type,
+        (int) $object_status,
+        (string) $object_id
+    );
+
+    return $db->get_row( $query, $output_type );
+}
+
+//=============================================
+// Отримати значення поля з останньої ревізії versioned-таблиці
+//=============================================
+function waf_db_get_versioned_value( $db, $table_name, $field_name, $object_id = '', $object_field = 'objectId', $object_type = null, $object_status = null ) {
+    if ( ! ( $db instanceof wpdb ) ) {
+        return null;
+    }
+
+    $field_name = waf_db_sanitize_identifier( $field_name );
+    if ( $field_name === '' ) {
+        return null;
+    }
+
+    $row = waf_db_get_versioned_row(
+        $db,
+        $table_name,
+        $object_id,
+        $object_field,
+        ARRAY_A,
+        $object_type,
+        $object_status
+    );
+
+    if ( ! is_array( $row ) || ! array_key_exists( $field_name, $row ) ) {
+        return null;
+    }
+
+    return $row[ $field_name ];
+}
+
+//=============================================
+// Отримати довідник типів з sys_conf_list_types для поточної/заданої локалі
+//
+// @param int      $group_id
+// @param int|null $lang_id
+// @param wpdb|null $db
+// @return array|null
+//=============================================
+function waf_db_get_sys_conf_list_types( $group_id, $lang_id = null, $db = null ) {
+    if ( ! ( $db instanceof wpdb ) ) {
+        $gl_ = gl_form_array::get();
+        $db  = $gl_['db'] ?? null;
+    }
+
+    if ( ! ( $db instanceof wpdb ) ) {
+        return null;
+    }
+
+    $group_id = absint( $group_id );
+    if ( ! $group_id ) {
+        return null;
+    }
+
+    if ( null === $lang_id ) {
+        $lang_id = function_exists( 'get_user_locale_db_card' ) ? absint( get_user_locale_db_card() ) : 1;
+    } else {
+        $lang_id = absint( $lang_id );
+    }
+
+    if ( ! $lang_id ) {
+        $lang_id = 1;
+    }
+
+    $object_type   = defined( 'OBJECT_TYPE_ACTUAL' ) ? (int) OBJECT_TYPE_ACTUAL : 140;
+    $object_status = defined( 'OBJECT_STATUS_ACTIVE' ) ? (int) OBJECT_STATUS_ACTIVE : 150;
+
+    $sql = $db->prepare(
+        "SELECT typeId, typeValue
+         FROM sys_conf_list_types
+         WHERE typeGroupId = %d
+           AND typeLangId = %d
+           AND objectType = %d
+           AND objectStatus = %d",
+        $group_id,
+        $lang_id,
+        $object_type,
+        $object_status
+    );
+
+    $results = $db->get_results( $sql );
+
+    if ( $db->last_error ) {
+        error_log( 'DB Error in waf_db_get_sys_conf_list_types: ' . $db->last_error );
+        return null;
+    }
+
+    return $results;
+}
+
 //=============================================
 // Функция создает часть запроса MySQL для фильтра
 function add_query_filter( $array_filter, $array_filter_tables ) {

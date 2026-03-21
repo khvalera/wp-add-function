@@ -254,16 +254,25 @@ function html_title($title, $picture, $description1 = '', $description2 = '' ){
 // plugin_name   - ім'я плагіна (обов'язково)
 // display_name  - ім'я реквізиту, що відображається
 // table_name    - ім'я таблиці бази даних
-// name          - ім'я об'єкта, рядок або масив, що складається з імені поля та таблиці бази даних. приклад: array("objectId", "table")
-// extra_options - додаткові параметри (тут також вказується стиль: style="width:352px;")
+// name          - ім'я об'єкта, рядок або масив, що складається з імені поля та таблиці БД.
+//                  приклад: array("objectId", "table")
+// extra_options - додаткові параметри (тут також можна вказувати style / class / required)
 // select_id     - id обраної позиції
-// select_name   - рядок або масив з іменами полів із таблиці бази даних для додавання як name (за замовчуванням name). приклад: array("objectId", "holderName")
-// php_file      - шлях до файлу ajax (не обов'язково)
+// select_name   - рядок або масив з іменами полів із таблиці БД для відображення тексту
+//                  приклад: array("objectId", "holderName")
+// php_file      - шлях до ajax-файлу (не обов'язково)
 // if_select     - ім'я поля для відбору, якщо не вказано, використовується objectId
-// params        - параметри для передачі до ajax_php (наприклад: "?f=objectId&v=1")
-// name_function - якщо потрібно вказати свою функцію
-// prefix        - префікс для імені поля: 'field' (для форм) або 'filter' (для журналів) (за замовчуванням 'field')
+// params        - параметри для передачі в ajax_php (наприклад: "?f=objectId&v=1")
+// name_function - якщо потрібно вказати свою функцію для завантаження select_id
+// prefix        - префікс для імені поля: 'field' (для форм) або 'filter' (для журналів)
 // not_field     - якщо true, не додавати префікс до імені
+// allow_clear   - якщо true, дозволити очищення single Select2
+//
+// Важливо:
+// Для single Select2 очищення (хрестик) працює коректно лише якщо:
+// 1) allowClear = true
+// 2) placeholder має id = ''
+// 3) у <select> є порожня <option value=""></option>
 function html_select2( array $args ) {
   $defaults = [
     'plugin_name'   => '',
@@ -279,6 +288,7 @@ function html_select2( array $args ) {
     'name_function' => null,
     'not_field'     => false,
     'prefix'        => 'field',
+    'allow_clear'   => false,
   ];
 
   $args = wp_parse_args( $args, $defaults );
@@ -287,21 +297,21 @@ function html_select2( array $args ) {
     return;
   }
 
-  // --- формування item_name з урахуванням префікса ---
+  // --------------------------------------------------
+  // Формуємо унікальне ім'я елемента.
+  // Логіку лишаємо максимально близькою до оригіналу.
+  // --------------------------------------------------
   $item_name = '';
 
   if ( is_array( $args['name'] ) ) {
-    // Якщо name передано як масив [field_name, table_name]
     $item_name = array_to_string( [
       $args['prefix'] => $args['name'][0],
-      'table' => $args['name'][1] ?? null,
+      'table'         => $args['name'][1] ?? null,
     ] );
   } elseif ( $args['not_field'] ) {
-    // Якщо not_field = true, не додаємо префікс
     $item_name = array_to_string( [ 'not_field' => $args['name'] ] );
   } else {
-    // Якщо name - простий рядок
-    $has_field_prefix = strpos( $args['name'], 'field-' ) === 0;
+    $has_field_prefix  = strpos( $args['name'], 'field-' ) === 0;
     $has_filter_prefix = strpos( $args['name'], 'filter-' ) === 0;
 
     if ( $has_field_prefix || $has_filter_prefix ) {
@@ -311,13 +321,16 @@ function html_select2( array $args ) {
     }
   }
 
-  // Для журналів (filter- префікс)
-  if ($args['prefix'] === 'filter' && strpos($item_name, 'filter-') !== 0) {
-    $item_name = str_replace('field-', 'filter-', $item_name);
+  // Для журналів примусово контролюємо filter-префікс.
+  if ( $args['prefix'] === 'filter' && strpos( $item_name, 'filter-' ) !== 0 ) {
+    $item_name = str_replace( 'field-', 'filter-', $item_name );
   }
 
-  // --- завантаження даних для select_id ---
-  $data = [];
+  // --------------------------------------------------
+  // Завантажуємо поточне значення select_id, якщо воно є.
+  // Це потрібно, щоб одразу показати текст обраного елемента.
+  // --------------------------------------------------
+  $data        = [];
   $select_name = '';
 
   if ( ! empty( $args['select_id'] ) && $args['select_id'] !== '' && $args['select_id'] !== '0' ) {
@@ -338,32 +351,41 @@ function html_select2( array $args ) {
     }
   }
 
-  // Формування тексту для відображення
+  // Формуємо текст для selected option.
   if ( ! empty( $data ) ) {
     if ( empty( $args['select_name'] ) ) {
       $select_name = $data['name'] ?? '';
     } elseif ( is_array( $args['select_name'] ) ) {
       $parts = [];
-      foreach ( $args['select_name'] as $n ) {
-        if ( ! empty( $data[ $n ] ) ) {
-          $parts[] = $data[ $n ];
+
+      foreach ( $args['select_name'] as $field_name ) {
+        if ( ! empty( $data[ $field_name ] ) ) {
+          $parts[] = $data[ $field_name ];
         }
       }
+
       $select_name = implode( ' - ', $parts );
     } else {
       $select_name = $data[ $args['select_name'] ] ?? '';
     }
   }
 
-  // Визначаємо поле ID
+  // У ваших таблицях найчастіше ключ - objectId, але інколи буває id.
   $name_id = ! empty( $data['objectId'] ) ? 'objectId' : 'id';
-  if (!empty($data) && !isset($data[$name_id])) {
+
+  if ( ! empty( $data ) && ! isset( $data[ $name_id ] ) ) {
     $name_id = 'id';
   }
 
-  // --- ajax файл ---
+  // --------------------------------------------------
+  // Формуємо базовий URL для AJAX.
+  // params тут НЕ додаємо, щоб не було дублювання query string.
+  // Вони будуть акуратно додані всередині java_item().
+  // --------------------------------------------------
   $php_file = $args['php_file'] ?: 'includes/' . $args['table_name'] . '/ajax.php';
+
   $path = WP_PLUGIN_DIR . '/' . $args['plugin_name'] . '/' . $php_file;
+
   $url = plugins_url(
     $php_file,
     WP_PLUGIN_DIR . '/' . $args['plugin_name'] . '/' . $args['plugin_name'] . '.php'
@@ -380,18 +402,28 @@ function html_select2( array $args ) {
     $ajax_php = $url;
   }
 
-  // Додаємо параметри до AJAX URL
-  if (!empty($args['params'])) {
-    $ajax_php .= $args['params'];
+  // --------------------------------------------------
+  // Нормалізація HTML-атрибутів.
+  // Додаємо wpaf-select2 і стандартну ширину, якщо вони не задані.
+  // --------------------------------------------------
+  $extra_options = (string) $args['extra_options'];
+
+  // Якщо allow_clear увімкнений, required краще прибрати.
+  // Інакше браузер може не дати очистити поле.
+  if ( ! empty( $args['allow_clear'] ) ) {
+    $extra_options = preg_replace( '/\srequired(\s|$)/i', ' ', $extra_options );
   }
 
-  // Додаємо клас wpaf-select2 для уніфікованих стилів
-  $extra_options = $args['extra_options'];
-  $extra_options = str_replace('class="', 'class="wpaf-select2 ', $extra_options);
-  if (stripos($extra_options, 'style') === false) {
-    $extra_options = $extra_options . ' style="width:352px;" ';
+  // Якщо class уже є - додаємо wpaf-select2 всередину.
+  $extra_options = str_replace( 'class="', 'class="wpaf-select2 ', $extra_options );
+
+  // Якщо style ще не задано - ставимо стандартну ширину.
+  if ( stripos( $extra_options, 'style' ) === false ) {
+    $extra_options .= ' style="width:352px;" ';
   }
-  if (strpos($extra_options, 'class=') === false) {
+
+  // Якщо class взагалі відсутній - додаємо.
+  if ( strpos( $extra_options, 'class=' ) === false ) {
     $extra_options = 'class="wpaf-select2" ' . $extra_options;
   }
   ?>
@@ -405,16 +437,29 @@ function html_select2( array $args ) {
   <?php echo $extra_options; ?>
   >
   <?php
-  // Якщо є дані — одразу ставимо selected-опцію
-  if ( ! empty( $data ) && isset($data[$name_id]) ) :
-    $selected_id = $data[$name_id];
+  // ------------------------------------------------
+  // Критично важливо:
+  // порожня option створює реальний пустий value=""
+  // і дозволяє Select2 очистити single select саме в пусте значення.
+  // ------------------------------------------------
+  if ( ! empty( $args['allow_clear'] ) ) :
+    ?>
+    <option value=""></option>
+    <?php endif; ?>
+
+    <?php
+    // Якщо вдалося завантажити поточний елемент з БД - показуємо його.
+    if ( ! empty( $data ) && isset( $data[ $name_id ] ) ) :
+      $selected_id  = $data[ $name_id ];
   $display_text = $select_name ?: $selected_id;
   ?>
   <option selected value="<?php echo esc_attr( $selected_id ); ?>">
   <?php echo esc_html( $display_text ); ?>
   </option>
   <?php elseif ( ! empty( $args['select_id'] ) && $args['select_id'] !== '' ) : ?>
-  <!-- Якщо є select_id, але даних не завантажено -->
+  <?php
+  // Fallback, якщо select_id є, але дані ще не завантажилися.
+  ?>
   <option selected value="<?php echo esc_attr( $args['select_id'] ); ?>">
   <?php echo esc_html( sprintf( __( 'Loading ID %s...', 'wp-add-function' ), $args['select_id'] ) ); ?>
   </option>
@@ -424,115 +469,131 @@ function html_select2( array $args ) {
   </tr>
   <?php
 
-  // Перевіряємо, чи потрібно передавати параметри до AJAX
+  // Передаємо params окремо - java_item() сама правильно зіб'є URL.
   $ajax_params = $args['params'] ?? '';
 
-  // Для журналів додаємо параметр для фільтрації по firmId
-  if ($args['prefix'] === 'filter' && empty($ajax_params)) {
-    $ajax_params = '';
-  }
-
-  java_item( $item_name, esc_url( $ajax_php ), $ajax_params );
+  java_item(
+    $item_name,
+    esc_url_raw( $ajax_php ),
+            $ajax_params,
+            ! empty( $args['allow_clear'] )
+  );
 }
 
 //===================================================
-// JS-частина html_select2
-//===================================================
-function java_item( $item_name, $ajax_php = '', $params = '' ) {
+// JS-частина для html_select2
+//
+// $item_name   - унікальне ім'я елемента
+// $ajax_php    - базовий URL ajax-файлу
+// $params      - додаткові query params
+// $allow_clear - чи дозволяти очищення Select2
+//
+// Важливо:
+// Для allowClear ми використовуємо placeholder з id = ''.
+// Саме тоді очищення переводить select у справжнє пусте значення.
+function java_item( $item_name, $ajax_php = '', $params = '', $allow_clear = false ) {
   $place_item = __( 'Select value', 'wp-add-function' );
   $class_name = '.item_' . $item_name;
 
-  // Формуємо повний URL для AJAX
+  // Формуємо повний URL для AJAX в одному місці,
+  // щоб params не дублювались двічі.
   $full_ajax_url = $ajax_php;
-  if (!empty($params)) {
-    if (strpos($full_ajax_url, '?') !== false) {
-      $full_ajax_url .= '&' . ltrim($params, '?&');
+
+  if ( ! empty( $params ) && ! empty( $full_ajax_url ) ) {
+    $normalized_params = ltrim( $params, '?&' );
+
+    if ( strpos( $full_ajax_url, '?' ) !== false ) {
+      $full_ajax_url .= '&' . $normalized_params;
     } else {
-      $full_ajax_url .= '?' . ltrim($params, '?');
+      $full_ajax_url .= '?' . $normalized_params;
     }
   }
   ?>
   <script type="text/javascript">
   jQuery(function($) {
-    const class_name = '<?php echo $class_name; ?>';
-  const place_item = '<?php echo $place_item; ?>';
-  const ajax_php   = '<?php echo $full_ajax_url; ?>';
-  const $selectEl = $(class_name);
+    const className  = <?php echo wp_json_encode( $class_name ); ?>;
+    const placeItem  = <?php echo wp_json_encode( $place_item ); ?>;
+    const ajaxUrl    = <?php echo wp_json_encode( $full_ajax_url ); ?>;
+    const allowClear = <?php echo $allow_clear ? 'true' : 'false'; ?>;
 
-  if (!$selectEl.length) {
-    return;
-  }
+    const $selectEl = $(className);
 
-  // Отримуємо selected ID з data-атрибута
-  let selectedId = $selectEl.data('selected');
-
-  if (!ajax_php || ajax_php === '') {
-    // Ініціалізувати Select2 без AJAX
-    $selectEl.select2({
-      placeholder: {
-        id: '-1',
-        text: place_item
-      },
-      allowClear: true
-    });
-    return;
-  }
-
-  // Ініціалізація Select2 з AJAX-пошуком
-  $selectEl.select2({
-    placeholder: {
-      id: '-1',
-      text: place_item
-    },
-    allowClear: true,
-    ajax: {
-      url: ajax_php,
-      dataType: 'json',
-      delay: 250,
-      data: function (params) {
-        return {
-          q: params.term || '',
-          page: params.page || 1,
-          _ajax_nonce: '<?php echo wp_create_nonce("select2_search"); ?>'
-        };
-      },
-      processResults: function (data, params) {
-        params.page = params.page || 1;
-        return {
-          results: data || [],
-          pagination: {
-            more: (data && data.length >= 30)
-          }
-        };
-      },
-      cache: true
-    },
-    minimumInputLength: 0
-  });
-
-  // Автозаповнення SELECTED VALUE при завантаженні
-  if (selectedId && selectedId !== '' && selectedId !== '0' && selectedId !== '-1') {
-    var existingOption = $selectEl.find('option[value="' + selectedId + '"]');
-    if (existingOption.length > 0) {
-      $selectEl.val(selectedId).trigger('change');
-    } else {
-      // Якщо опції немає, завантажуємо через AJAX
-      $.ajax({
-        url: ajax_php,
-        data: {
-          id: selectedId,
-          _ajax_nonce: '<?php echo wp_create_nonce("select2_search"); ?>'
-        },
-        dataType: 'json',
-        success: function (data) {
-          if (data && data.id) {
-            var option = new Option(data.text, data.id, true, true);
-            $selectEl.append(option).trigger('change');
-          }
-        }
-      });
+    if (!$selectEl.length) {
+      return;
     }
-  }
+
+    // Поточне значення, яке прийшло з HTML.
+    let selectedId = $selectEl.data('selected');
+
+    // Базова конфігурація Select2.
+    // placeholder з id: '' потрібен для справжнього пустого значення.
+    const baseConfig = {
+      placeholder: {
+        id: '',
+        text: placeItem
+      },
+      allowClear: allowClear,
+      width: 'resolve'
+    };
+
+    // Якщо AJAX немає - просто ініціалізуємо Select2 без пошуку.
+    if (!ajaxUrl || ajaxUrl === '') {
+      $selectEl.select2(baseConfig);
+      return;
+    }
+
+    // Ініціалізація Select2 з AJAX-пошуком.
+    $selectEl.select2($.extend(true, {}, baseConfig, {
+      ajax: {
+        url: ajaxUrl,
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term || '',
+            page: params.page || 1,
+            _ajax_nonce: <?php echo wp_json_encode( wp_create_nonce( 'select2_search' ) ); ?>
+          };
+        },
+        processResults: function (data, params) {
+          params.page = params.page || 1;
+
+          return {
+            results: data || [],
+            pagination: {
+              more: (data && data.length >= 30)
+            }
+          };
+        },
+        cache: true
+      },
+      minimumInputLength: 0
+    }));
+
+    // Якщо selectedId уже є серед option - просто активуємо його.
+    // Якщо нема - пробуємо довантажити по id.
+    if (selectedId && selectedId !== '' && selectedId !== '0') {
+      var existingOption = $selectEl.find('option[value="' + selectedId + '"]');
+
+      if (existingOption.length > 0) {
+        $selectEl.val(selectedId).trigger('change');
+      } else {
+        $.ajax({
+          url: ajaxUrl,
+          data: {
+            id: selectedId,
+            _ajax_nonce: <?php echo wp_json_encode( wp_create_nonce( 'select2_search' ) ); ?>
+          },
+          dataType: 'json',
+          success: function (data) {
+            if (data && data.id) {
+              var option = new Option(data.text, data.id, true, true);
+              $selectEl.append(option).trigger('change');
+            }
+          }
+        });
+      }
+    }
   });
   </script>
   <?php

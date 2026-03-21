@@ -51,7 +51,21 @@
   }
 
   function initTiles(root) {
+    if (!root) {
+      return;
+    }
+
     var intervalValue = parseInt(root.dataset.refreshInterval || '0', 10);
+
+    if (root.dataset.ajaxEnabled === '1') {
+      window.setTimeout(function () {
+        refreshTiles(root);
+      }, 150);
+
+      window.addEventListener('pageshow', function () {
+        refreshTiles(root);
+      });
+    }
 
     if (root.dataset.autoRefresh === '1' && intervalValue > 0) {
       window.setInterval(function () {

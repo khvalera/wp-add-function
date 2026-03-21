@@ -263,6 +263,7 @@ class add_admin_submenu_class_table {
   public string $parent_page;
   public string $page;
   public string $position;
+  public string $page_callback;
   public array $set_fields;
 
   //===================================================
@@ -274,6 +275,7 @@ class add_admin_submenu_class_table {
     $this->plugin_prefix    = $config['plugin_prefix'] ?? '';
     $this->parent_page      = $config['parent_page'] ?? 'options-general.php';
     $this->position         = $config['position'] ?? 'admin_menu';
+    $this->page_callback    = $config['page_callback'] ?? '';
     $this->set_fields       = $config['set_fields'] ?? [];
 
     $this->page = $this->plugin_prefix . '-' . $this->item_name;
@@ -391,6 +393,10 @@ class add_admin_submenu_class_table {
         $this->page,
         function(){
           require_once( WP_PLUGIN_DIR . '/' . $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
+
+          if ( ! empty( $this->page_callback ) && function_exists( $this->page_callback ) ) {
+            call_user_func( $this->page_callback );
+          }
         }
       );
     } else {
@@ -402,6 +408,10 @@ class add_admin_submenu_class_table {
         $this->page,
         function(){
           require_once( WP_PLUGIN_DIR . '/' . $this->plugin_name . '/includes/' . $this->item_name . '/page.php' );
+
+          if ( ! empty( $this->page_callback ) && function_exists( $this->page_callback ) ) {
+            call_user_func( $this->page_callback );
+          }
         }
       );
     }

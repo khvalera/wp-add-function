@@ -97,21 +97,50 @@ abstract class BaseExporter {
 
         if ( method_exists( $this->table, $method_name ) ) {
             ob_start();
-            call_user_func( [ $this->table, $method_name ], $item );
-            $value = ob_get_clean();
+            $result = call_user_func( [ $this->table, $method_name ], $item );
+            $output = ob_get_clean();
+
+            if ( $result !== null && $result !== false && $result !== '' ) {
+                $value = (string) $result;
+            } else {
+                $value = (string) $output;
+            }
         } elseif ( method_exists( $this->table, 'column_default' ) ) {
             $value = $this->table->column_default( $item, $column_key );
         } else {
             $value = is_array( $item ) && isset( $item[ $column_key ] ) ? $item[ $column_key ] : '';
         }
 
-        $value = (string) $value;
+        $value = $this->normalize_column_value_for_export( (string) $value );
+
+        return $value;
+    }
+
+    /**
+     * Нормалізує HTML значення колонки для plain-text експорту.
+     *
+     * Прибирає службові row actions WP_List_Table (View/Edit/History, toggle-row тощо),
+     * щоб в експорт не потрапляв службовий UI-текст із журналу.
+     */
+    protected function normalize_column_value_for_export( string $value ): string {
+
+        if ( $value === '' ) {
+            return '';
+        }
+
+        $patterns = [
+            '/<div\b[^>]*\bclass=(?:\"|\')[^\"\']*\brow-actions\b[^\"\']*(?:\"|\')[^>]*>.*?<\/div>/si',
+            '/<button\b[^>]*\bclass=(?:\"|\')[^\"\']*\btoggle-row\b[^\"\']*(?:\"|\')[^>]*>.*?<\/button>/si',
+            '/<span\b[^>]*\bclass=(?:\"|\')[^\"\']*\bscreen-reader-text\b[^\"\']*(?:\"|\')[^>]*>.*?<\/span>/si',
+        ];
+
+        $value = preg_replace( $patterns, '', $value );
         $value = html_entity_decode( $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
         $value = str_replace( [ "\xC2\xA0", '&nbsp;' ], ' ', $value );
         $value = trim( wp_strip_all_tags( $value ) );
         $value = preg_replace( '/[ \t]+/u', ' ', $value );
 
-        return $value;
+        return (string) $value;
     }
 
     /* ======================================================
