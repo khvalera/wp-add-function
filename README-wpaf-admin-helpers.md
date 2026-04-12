@@ -79,6 +79,8 @@
   - збирає стандартний primary title action item для page headers без дублювання `page-title-action wpaf-button wpaf-button-primary`
 - `wpaf_build_title_action_items( array $definitions )`
   - збирає набір title action items із компактних definitions (`condition / primary / url / label / class`), щоб модулі менше руками складали page-header actions
+- `wpaf_normalize_report_screen_runtime_args( array $args = [] )`
+  - нормалізує компактний runtime DSL для простих report/journal screens: `title_actions => title_definitions`, а також вкладений `notice`-блок (`code/map/args`, `message/type/dismissible`, `buttons`) без зміни module-specific URLs, текстів чи бізнес-правил
 
 Використання:
 - page-title actions
@@ -255,6 +257,7 @@ Backward compatibility:
 - `wpaf_get_history_button_label()` — shared emoji label helper for history buttons such as `📜 History`.
 - `wpaf_get_return_button_label()` — shared emoji label helper for return/back buttons such as `📖 Return`.
 - `wpaf_get_open_button_label()` — shared emoji label helper for open buttons such as `📂 Open`.
+- `wpaf_get_user_display_name()` / `wpaf_get_user_display_name_by_id()` / `wpaf_get_current_user_display_name()` — shared user-label helpers for admin screens so plugins do not duplicate `display_name -> user_login -> #id` fallback logic.
 - `wpaf_get_confirm_layout_wrapper_style()` — shared compact wrapper spacing helper for confirm-layout blocks.
 - `wpaf_render_action_buttons()` now can render an optional right-side trailing action group via `trailing_actions`, which is useful for layouts like `Save / Cancel` on the left and a destructive action on the right.
 - `wpaf_get_readonly_action_buttons_args()` helps reuse the same split-layout action row on readonly/view screens, for example keeping document actions on the left and a return/back action on the right.
@@ -402,4 +405,6 @@ These helpers stay presentation-only. Modules still own URLs, labels, permission
 
 `wpaf_send_matrix_message()` accepts an optional `thread_root_event_id` argument. When it is set, the helper sends the message with an `m.relates_to` payload using `rel_type = m.thread` so the message becomes part of the Matrix thread rooted at that event.
 
-
+Shared Matrix/display helpers:
+- `wpaf_get_matrix_colored_text_html($text, $color)` — формує Matrix-safe colored HTML через `data-mx-color` для `formatted_body`
+- `wpaf_format_number_trimmed($number, $decimals = 3)` — локалізоване форматування числа з обрізанням хвостових нулів для компактного display/notification output

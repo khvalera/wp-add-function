@@ -2,7 +2,7 @@
 /*
 * Plugin Name: wp-add-function
 * Description: Additional common function WP
-* Version: 0.0.1
+* Version: 0.0.2
 * Author: Khomenko Valery
 * Author URI: https://github.com/khvalera/wp-add-function
 * Domain Path: /lang/

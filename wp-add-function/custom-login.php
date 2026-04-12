@@ -45,7 +45,7 @@ function waf_login__get_branding_args(): array {
         'background_size' => 'contain',
         'margin'          => '0 auto 25px',
         'header_url'      => home_url( '/' ),
-                  'header_text'     => get_bloginfo( 'name' ),
+        'header_text'     => get_bloginfo( 'name' ),
     );
 
     // Backward compatibility: старий filter для URL логотипа.
@@ -68,7 +68,7 @@ function waf_login__get_branding_args(): array {
             'background_size' => 'contain',
             'margin'          => '0 auto 25px',
             'header_url'      => home_url( '/' ),
-              'header_text'     => get_bloginfo( 'name' ),
+            'header_text'     => get_bloginfo( 'name' ),
         )
     );
 
@@ -131,15 +131,26 @@ function waf_login__user_trailingslashit( string $path ): string {
     return waf_login__use_trailing_slashes() ? trailingslashit( $path ) : untrailingslashit( $path );
 }
 
+/**
+ * У plain-permalink режимі не використовуємо ?login,
+ * бо WordPress reset-password URL вже містить login=<username>.
+ */
+function waf_login__page_query_var(): string {
+    return 'waf_login';
+}
+
+function waf_login__using_plain_permalinks(): bool {
+    return (string) get_option( 'permalink_structure' ) === '';
+}
+
 function waf_login__login_url( ?string $scheme = null ): string {
     $base = home_url( '/', $scheme );
 
-    if ( get_option( 'permalink_structure' ) ) {
+    if ( ! waf_login__using_plain_permalinks() ) {
         return waf_login__user_trailingslashit( $base . WAF_LOGIN_SLUG );
     }
 
-    // fallback для “plain” пермалінків: https://site.tld/?login
-    return add_query_arg( WAF_LOGIN_SLUG, '', $base );
+    return add_query_arg( waf_login__page_query_var(), '1', $base );
 }
 
 /**
@@ -209,7 +220,7 @@ add_action( 'plugins_loaded', static function () {
     // 2) Наш /login — змушуємо WP працювати як на wp-login.php.
     if (
         waf_login__is_login_slug_request()
-        || ( ! get_option( 'permalink_structure' ) && isset( $_GET[ WAF_LOGIN_SLUG ] ) && $_GET[ WAF_LOGIN_SLUG ] === '' )
+        || ( waf_login__using_plain_permalinks() && isset( $_GET[ waf_login__page_query_var() ] ) )
     ) {
         $_SERVER['SCRIPT_NAME'] = WAF_LOGIN_SLUG;
         $pagenow                = 'wp-login.php';
@@ -235,13 +246,17 @@ add_action( 'wp_loaded', static function () {
 
         $target = waf_login__login_url( is_ssl() ? 'https' : 'http' );
         if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-            $target .= '?' . ltrim( (string) $_SERVER['QUERY_STRING'], '?' );
+            $query_args = array();
+            parse_str( (string) $_SERVER['QUERY_STRING'], $query_args );
+            if ( ! empty( $query_args ) ) {
+                $target = add_query_arg( $query_args, $target );
+            }
         }
         wp_safe_redirect( $target, 302 );
         exit;
     }
 
-    // Віддаємо login-сторінку на /login (і на fallback ?login)
+    // Віддаємо login-сторінку на /login (і на fallback query var)
     if ( $pagenow === 'wp-login.php' ) {
         // WP core wp-login.php у деяких сценаріях звертається до $user_login без попередньої ініціалізації.
         // Щоб уникнути Warning при підвищеному error_reporting, задамо дефолти.
@@ -350,6 +365,10 @@ add_action( 'template_redirect', static function () {
 
     // Дозволяємо логін-ендпоінт
     if ( waf_login__is_login_slug_request() ) {
+        return;
+    }
+
+    if ( waf_login__using_plain_permalinks() && isset( $_GET[ waf_login__page_query_var() ] ) ) {
         return;
     }
 

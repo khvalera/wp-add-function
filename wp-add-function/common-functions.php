@@ -133,6 +133,94 @@ function admin_bar_menu_title_icon( $icon_url, $title ){
 }
 
 
+
+//===========================================
+// Отримати відображуване ім'я користувача з WP_User / user_login fallback
+//===========================================
+if ( ! function_exists( 'wpaf_get_user_display_name' ) ) {
+   /**
+    * Resolve a human-readable display name for a WordPress user.
+    *
+    * The helper is intentionally generic and can be reused by any plugin or
+    * admin screen that needs a stable display label for a WP user without
+    * duplicating `display_name => user_login` fallback logic.
+    *
+    * @param mixed       $user     WP_User instance or compatible value.
+    * @param string|mixed $fallback Optional fallback string.
+    *
+    * @return string
+    */
+   function wpaf_get_user_display_name( $user, $fallback = '' ) {
+      if ( ! ( $user instanceof WP_User ) ) {
+         return is_scalar( $fallback ) ? (string) $fallback : '';
+      }
+
+      $user_name = (string) $user->display_name;
+
+      if ( $user_name === '' ) {
+         $user_name = (string) $user->user_login;
+      }
+
+      if ( $user_name !== '' ) {
+         return $user_name;
+      }
+
+      return is_scalar( $fallback ) ? (string) $fallback : '';
+   }
+}
+
+//===========================================
+// Отримати відображуване ім'я користувача за ID
+//===========================================
+if ( ! function_exists( 'wpaf_get_user_display_name_by_id' ) ) {
+   /**
+    * Resolve a human-readable display name by WordPress user ID.
+    *
+    * Invalid IDs return the supplied fallback. Missing users fall back to
+    * `#<id>` unless a custom fallback string was provided by the caller.
+    *
+    * @param int|string|mixed $user_id  User ID.
+    * @param string|mixed     $fallback Optional fallback for invalid/missing users.
+    *
+    * @return string
+    */
+   function wpaf_get_user_display_name_by_id( $user_id, $fallback = '' ) {
+      $user_id = (int) $user_id;
+
+      if ( $user_id <= 0 ) {
+         return is_scalar( $fallback ) ? (string) $fallback : '';
+      }
+
+      $user = get_userdata( $user_id );
+
+      if ( ! ( $user instanceof WP_User ) ) {
+         if ( is_scalar( $fallback ) && (string) $fallback !== '' ) {
+            return (string) $fallback;
+         }
+
+         return '#' . $user_id;
+      }
+
+      return wpaf_get_user_display_name( $user, '#' . $user_id );
+   }
+}
+
+//===========================================
+// Отримати відображуване ім'я поточного користувача
+//===========================================
+if ( ! function_exists( 'wpaf_get_current_user_display_name' ) ) {
+   /**
+    * Resolve a human-readable display name for the current user.
+    *
+    * @param string|mixed $fallback Optional fallback string.
+    *
+    * @return string
+    */
+   function wpaf_get_current_user_display_name( $fallback = '' ) {
+      return wpaf_get_user_display_name( wp_get_current_user(), $fallback );
+   }
+}
+
 //===========================================
 // Універсальні admin helper-механізми для повторного використання в плагінах
 //
@@ -1345,7 +1433,6 @@ if ( ! function_exists( 'wpaf_render_report_screen_with_button_actions' ) ) {
     * - plural_name (required for form_report())
     * - title
     * - title_definitions
-    * - title_actions (alias of title_definitions for compact module code)
     * - title_html (optional prebuilt title HTML)
     * - title_args
     * - description1
@@ -1359,12 +1446,14 @@ if ( ! function_exists( 'wpaf_render_report_screen_with_button_actions' ) ) {
     * @return bool True when the helper rendered the report shell.
     */
    function wpaf_render_report_screen_with_button_actions( array $args = array() ) {
+      if ( function_exists( 'wpaf_normalize_report_screen_runtime_args' ) ) {
+         $args = wpaf_normalize_report_screen_runtime_args( $args );
+      }
+
       $plural_name       = isset( $args['plural_name'] ) && is_scalar( $args['plural_name'] ) ? trim( (string) $args['plural_name'] ) : '';
       $title             = isset( $args['title'] ) && is_scalar( $args['title'] ) ? (string) $args['title'] : '';
       $title_html        = isset( $args['title_html'] ) && is_scalar( $args['title_html'] ) ? (string) $args['title_html'] : '';
-      $title_definitions = isset( $args['title_definitions'] ) && is_array( $args['title_definitions'] )
-         ? $args['title_definitions']
-         : ( isset( $args['title_actions'] ) && is_array( $args['title_actions'] ) ? $args['title_actions'] : array() );
+      $title_definitions = isset( $args['title_definitions'] ) && is_array( $args['title_definitions'] ) ? $args['title_definitions'] : array();
       $title_args        = isset( $args['title_args'] ) && is_array( $args['title_args'] ) ? $args['title_args'] : array();
       $description1      = isset( $args['description1'] ) && is_scalar( $args['description1'] ) ? (string) $args['description1'] : '';
       $description2      = isset( $args['description2'] ) && is_scalar( $args['description2'] ) ? (string) $args['description2'] : '';
@@ -1434,6 +1523,87 @@ if ( ! function_exists( 'wpaf_render_report_screen_with_button_actions' ) ) {
    }
 }
 
+
+
+//===========================================
+// Нормалізувати компактний runtime DSL для report/list screen helper-а
+//===========================================
+if ( ! function_exists( 'wpaf_normalize_report_screen_runtime_args' ) ) {
+   /**
+    * Expand compact runtime DSL for wpaf_render_report_screen_with_button_actions().
+    *
+    * This keeps report/journal pages short and declarative, similar to the
+    * standard-screen runtime DSL, while staying presentation-only.
+    *
+    * Supported compact aliases:
+    * - title_actions => title_definitions
+    * - notice =>
+    *    - code / map / args
+    *    - message / type / dismissible / class / message_tag
+    *    - buttons / button_definitions / action_links_args
+    *
+    * @param array $args Report/list runtime args.
+    *
+    * @return array<string,mixed>
+    */
+   function wpaf_normalize_report_screen_runtime_args( array $args = array() ) {
+      $normalized = $args;
+
+      if ( ! isset( $normalized['title_definitions'] ) && isset( $normalized['title_actions'] ) && is_array( $normalized['title_actions'] ) ) {
+         $normalized['title_definitions'] = $normalized['title_actions'];
+      }
+
+      if ( isset( $normalized['notice'] ) && is_array( $normalized['notice'] ) ) {
+         $notice = $normalized['notice'];
+
+         if ( ! isset( $normalized['notice_code'] ) && isset( $notice['code'] ) && is_scalar( $notice['code'] ) ) {
+            $normalized['notice_code'] = (string) $notice['code'];
+         }
+
+         if ( ! isset( $normalized['notice_map'] ) && isset( $notice['map'] ) && is_array( $notice['map'] ) ) {
+            $normalized['notice_map'] = $notice['map'];
+         }
+
+         if ( ! isset( $normalized['notice_args'] ) && isset( $notice['args'] ) && is_array( $notice['args'] ) ) {
+            $normalized['notice_args'] = $notice['args'];
+         }
+
+         if ( ! isset( $normalized['notice_message'] ) && isset( $notice['message'] ) && is_scalar( $notice['message'] ) ) {
+            $normalized['notice_message'] = (string) $notice['message'];
+         }
+
+         if ( ! isset( $normalized['notice_type'] ) && isset( $notice['type'] ) && is_scalar( $notice['type'] ) ) {
+            $normalized['notice_type'] = (string) $notice['type'];
+         }
+
+         if ( ! isset( $normalized['notice_dismissible'] ) && array_key_exists( 'dismissible', $notice ) ) {
+            $normalized['notice_dismissible'] = ! empty( $notice['dismissible'] );
+         }
+
+         if ( ! isset( $normalized['notice_class'] ) && isset( $notice['class'] ) && is_scalar( $notice['class'] ) ) {
+            $normalized['notice_class'] = (string) $notice['class'];
+         }
+
+         if ( ! isset( $normalized['message_tag'] ) && isset( $notice['message_tag'] ) && is_scalar( $notice['message_tag'] ) ) {
+            $normalized['message_tag'] = (string) $notice['message_tag'];
+         }
+
+         if ( ! isset( $normalized['notice_button_definitions'] ) ) {
+            if ( isset( $notice['button_definitions'] ) && is_array( $notice['button_definitions'] ) ) {
+               $normalized['notice_button_definitions'] = $notice['button_definitions'];
+            } elseif ( isset( $notice['buttons'] ) && is_array( $notice['buttons'] ) ) {
+               $normalized['notice_button_definitions'] = $notice['buttons'];
+            }
+         }
+
+         if ( ! isset( $normalized['notice_action_links_args'] ) && isset( $notice['action_links_args'] ) && is_array( $notice['action_links_args'] ) ) {
+            $normalized['notice_action_links_args'] = $notice['action_links_args'];
+         }
+      }
+
+      return $normalized;
+   }
+}
 
 //===========================================
 // Вивести document-like screen одним shared викликом
@@ -5606,6 +5776,62 @@ if ( ! function_exists( 'wpaf_render_admin_intro_box' ) ) {
    }
 }
 
+
+//===========================================
+// Matrix/display utility helpers
+//===========================================
+if ( ! function_exists( 'wpaf_get_matrix_colored_text_html' ) ) {
+   /**
+    * Build Matrix-safe colored HTML text using data-mx-color.
+    *
+    * Inline CSS colors inside Matrix formatted_body are not reliable across
+    * clients, so this helper uses the recommended data-mx-color attribute.
+    *
+    * @param string $text  Plain text content.
+    * @param string $color Hex color in #RRGGBB format.
+    *
+    * @return string
+    */
+   function wpaf_get_matrix_colored_text_html( $text, $color ) {
+      $text  = trim( wp_strip_all_tags( (string) $text ) );
+      $color = strtoupper( trim( (string) $color ) );
+
+      if ( $text === '' ) {
+         return '';
+      }
+
+      if ( ! preg_match( '/^#[0-9A-F]{6}$/', $color ) ) {
+         return '<strong>' . esc_html( $text ) . '</strong>';
+      }
+
+      return '<span data-mx-color="' . esc_attr( $color ) . '"><strong>' . esc_html( $text ) . '</strong></span>';
+   }
+}
+
+if ( ! function_exists( 'wpaf_format_number_trimmed' ) ) {
+   /**
+    * Format a numeric value with locale support and trim trailing zeros.
+    *
+    * Examples: 5 -> 5, 5.500 -> 5.5, 5.125 -> 5.125.
+    *
+    * @param float|int|string $number
+    * @param int              $decimals
+    *
+    * @return string
+    */
+   function wpaf_format_number_trimmed( $number, $decimals = 3 ) {
+      $number   = (float) $number;
+      $decimals = max( 0, (int) $decimals );
+
+      if ( function_exists( 'number_format_i18n' ) ) {
+         $formatted = number_format_i18n( $number, $decimals );
+      } else {
+         $formatted = number_format( $number, $decimals, '.', '' );
+      }
+
+      return rtrim( rtrim( (string) $formatted, '0' ), ',.' );
+   }
+}
 
 //===========================================
 // Надіслати універсальне Matrix-повідомлення через Client-Server API
